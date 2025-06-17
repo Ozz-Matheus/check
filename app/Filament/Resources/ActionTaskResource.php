@@ -27,6 +27,10 @@ class ActionTaskResource extends Resource
                     ->description('')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\TextInput::make('action_id')
+                            ->default(request('action_id'))
+                            ->dehydrated()
+                            ->visible(false), // Se deja este campo dehidrated y sin visibilidad para dejar seteado el valor de la acción
                         Forms\Components\TextInput::make('title')
                             ->required()
                             ->maxLength(255)

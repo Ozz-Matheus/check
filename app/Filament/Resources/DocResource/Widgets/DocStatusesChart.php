@@ -12,11 +12,11 @@ class DocStatusesChart extends ChartWidget
     protected function getData(): array
     {
         $statusColors = [
-            'approved' => 'rgba(22, 163, 74, 1)', // verde
-            'rejected' => 'rgba(220, 38, 38, 1)', // rojo
-            'pending' => 'rgba(79, 70, 229, 1)', // azul
-            'draft' => 'rgba(251, 191, 36, 1)', // amarillo
-            'Sin estado' => 'rgba(203, 213, 225, 1)', // gris para registros sin estado
+            'approved' => config('filament-colors.success.rgba'),
+            'rejected' => config('filament-colors.danger.rgba'),
+            'pending' => config('filament-colors.primary.rgba'),
+            'draft' => config('filament-colors.warning.rgba'),
+            'Sin estado' => config('filament-colors.secondary.rgba'),
         ];
 
         // Obtener todos los registros con su último archivo y estado

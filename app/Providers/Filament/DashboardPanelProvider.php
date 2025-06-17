@@ -30,7 +30,13 @@ class DashboardPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         FilamentColor::register([
-            'indigo' => Color::Indigo,
+            'indigo' => Color::hex(config('filament-colors.indigo.hex')),
+            'success' => Color::hex(config('filament-colors.success.hex')),
+            'danger' => Color::hex(config('filament-colors.danger.hex')),
+            'warning' => Color::hex(config('filament-colors.warning.hex')),
+            'gray' => Color::hex(config('filament-colors.gray.hex')),
+            'primary' => Color::hex(config('filament-colors.primary.hex')),
+
         ]);
 
         return $panel
@@ -39,7 +45,7 @@ class DashboardPanelProvider extends PanelProvider
             ->path('dashboard')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::hex(config('filament-colors.primary.hex')),
             ])
             ->favicon(asset('images/favicon.png'))
             ->brandLogo(asset('images/record-manager-logo.svg'))

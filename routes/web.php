@@ -16,13 +16,3 @@ Route::get('clear', function () {
 
     return redirect('/#clear');
 });
-
-Route::get('/salir', function () {
-    Auth::logout();
-
-    // Invalidar la sesión y regenerar el token CSRF por seguridad
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-
-    return redirect('/'); // o a donde quieras redirigir
-})->name('salir');

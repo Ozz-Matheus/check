@@ -30,7 +30,7 @@ class TaskService
     {
         $responsibleTaskId = $actionTask->responsible_by_id;
 
-        $statusTaskInExecutionId = Status::byContextAndTitle('task', 'in_execution_task')?->id;
+        $statusTaskInExecutionId = Status::byContextAndTitle('task', 'in_execution')?->id;
 
         $statusActionCanceledId = Status::byContextAndTitle('action', 'canceled')?->id;
 
@@ -118,8 +118,8 @@ class TaskService
     {
         $currentTaskStatusId = $actionTask->status_id;
 
-        $pendingTaskStatusId = Status::byContextAndTitle('task', 'pending_task')?->id;
-        $inExecutionTaskStatusId = Status::byContextAndTitle('task', 'in_execution_task')?->id;
+        $pendingTaskStatusId = Status::byContextAndTitle('task', 'pending')?->id;
+        $inExecutionTaskStatusId = Status::byContextAndTitle('task', 'in_execution')?->id;
 
         if ($currentTaskStatusId === $pendingTaskStatusId && $inExecutionTaskStatusId !== null) {
             return $actionTask->update(['status_id' => $inExecutionTaskStatusId]);

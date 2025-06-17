@@ -98,7 +98,7 @@ class StatusSeeder extends Seeder
         // --------- Context: task ---------
         Status::factory()->create([
             'context' => 'task',
-            'title' => 'pending_task',
+            'title' => 'pending',
             'label' => 'Pendiente',
             'color' => 'gray',
             'icon' => 'heroicon-o-pencil-square',
@@ -106,7 +106,7 @@ class StatusSeeder extends Seeder
         ]);
         Status::factory()->create([
             'context' => 'task',
-            'title' => 'in_execution_task',
+            'title' => 'in_execution',
             'label' => 'En ejecución',
             'color' => 'indigo',
             'icon' => 'heroicon-o-clock',

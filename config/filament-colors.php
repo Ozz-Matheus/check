@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'indigo' => [
+        'hex' => '#6366F1',
+        'rgba' => 'rgba(99, 102, 241, 1)',
+    ],
+    'success' => [
+        'hex' => '#10B981',
+        'rgba' => 'rgba(16, 185, 129, 1)',
+    ],
+    'danger' => [
+        'hex' => '#EF4444',
+        'rgba' => 'rgba(239, 68, 68, 1)',
+    ],
+    'warning' => [
+        'hex' => '#F59E0B',
+        'rgba' => 'rgba(245, 158, 11, 1)',
+    ],
+    'gray' => [
+        'hex' => '#6B7280',
+        'rgba' => 'rgba(107, 114, 128, 1)',
+    ],
+    'secondary' => [
+        'hex' => '#ffc107',
+        'rgba' => 'rgba(255, 193, 7, 1)',
+    ],
+    'primary' => [
+        'hex' => '#3B82F6',
+        'rgba' => 'rgba(59, 130, 246, 1)',
+    ],
+];
