@@ -15,6 +15,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DocVersionResource extends Resource
@@ -45,7 +46,7 @@ class DocVersionResource extends Resource
                             ->helperText('Allowed types: PDF, DOC, DOCX, XLS, XLSX (max. 10MB)')
                             ->columnSpanFull(),
                         TextArea::make('comment')
-                            ->label(__('comment'))
+                            ->label(__('Comment'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
@@ -59,7 +60,13 @@ class DocVersionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('file.name')
                     ->label(__('Title'))
+                    ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('file.mime_type')
+                    ->label('Type')
+                    ->formatStateUsing(fn (string $state) => strtoupper(Str::after($state, '/'))),
+                Tables\Columns\TextColumn::make('file.readable_size')
+                    ->label('Size'),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
                     ->searchable()
@@ -69,7 +76,7 @@ class DocVersionResource extends Resource
                     ->label(__('Version'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('comment')
-                    ->label(__('comment'))
+                    ->label(__('Comment'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->comment)
                     ->searchable(),

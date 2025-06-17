@@ -25,7 +25,7 @@ class VersionStatusService
 
     public function pending(DocVersion $docVersion): void
     {
-        $status = Status::byTitle('pending');
+        $status = Status::byContextAndTitle('doc', 'pending');
         $changeReason = 'Pending from version '.$docVersion->version;
 
         $this->updateVersionStatus($docVersion, $status, $changeReason);
@@ -33,7 +33,7 @@ class VersionStatusService
 
     public function rejected(DocVersion $docVersion): void
     {
-        $status = Status::byTitle('rejected');
+        $status = Status::byContextAndTitle('doc', 'rejected');
         $reasonMessage = 'Rejected from version '.$docVersion->version;
         $changeReason = Str::limit(strip_tags(request()->query('change_reason', $reasonMessage)), 255);
         $extra = [
@@ -56,7 +56,7 @@ class VersionStatusService
 
         DB::transaction(fn () => $docVersion->update($validated));
 
-        $status = Status::byTitle('approved');
+        $status = Status::byContextAndTitle('doc', 'approved');
         $this->notifyStatusChange($docVersion, $status, $data['change_reason']);
     }
 

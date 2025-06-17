@@ -36,7 +36,7 @@ class ListDocVersions extends ListRecords
 
             $data = session('version_status');
 
-            $status = Status::byTitle($data['status_title']);
+            $status = Status::byContextAndTitle('doc', $data['status_title']);
 
             Notification::make()
                 ->title('Version successfully '.$status->label)

@@ -47,7 +47,7 @@ class CreateActionTask extends CreateRecord
             'responsible_by_id' => $data['responsible_by_id'],
             'start_date' => $data['start_date'],
             'deadline' => $data['deadline'],
-            'status_id' => Status::byTitle('pending_task')?->id,
+            'status_id' => Status::byContextAndTitle('task', 'pending_task')?->id,
         ]);
 
         app(ActionStatusService::class)->statusChangesInActions($this->ActionModel, 'in_execution');

@@ -13,11 +13,11 @@ class ActionService
     public function canCancelAction(Action $action)
     {
 
-        $finishedActionStatusId = Status::byTitle('finished')?->id;
-        $canceledActionStatusId = Status::byTitle('canceled')?->id;
-        $currentActionStatusId = $action->status_id;
+        $finishedStatusId = Status::byContextAndTitle('action', 'finished')?->id;
+        $canceledStatusId = Status::byContextAndTitle('action', 'canceled')?->id;
+        $currentStatusId = $action->status_id;
 
-        if ($currentActionStatusId === $finishedActionStatusId || $currentActionStatusId === $canceledActionStatusId) {
+        if ($currentStatusId === $finishedStatusId || $currentStatusId === $canceledStatusId) {
             return false;
         }
 
@@ -26,7 +26,8 @@ class ActionService
 
     public function canFinishAction(Action $action): bool
     {
-        $expectedActionStatusId = Status::byTitle('in_execution')?->id;
+
+        $expectedActionStatusId = Status::byContextAndTitle('action', 'in_execution')?->id;
         $currentActionStatusId = $action->status_id;
 
         if ($currentActionStatusId !== $expectedActionStatusId) {
@@ -37,10 +38,10 @@ class ActionService
             return false;
         }
 
-        $completedActionStatusId = Status::byTitle('completed')?->id;
+        $completedTaskStatusId = Status::byContextAndTitle('task', 'completed')?->id;
 
         $hasUncompletedTasks = $action->tasks()
-            ->where('status_id', '!=', $completedActionStatusId)
+            ->where('status_id', '!=', $completedTaskStatusId)
             ->exists();
 
         return ! $hasUncompletedTasks;
@@ -48,8 +49,8 @@ class ActionService
 
     public function canViewActionEnding(int $statusId)
     {
-        $expectedActionStatusId = Status::byTitle('finished')?->id;
+        $expectedStatusId = Status::byContextAndTitle('action', 'finished')?->id;
 
-        return $statusId === $expectedActionStatusId;
+        return $statusId === $expectedStatusId;
     }
 }

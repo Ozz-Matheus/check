@@ -15,7 +15,7 @@ class CreateImprove extends CreateRecord
     {
         $data['registration_date'] = now()->toDateString();
         $data['registered_by_id'] = auth()->id();
-        $data['status_id'] = Status::byTitle('proposal')?->id;
+        $data['status_id'] = Status::byContextAndTitle('action', 'proposal')?->id;
 
         return $data;
     }

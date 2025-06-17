@@ -13,8 +13,8 @@ class ActionStatusService
 {
     public function statusChangesInActions(Action $action, string $status): bool
     {
-        $statusChangeId = Status::byTitle($status)?->id;
-        $proposalId = Status::byTitle('proposal')?->id;
+        $statusChangeId = Status::byContextAndTitle('action', $status)?->id;
+        $proposalId = Status::byContextAndTitle('action', 'proposal')?->id;
 
         if (! $statusChangeId) {
             return false;
@@ -35,7 +35,7 @@ class ActionStatusService
 
     public function statusAssignmentCanceled(Action $action, array $data)
     {
-        $statusActionChangeId = Status::byTitle('canceled')?->id;
+        $statusActionChangeId = Status::byContextAndTitle('action', 'canceled')?->id;
 
         $action->update(['status_id' => $statusActionChangeId, 'reason_for_cancellation' => $data['reason_for_cancellation']]);
 

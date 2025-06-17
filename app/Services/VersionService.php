@@ -20,8 +20,8 @@ class VersionService
         $doc = Doc::with('subProcess')->findOrFail($data['doc_id']);
 
         $hasApprovalAccess = $user->canApproveAndReject($doc->sub_process_id ?? null);
-        $statusApproved = Status::byTitle('approved');
-        $statusDraft = Status::byTitle('draft');
+        $statusApproved = Status::byContextAndTitle('doc', 'approved');
+        $statusDraft = Status::byContextAndTitle('doc', 'draft');
 
         $lastVersion = DocVersion::where('doc_id', $data['doc_id'])
             ->orderByDesc('version')

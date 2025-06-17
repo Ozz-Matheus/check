@@ -16,10 +16,10 @@ class TaskService
 {
     public function canCreateTask(int $responsibleId, int $statusId): bool
     {
-        $statusActionProposal = Status::byTitle('proposal')?->id;
-        $statusActionInExecution = Status::byTitle('in_execution_task')?->id;
+        $statusProposal = Status::byContextAndTitle('action', 'proposal')?->id;
+        $statusInExecution = Status::byContextAndTitle('action', 'in_execution')?->id;
 
-        if (auth()->id() === $responsibleId && ($statusId === $statusActionProposal || $statusId === $statusActionInExecution)) {
+        if (auth()->id() === $responsibleId && ($statusId === $statusProposal || $statusId === $statusInExecution)) {
             return true;
         }
 
@@ -30,15 +30,16 @@ class TaskService
     {
         $responsibleTaskId = $actionTask->responsible_by_id;
 
-        $statusActionInExecutionId = Status::byTitle('in_execution_task')?->id;
-        $statusActionCanceledId = Status::byTitle('canceled')?->id;
+        $statusTaskInExecutionId = Status::byContextAndTitle('task', 'in_execution_task')?->id;
+
+        $statusActionCanceledId = Status::byContextAndTitle('action', 'canceled')?->id;
 
         $currentActionStatusId = $actionTask->action->status_id;
 
         if (auth()->id() !== $responsibleTaskId) {
             return false;
         }
-        if ($actionTask->status_id !== $statusActionInExecutionId) {
+        if ($actionTask->status_id !== $statusTaskInExecutionId) {
             return false;
         }
 
@@ -50,10 +51,10 @@ class TaskService
 
         $responsibleTaskId = $actionTask->responsible_by_id;
 
-        $statusTaskCompletedId = Status::byTitle('completed')?->id;
-        $statusTaskExtemporaneousId = Status::byTitle('extemporaneous')?->id;
+        $statusTaskCompletedId = Status::byContextAndTitle('task', 'completed')?->id;
+        $statusTaskExtemporaneousId = Status::byContextAndTitle('task', 'extemporaneous')?->id;
 
-        $statusActionCanceledId = Status::byTitle('canceled')?->id;
+        $statusActionCanceledId = Status::byContextAndTitle('action', 'canceled')?->id;
 
         $currentActionStatusId = $actionTask->action->status_id;
 
@@ -106,7 +107,7 @@ class TaskService
     public function closeTask(ActionTask $actionTask): bool
     {
         $statusTitle = now()->lessThanOrEqualTo($actionTask->deadline) ? 'completed' : 'extemporaneous';
-        $statusTaskId = Status::byTitle($statusTitle)?->id;
+        $statusTaskId = Status::byContextAndTitle('task', $statusTitle)?->id;
 
         return $statusTaskId ? $actionTask->update(['status_id' => $statusTaskId, 'actual_closing_date' => now()->format('Y-m-d')]) : false;
     }
@@ -117,8 +118,8 @@ class TaskService
     {
         $currentTaskStatusId = $actionTask->status_id;
 
-        $pendingTaskStatusId = Status::byTitle('pending_task')?->id;
-        $inExecutionTaskStatusId = Status::byTitle('in_execution_task')?->id;
+        $pendingTaskStatusId = Status::byContextAndTitle('task', 'pending_task')?->id;
+        $inExecutionTaskStatusId = Status::byContextAndTitle('task', 'in_execution_task')?->id;
 
         if ($currentTaskStatusId === $pendingTaskStatusId && $inExecutionTaskStatusId !== null) {
             return $actionTask->update(['status_id' => $inExecutionTaskStatusId]);

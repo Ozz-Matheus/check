@@ -17,7 +17,7 @@ class ActionEndingFilesRelationManager extends RelationManager
     {
         return $table->columns([
             Tables\Columns\TextColumn::make('name')
-                ->formatStateUsing(fn (string $state) => pathinfo($state, PATHINFO_FILENAME))
+                ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
                 ->searchable(),
             Tables\Columns\TextColumn::make('mime_type')
                 ->label('Type')

@@ -4,15 +4,20 @@ namespace App\Traits;
 
 trait HasStatusMetadata
 {
-    public static function byTitle(string $title): ?self
+    public static function byContextAndTitle(string $context, string $title): ?self
     {
-        static $cache;
+        static $cache = [];
 
-        if (! $cache) {
-            $cache = self::all()->keyBy('title');
+        $key = "{$context}:{$title}";
+
+        if (! isset($cache[$key])) {
+            $cache[$key] = self::query()
+                ->where('context', $context)
+                ->where('title', $title)
+                ->first();
         }
 
-        return $cache->get($title);
+        return $cache[$key];
     }
 
     public static function labelFromTitle(string $title): ?string
