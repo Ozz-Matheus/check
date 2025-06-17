@@ -1,0 +1,211 @@
+Table users {
+  id integer [primary key]
+  name varchar
+  email varchar [unique]
+  email_verified_at timestamp
+  password varchar
+  active tinyint(1)
+  remember_token varchar
+  created_at timestamp
+  updated_at timestamp
+}
+Table user_has_sub_process {
+  id bigint [pk]
+  user_id bigint [ref: - users.id]
+  sub_process_id bigint [ref: - sub_processes.id]
+  created_at timestamp
+  updated_at timestamp
+}
+Table processes {
+    id bigint [pk]
+    title varchar
+    created_at timestamp
+    updated_at timestamp
+}
+Table sub_processes {
+  id bigint [pk]
+  title varchar
+  acronym varchar
+  process_id bigint [ref: > processes.id]
+  user_id bigint
+  created_at timestamp
+  updated_at timestamp
+}
+Table statuses{
+    id integer [pk]
+    context varchar
+    title varchar
+    label varchar
+    color varchar
+    icon varchar
+    protected tinyint(1)
+    created_at timestamp
+    updated_at timestamp
+}
+Table files {
+  id bigint [pk]
+  //fileable morph
+  fileable_type bigint [ref: > doc_versions.id, ref: > action_tasks.id]
+  fileable_id bigint
+  name varchar
+  path varchar
+  mime_type varchar
+  size bigint
+  created_at timestamp
+  updated_at timestamp
+}
+Table comments{
+  id integer [pk]
+  //commentable morph
+  commentable_type bigint [ref: > action_tasks.id]
+  commentable_id bigint
+  content text
+}
+
+// Documentos
+Table docs {
+  id bigint [pk]
+  classification_code varchar
+  title varchar
+  process_id bigint [ref: - processes.id]
+  sub_process_id bigint [ref: - sub_processes.id]
+  doc_type_id bigint [ref: - doc_types.id]
+  created_by_id bigint [ref: - users.id]
+  management_review_date date
+  central_expiration_date date
+  doc_ending_id bigint [ref: - doc_endings.id]
+  expiration tinyint(1)
+  created_at timestamp
+  updated_at timestamp
+}
+Table doc_versions {
+  id bigint [pk]
+  version varchar
+  comment text
+  change_reason text
+  sha256_hash varchar
+  decision_at timestamp
+  status_id bigint [ref: - statuses.id]
+  doc_id bigint [ref: > docs.id]
+  created_by_id bigint [ref: - users.id]
+  decided_by_id bigint [ref: - users.id]
+  created_at timestamp
+  updated_at timestamp
+}
+Table doc_types {
+  id bigint [pk]
+  title varchar
+  acronym varchar
+  created_at timestamp
+  updated_at timestamp
+}
+Table doc_expirations{
+    id integer [pk]
+    doc_type_id bigint [ref: - doc_types.id]
+    management_review_years integer
+    central_expiration_years integer
+}
+Table doc_endings {
+  id bigint [pk]
+  title varchar
+  label varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Acciones
+Table action_types{
+    id integer [pk]
+    title varchar
+    label varchar
+    created_at timestamp
+    updated_at timestamp
+}
+Table actions {
+  id integer [pk]
+  action_type_id integer [ref: - action_types.id, note: 'Tipo de acción: mejora, correctiva, preventiva']
+  title varchar [note: 'Resumen o nombre de la acción']
+  description text [note: 'Detalle del problema, riesgo u oportunidad']
+  
+  process_id integer [ref: - processes.id]
+  sub_process_id integer [ref: - sub_processes.id]
+  action_origin_id integer [ref: - action_origins.id, note: 'Fuente: sugerencia, auditoría, queja, etc.']
+
+  registered_by_id integer [ref: - users.id]
+  responsible_id integer [ref: - users.id]
+
+  //Correctiva / Preventiva
+  detection_date date [note: 'Fecha de detección del hallazgo o condición']
+
+  //Solo para Correctiva
+  containment_action text [note: 'Acción de contención inmediata']
+  action_analysis_cause_id integer [ref: - action_analysis_causes.id, note: 'Análisis de causa raíz']
+  corrective_action text [note: 'Acción que elimina la causa del problema']
+  action_verification_method_id integer [ref: - action_verification_methods.id, note: 'Método de verificación de eficacia']
+  verification_responsible_id integer [ref: - users.id]
+  verification_date date
+  //verification_result text [note: 'Resultado de la verificación']
+
+  //Solo para Preventiva
+  risk_probability enum ('1 - Muy baja','2 - Baja','3 - Media','4 - Alta','5 - Muy alta')
+  risk_impact enum ('1 - Insignificante','2 - Menor','3 - Moderado','4 - Mayor','5 - Catastrofico')
+  risk_evaluation enum ('Bajo','Medio','Alto','Critico') [note: 'Evaluación del riesgo actual']
+  prevention_action text [note: 'Acción para prevenir la ocurrencia']
+  effectiveness_indicator text [note: 'Indicador para medir la efectividad']
+
+  //Mejora / Preventiva
+  expected_impact text [note: 'Impacto esperado con la implementación']
+
+  status_id integer [ref: - statuses.id]
+  deadline date
+  actual_closing_date date
+  reason_for_cancellation text
+
+  created_at timestamp
+  updated_at timestamp
+}
+Table action_origins{
+    id integer [pk]
+    title varchar
+    created_at timestamp
+    updated_at timestamp
+}
+Table action_analysis_causes{
+    id integer [pk]
+    title varchar
+    created_at timestamp
+    updated_at timestamp
+}
+Table action_verification_methods{
+    id integer [pk]
+    title varchar
+    created_at timestamp
+    updated_at timestamp
+}
+Table action_tasks{
+    id integer [pk]
+    action_id bigint [ref: - actions.id]
+    title varchar(255)
+    detail text
+    responsible_id bigint [ref: - users.id]
+    start_date date
+    deadline date
+    comment text
+    actual_start_date date
+    actual_closing_date date
+    status_id bigint [ref: - statuses.id]
+    created_at timestamp
+    updated_at timestamp
+}
+Table action_endings{
+    id integer [pk]
+    action_id integer [ref: - actions.id]
+    real_impact text
+    result text
+
+    //Solo parta correctiva
+    verification_result enum('Eficaz, Parcialmente eficaz, No eficaz')
+    
+    created_at timestamp
+    updated_at timestamp
+}

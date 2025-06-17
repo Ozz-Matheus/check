@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\ActionTask;
+use App\Models\ActionTaskComment;
+use App\Models\Status;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+/**
+ * Servicio para las tareas
+ */
+class TaskService
+{
+    public function canCreateTask(int $responsibleId, int $statusId): bool
+    {
+        $statusActionProposal = Status::byTitle('proposal')?->id;
+        $statusActionInExecution = Status::byTitle('in_execution_task')?->id;
+
+        if (auth()->id() === $responsibleId && ($statusId === $statusActionProposal || $statusId === $statusActionInExecution)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function canCloseTask(ActionTask $actionTask)
+    {
+        $responsibleTaskId = $actionTask->responsible_by_id;
+
+        $statusActionInExecutionId = Status::byTitle('in_execution_task')?->id;
+        $statusActionCanceledId = Status::byTitle('canceled')?->id;
+
+        $currentActionStatusId = $actionTask->action->status_id;
+
+        if (auth()->id() !== $responsibleTaskId) {
+            return false;
+        }
+        if ($actionTask->status_id !== $statusActionInExecutionId) {
+            return false;
+        }
+
+        return $currentActionStatusId !== $statusActionCanceledId;
+    }
+
+    public function canTaskUploadFollowUp(ActionTask $actionTask)
+    {
+
+        $responsibleTaskId = $actionTask->responsible_by_id;
+
+        $statusTaskCompletedId = Status::byTitle('completed')?->id;
+        $statusTaskExtemporaneousId = Status::byTitle('extemporaneous')?->id;
+
+        $statusActionCanceledId = Status::byTitle('canceled')?->id;
+
+        $currentActionStatusId = $actionTask->action->status_id;
+
+        if (auth()->id() !== $responsibleTaskId) {
+            return false;
+        }
+        if (($actionTask->status_id === $statusTaskCompletedId || $actionTask->status_id === $statusTaskExtemporaneousId)) {
+            return false;
+        }
+
+        return $currentActionStatusId !== $statusActionCanceledId;
+    }
+
+    public function createComment(ActionTask $actionTask, array $data): void
+    {
+        ActionTaskComment::create([
+            'action_task_id' => $actionTask->id,
+            'content' => Str::limit(strip_tags($data['content']), 255),
+
+        ]);
+
+        $this->updateTaskStatus($actionTask);
+        $this->assignActualStartDate($actionTask);
+
+        $this->taskNotification('Comment saved successfully');
+    }
+
+    public function createFiles(ActionTask $actionTask, array $data): void
+    {
+        foreach ($data['path'] ?? [] as $path) {
+
+            $fileName = $data['name'][$path] ?? basename($path);
+
+            $fileMetadata = [
+                'name' => $fileName,
+                'path' => $path,
+                'mime_type' => Storage::disk('public')->mimeType($path),
+                'size' => Storage::disk('public')->size($path),
+            ];
+
+            $actionTask->files()->create($fileMetadata);
+        }
+
+        $this->updateTaskStatus($actionTask);
+        $this->assignActualStartDate($actionTask);
+
+        $this->taskNotification('Support files uploaded successfully');
+    }
+
+    public function closeTask(ActionTask $actionTask): bool
+    {
+        $statusTitle = now()->lessThanOrEqualTo($actionTask->deadline) ? 'completed' : 'extemporaneous';
+        $statusTaskId = Status::byTitle($statusTitle)?->id;
+
+        return $statusTaskId ? $actionTask->update(['status_id' => $statusTaskId, 'actual_closing_date' => now()->format('Y-m-d')]) : false;
+    }
+
+    // Métodos auxiliares privados.
+
+    private function updateTaskStatus(ActionTask $actionTask): bool
+    {
+        $currentTaskStatusId = $actionTask->status_id;
+
+        $pendingTaskStatusId = Status::byTitle('pending_task')?->id;
+        $inExecutionTaskStatusId = Status::byTitle('in_execution_task')?->id;
+
+        if ($currentTaskStatusId === $pendingTaskStatusId && $inExecutionTaskStatusId !== null) {
+            return $actionTask->update(['status_id' => $inExecutionTaskStatusId]);
+        }
+
+        return false;
+    }
+
+    private function assignActualStartDate(ActionTask $actionTask)
+    {
+        $actualStartDate = $actionTask->actual_start_date;
+
+        if ($actualStartDate === null) {
+
+            return $actionTask->update(['actual_start_date' => now()->format('Y-m-d')]);
+        }
+
+        return false;
+    }
+
+    private function taskNotification(string $message): void
+    {
+        Notification::make()
+            ->title($message)
+            ->success()
+            ->send();
+    }
+}
