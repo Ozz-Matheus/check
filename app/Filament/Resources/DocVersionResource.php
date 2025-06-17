@@ -15,7 +15,6 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DocVersionResource extends Resource
@@ -64,7 +63,15 @@ class DocVersionResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('file.mime_type')
                     ->label('Type')
-                    ->formatStateUsing(fn (string $state) => strtoupper(Str::after($state, '/'))),
+                    ->formatStateUsing(function ($state) {
+                        return match ($state) {
+                            'application/pdf' => 'PDF',
+                            'application/msword' => 'Word',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
+                            default => __('Otro'),
+                        };
+                    }),
                 Tables\Columns\TextColumn::make('file.readable_size')
                     ->label('Size'),
                 Tables\Columns\TextColumn::make('status.label')
@@ -124,7 +131,7 @@ class DocVersionResource extends Resource
                     Action::make('pending')
                         ->label(fn ($record) => Status::labelFromTitle('pending') ?? 'Pending')
                         ->icon(fn ($record) => Status::iconFromTitle('pending') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('pending') ?? 'gray')
+                        ->color(fn ($record) => Status::colorFromTitle('pending') ?? 'grey')
                         ->requiresConfirmation()
                         ->action(function ($record, array $data) {
                             redirect(DocResource::getUrl('versions.pending', [
@@ -142,7 +149,7 @@ class DocVersionResource extends Resource
                     Action::make('restore')
                         ->label(fn ($record) => Status::labelFromTitle('restore') ?? 'Restore')
                         ->icon(fn ($record) => Status::iconFromTitle('restore') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('restore') ?? 'gray')
+                        ->color(fn ($record) => Status::colorFromTitle('restore') ?? 'grey')
                         ->authorize(fn ($record) => auth()->user()->can('create_doc::version', $record))
                         ->form([
                             Textarea::make('comment')
@@ -168,7 +175,7 @@ class DocVersionResource extends Resource
                     Action::make('approved')
                         ->label(fn ($record) => Status::labelFromTitle('approved') ?? 'Approved')
                         ->icon(fn ($record) => Status::iconFromTitle('approved') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('approved') ?? 'gray')
+                        ->color(fn ($record) => Status::colorFromTitle('approved') ?? 'grey')
                         ->requiresConfirmation()
                         ->action(function ($record) {
                             redirect(DocResource::getUrl('versions.approved', [
@@ -186,7 +193,7 @@ class DocVersionResource extends Resource
                     Action::make('rejected')
                         ->label(fn ($record) => Status::labelFromTitle('rejected') ?? 'Rejected')
                         ->icon(fn ($record) => Status::iconFromTitle('rejected') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'gray')
+                        ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'grey')
                         ->form([
                             Textarea::make('change_reason')
                                 ->label(__('Confirm Rejection'))

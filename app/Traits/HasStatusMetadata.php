@@ -48,7 +48,7 @@ trait HasStatusMetadata
 
     public function colorName(): string
     {
-        return $this->color ?? 'gray';
+        return $this->color ?? 'grey';
     }
 
     public function iconName(): string

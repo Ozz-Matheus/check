@@ -74,7 +74,7 @@ class ListDocVersions extends ListRecords
                 ->label($this->docModel?->getContextPath())
                 ->icon('heroicon-o-information-circle')
                 ->disabled()
-                ->color('gray'),
+                ->color('grey'),
 
             Action::make('addFile')
                 ->label(__('Upload file'))
@@ -87,7 +87,7 @@ class ListDocVersions extends ListRecords
                 ->label(__('Return'))
                 ->url(fn (): string => DocResource::getUrl('index'))
                 ->button()
-                ->color('gray'),
+                ->color('grey'),
 
         ];
     }

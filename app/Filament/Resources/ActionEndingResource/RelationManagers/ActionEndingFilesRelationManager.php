@@ -5,7 +5,6 @@ namespace App\Filament\Resources\ActionEndingResource\RelationManagers;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 
 class ActionEndingFilesRelationManager extends RelationManager
 {
@@ -21,8 +20,15 @@ class ActionEndingFilesRelationManager extends RelationManager
                 ->searchable(),
             Tables\Columns\TextColumn::make('mime_type')
                 ->label('Type')
-                ->formatStateUsing(fn (string $state) => strtoupper(Str::after($state, '/'))),
-            Tables\Columns\TextColumn::make('readable_size')
+                ->formatStateUsing(function ($state) {
+                    return match ($state) {
+                        'application/pdf' => 'PDF',
+                        'application/msword' => 'Word',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
+                        default => __('Otro'),
+                    };
+                }),            Tables\Columns\TextColumn::make('readable_size')
                 ->label('Size'),
             Tables\Columns\TextColumn::make('created_at')
                 ->date('l, d \d\e F \d\e Y'),

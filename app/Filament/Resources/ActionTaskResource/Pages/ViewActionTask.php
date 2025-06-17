@@ -48,6 +48,7 @@ class ViewActionTask extends ViewRecord
                 ->color('success')
                 ->authorize(fn ($record) => app(TaskService::class)->canCloseTask($record))
                 ->action(function ($record) use ($resourceClass) {
+
                     app(TaskService::class)->closeTask($record);
 
                     redirect($resourceClass::getUrl('view', [
@@ -61,7 +62,7 @@ class ViewActionTask extends ViewRecord
                     'record' => $record->action->id,
                 ]))
                 ->button()
-                ->color('gray'),
+                ->color('grey'),
 
         ];
     }

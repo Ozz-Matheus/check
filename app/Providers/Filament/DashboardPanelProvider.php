@@ -34,7 +34,8 @@ class DashboardPanelProvider extends PanelProvider
             'success' => Color::hex(config('filament-colors.success.hex')),
             'danger' => Color::hex(config('filament-colors.danger.hex')),
             'warning' => Color::hex(config('filament-colors.warning.hex')),
-            'gray' => Color::hex(config('filament-colors.gray.hex')),
+            'grey' => Color::hex(config('filament-colors.grey.hex')),
+            'secondary' => Color::hex(config('filament-colors.secondary.hex')),
             'primary' => Color::hex(config('filament-colors.primary.hex')),
 
         ]);

@@ -27,11 +27,11 @@ class ActionStatusChart extends ChartWidget
         $actionTypeId = ActionType::where('name', $activeFilter)->value('id');
 
         $statusColors = [
-            'finished' => 'rgba(22, 163, 74, 1)', // verde
-            'canceled' => 'rgba(220, 38, 38, 1)', // rojo
-            'in_execution' => 'rgba(79, 70, 229, 1)', // azul
-            'proposal' => 'rgba(161, 161, 170, 1)', // amarillo
-            'Sin estado' => 'rgba(203, 213, 225, 1)', // gris para registros sin estado
+            'finished' => config('filament-colors.success.rgba'), // verde
+            'canceled' => config('filament-colors.danger.rgba'), // rojo
+            'in_execution' => config('filament-colors.primary.rgba'), // azul
+            'proposal' => config('filament-colors.warning.rgba'), // amarillo
+            'Sin estado' => config('filament-colors.secondary.rgba'), // registros sin estado
         ];
 
         // Obtener todos los registros con su último archivo y estado

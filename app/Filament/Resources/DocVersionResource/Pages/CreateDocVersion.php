@@ -75,7 +75,7 @@ class CreateDocVersion extends CreateRecord
                 ->label($this->docModel?->getContextPath())
                 ->icon('heroicon-o-information-circle')
                 ->disabled()
-                ->color('gray'),
+                ->color('grey'),
         ];
     }
 

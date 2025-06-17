@@ -45,7 +45,7 @@ class ViewActionEnding extends ViewRecord
                     'record' => $this->action_id,
                 ]))
                 ->button()
-                ->color('gray'),
+                ->color('grey'),
         ];
     }
 

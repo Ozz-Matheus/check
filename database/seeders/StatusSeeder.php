@@ -50,7 +50,7 @@ class StatusSeeder extends Seeder
             'context' => 'doc',
             'title' => 'restore',
             'label' => 'Restaurar',
-            'color' => 'gray',
+            'color' => 'grey',
             'icon' => 'heroicon-o-arrow-uturn-left',
             'protected' => true,
         ]);
@@ -59,7 +59,7 @@ class StatusSeeder extends Seeder
             'context' => 'action',
             'title' => 'proposal',
             'label' => 'Propuesto',
-            'color' => 'gray',
+            'color' => 'grey',
             'icon' => 'heroicon-o-pencil-square',
             'protected' => true,
         ]);
@@ -67,7 +67,7 @@ class StatusSeeder extends Seeder
             'context' => 'action',
             'title' => 'open',
             'label' => 'Abierto',
-            'color' => 'gray',
+            'color' => 'grey',
             'icon' => 'heroicon-o-folder-open',
             'protected' => true,
         ]);
@@ -100,7 +100,7 @@ class StatusSeeder extends Seeder
             'context' => 'task',
             'title' => 'pending',
             'label' => 'Pendiente',
-            'color' => 'gray',
+            'color' => 'grey',
             'icon' => 'heroicon-o-pencil-square',
             'protected' => true,
         ]);
