@@ -69,4 +69,8 @@
     ul li {
         margin-bottom: 8px;
     }
+    em{
+        display: block;
+        font-style: normal;
+    }
 </style>
