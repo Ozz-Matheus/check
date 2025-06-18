@@ -22,8 +22,9 @@ class CreateCorrective extends CreateRecord
 
     protected function afterCreate(): void
     {
-
-        auth()->user()->notify(new ActionCreatedNotice($this->record));
+        if ($this->record->responsible_by_id && $this->record->responsibleBy) {
+            $this->record->responsibleBy->notify(new ActionCreatedNotice($this->record));
+        }
     }
 
     protected function getRedirectUrl(): string

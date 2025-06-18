@@ -9,7 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ActionCreatedNotice extends Notification
+class ActionCanceledNotice extends Notification
 {
     use Queueable;
 
@@ -39,8 +39,8 @@ class ActionCreatedNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Create new Action'))
-            ->view('emails.action-created', [
+            ->subject(__('The Action has canceled'))
+            ->view('emails.action-canceled', [
                 'user' => $notifiable,
                 'action' => $this->action,
             ]);
@@ -56,7 +56,7 @@ class ActionCreatedNotice extends Notification
     {
         return FilamentNotification::make()
             ->title($this->action->title)
-            ->body(__('Created a new Action!'))
+            ->body(__('The Action has canceled!'))
             ->icon('heroicon-o-archive-box')
             ->color('primary')
             ->status('primary')

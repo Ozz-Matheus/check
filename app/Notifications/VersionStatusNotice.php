@@ -46,23 +46,6 @@ class VersionStatusNotice extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        // $mailMessage = (new MailMessage)
-        //     ->subject('Document status')
-        //     ->greeting('Hi '.$notifiable->name.',')
-        //     ->line('The status of the document "'.$this->version->file?->name.'"')
-        //     ->line('has changed to: '.ucfirst(strtolower($this->status->label)));
-
-        // // Solo agregar la línea si $this->changeReason no es null ni vacío
-        // if (! empty($this->changeReason)) {
-        //     $mailMessage->line('Important state information: '.$this->changeReason);
-        // }
-
-        // return $mailMessage->action(
-        //     'See details',
-        //     route('filament.dashboard.resources.docs.versions.index',
-        //         ['doc' => $this->version->doc_id])
-        // );
-
         return (new MailMessage)
             ->subject(__('New version status'))
             ->view('emails.version-status', [

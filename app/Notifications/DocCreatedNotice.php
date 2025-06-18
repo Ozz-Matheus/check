@@ -40,13 +40,6 @@ class DocCreatedNotice extends Notification
     {
         return (new MailMessage)
             ->subject(__('Create new record'))
-            // ->greeting('Hi '.$notifiable->name.',')
-            // ->line('You have successfully created a new record! "'.$this->doc->title.'"')
-            // ->action(
-            //     'Manage your versions',
-            //     route('filament.dashboard.resources.docs.versions.index',
-            //         ['doc' => $this->doc->id])
-            // )
             ->view('emails.doc-created', [
                 'user' => $notifiable,
                 'doc' => $this->doc,

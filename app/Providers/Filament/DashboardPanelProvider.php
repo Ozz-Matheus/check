@@ -92,7 +92,8 @@ class DashboardPanelProvider extends PanelProvider
                     ->url(null)
                     ->sort(2)
                     ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                        auth()->user()?->hasRole('super_admin')
+                        auth()->user()?->hasRole('super_admin') ||
+                        auth()->user()?->hasRole('admin')
                     ),
                 // Proceso
                 UserMenuItem::make()
@@ -105,7 +106,8 @@ class DashboardPanelProvider extends PanelProvider
                     ->url(null)
                     ->sort(1)
                     ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                        auth()->user()?->hasRole('super_admin')
+                        auth()->user()?->hasRole('super_admin') ||
+                        auth()->user()?->hasRole('admin')
                     ),
             ]);
     }

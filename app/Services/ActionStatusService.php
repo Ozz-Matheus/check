@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Action;
 use App\Models\Status;
+use App\Notifications\ActionCanceledNotice;
 use Filament\Notifications\Notification;
 
 /**
@@ -39,7 +40,7 @@ class ActionStatusService
 
         $action->update(['status_id' => $statusActionChangeId, 'reason_for_cancellation' => $data['reason_for_cancellation']]);
 
-        $this->StatusNotification('Action cancelled');
+        $action->responsibleBy->notify(new ActionCanceledNotice($action));
 
         return $action;
     }
