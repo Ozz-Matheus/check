@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\ActionEndingResource\Pages;
 
 use App\Filament\Resources\ActionEndingResource;
+use App\Models\ActionEnding;
 use App\Services\ActionStatusService;
 use App\Traits\HasActionContext;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class CreateActionEnding extends CreateRecord
@@ -21,9 +21,9 @@ class CreateActionEnding extends CreateRecord
         $this->loadActionContext();
     }
 
-    protected function handleRecordCreation(array $data): Model
+    protected function handleRecordCreation(array $data): ActionEnding
     {
-        $ending = static::getModel()::create([
+        $ending = ActionEnding::create([
             'real_impact' => $data['real_impact'],
             'result' => $data['result'],
             'action_id' => $this->action_id,

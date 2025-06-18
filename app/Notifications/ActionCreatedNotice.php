@@ -39,7 +39,7 @@ class ActionCreatedNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Create new Action'))
+            ->subject(__('Create a new Action'))
             ->view('emails.action-created', [
                 'user' => $notifiable,
                 'action' => $this->action,

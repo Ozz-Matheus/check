@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ActionTask;
 use App\Models\ActionTaskComment;
 use App\Models\Status;
+use App\Notifications\TaskCompletedNotice;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -108,6 +109,11 @@ class TaskService
     {
         $statusTitle = now()->lessThanOrEqualTo($actionTask->deadline) ? 'completed' : 'extemporaneous';
         $statusTaskId = Status::byContextAndTitle('task', $statusTitle)?->id;
+
+        // Solo si quedó como 'completed' y existe responsable de la acción
+        if ($actionTask->responsible_by_id && $statusTitle === 'completed') {
+            $actionTask->responsibleBy->notify(new TaskCompletedNotice($actionTask));
+        }
 
         return $statusTaskId ? $actionTask->update(['status_id' => $statusTaskId, 'actual_closing_date' => now()->format('Y-m-d')]) : false;
     }

@@ -2,25 +2,25 @@
 
 namespace App\Notifications;
 
-use App\Models\Doc;
+use App\Models\ActionTask;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DocCreatedNotice extends Notification
+class TaskAssignedNotice extends Notification
 {
     use Queueable;
 
-    private $doc;
+    private $task;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Doc $doc)
+    public function __construct(ActionTask $task)
     {
-        $this->doc = $doc;
+        $this->task = $task;
     }
 
     /**
@@ -39,10 +39,10 @@ class DocCreatedNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Create a new record'))
-            ->view('emails.doc-created', [
+            ->subject(__('A task has been assigned'))
+            ->view('emails.task-assigned', [
                 'user' => $notifiable,
-                'doc' => $this->doc,
+                'task' => $this->task,
             ]);
 
     }
@@ -55,8 +55,8 @@ class DocCreatedNotice extends Notification
     public function toDatabase(User $notifiable)
     {
         return FilamentNotification::make()
-            ->title($this->doc->title)
-            ->body(__('Created a new record!'))
+            ->title($this->task->title)
+            ->body(__('A task has been assigned!'))
             ->icon('heroicon-o-archive-box')
             ->color('primary')
             ->status('primary')

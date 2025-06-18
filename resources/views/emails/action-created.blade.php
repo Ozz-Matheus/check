@@ -1,13 +1,14 @@
 @extends('emails.layout.theme')
 
 @section('title')
-Nueva Acción Creada
+Una Acción ha sido Creada
 @endsection
 
 @section('content')
 <p>Hola {{ $user->name }},</p>
 
-<p>Se ha creado un nueva acción en el sistema {{ config('app.name') }} :</p>
+<p>Se ha creado un nueva acción </p>
+<p>en el sistema {{ config('app.name') }} :</p>
 
 <ul>
     <li><strong>Título:</strong> {{ $action->title }}</li>
@@ -19,7 +20,7 @@ Nueva Acción Creada
 <p>
     <a href="{{ $action->url }}"
        class="button">
-        Ver más
+        Ver Acción
     </a> 
 </p>
 @endsection

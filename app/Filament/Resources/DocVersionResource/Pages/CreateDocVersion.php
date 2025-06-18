@@ -4,11 +4,11 @@ namespace App\Filament\Resources\DocVersionResource\Pages;
 
 use App\Filament\Resources\DocResource;
 use App\Filament\Resources\DocVersionResource;
+use App\Models\DocVersion;
 use App\Services\VersionService;
 use App\Traits\HasDocContext;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class CreateDocVersion extends CreateRecord
@@ -23,7 +23,7 @@ class CreateDocVersion extends CreateRecord
         $this->loadDocContext();
     }
 
-    protected function handleRecordCreation(array $data): Model
+    protected function handleRecordCreation(array $data): DocVersion
     {
         $path = $data['path'];
         $name = $data['name'];
@@ -36,7 +36,7 @@ class CreateDocVersion extends CreateRecord
 
         $validated = app(VersionService::class)->validatedData($data);
 
-        $version = static::getModel()::create($validated);
+        $version = DocVersion::create($validated);
 
         $fileMetadata = [
 

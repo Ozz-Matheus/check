@@ -1,13 +1,14 @@
 @extends('emails.layout.theme')
 
 @section('title')
-Nuevo Registro Creado
+Un documento ha sido creado
 @endsection
 
 @section('content')
 <p>Hola {{ $user->name }},</p>
 
-<p>Se ha creado un nuevo registro en el sistema {{ config('app.name') }} :</p>
+<p>Se ha creado un nuevo documento </p>
+<p>en el sistema {{ config('app.name') }} :</p>
 
 <ul>
     <li><strong>Título:</strong> {{ $doc->title }}</li>
@@ -18,7 +19,7 @@ Nuevo Registro Creado
 <p>
     <a href="{{ route('filament.dashboard.resources.docs.versions.index', ['doc' => $doc->id ]) }}"
        class="button">
-        Ver Registro
+        Ver Documento
     </a>
 </p>
 @endsection

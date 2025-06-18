@@ -1,13 +1,13 @@
 @extends('emails.layout.theme')
 
 @section('title')
-El estado del documento ha cambiado
+Un documento ha cambiado de estado
 @endsection
 
 @section('content')
 <p>Hola {{ $user->name }},</p>
 
-<p>Un documento a cambiado de estado </p>
+<p>El estado de un documento ha cambiado </p>
 <p>en el sistema {{ config('app.name') }} :</p>
 
 <ul>

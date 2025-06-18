@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\ActionTaskResource\Pages;
 
 use App\Filament\Resources\ActionTaskResource;
+use App\Models\ActionTask;
 use App\Models\Status;
+use App\Notifications\TaskAssignedNotice;
 use App\Services\ActionStatusService;
 use App\Traits\HasActionContext;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class CreateActionTask extends CreateRecord
 {
@@ -21,10 +22,10 @@ class CreateActionTask extends CreateRecord
         $this->loadActionContext();
     }
 
-    protected function handleRecordCreation(array $data): Model
+    protected function handleRecordCreation(array $data): ActionTask
     {
 
-        $task = static::getModel()::create([
+        $task = ActionTask::create([
             'action_id' => $this->action_id,
             'title' => $data['title'],
             'detail' => $data['detail'],
@@ -33,6 +34,8 @@ class CreateActionTask extends CreateRecord
             'deadline' => $data['deadline'],
             'status_id' => Status::byContextAndTitle('task', 'pending')?->id,
         ]);
+
+        $task->responsibleBy?->notify(new TaskAssignedNotice($task));
 
         app(ActionStatusService::class)->statusChangesInActions($this->ActionModel, 'in_execution');
 
