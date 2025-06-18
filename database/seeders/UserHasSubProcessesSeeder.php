@@ -14,10 +14,15 @@ class UserHasSubProcessesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $superAdminRole = 'super_admin'; // o el nombre exacto del rol
+
         $subProcesses = SubProcess::pluck('id');
 
-        $users = User::pluck('id');
+        $users = User::whereDoesntHave('roles', function ($query) use ($superAdminRole) {
+            $query->where('name', $superAdminRole);
+        })->pluck('id');
+
+        $data = [];
 
         foreach ($users as $user) {
             foreach ($subProcesses as $subProcess) {

@@ -63,7 +63,7 @@ class ViewCorrective extends ViewRecord
                 ->label('Return')
                 ->url(fn (): string => CorrectiveResource::getUrl('index'))
                 ->button()
-                ->color('grey'),
+                ->color('gray'),
 
             // Actions\DeleteAction::make(),
         ];

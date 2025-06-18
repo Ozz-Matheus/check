@@ -63,7 +63,7 @@ class ViewPreventive extends ViewRecord
                 ->label('Return')
                 ->url(fn (): string => PreventiveResource::getUrl('index'))
                 ->button()
-                ->color('grey'),
+                ->color('gray'),
 
             // Actions\DeleteAction::make(),
         ];

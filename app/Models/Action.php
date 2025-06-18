@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasFilamentResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends Model
 {
     /** @use HasFactory<\Database\Factories\ActionFactory> */
-    use HasFactory;
+    use HasFactory, HasFilamentResource;
 
     protected $fillable = [
         'action_type_id',
@@ -130,11 +131,8 @@ class Action extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function getUrlAttribute(): string
+    public function getUrlAttribute(): ?string
     {
-        $baseUrl = config('app.url');
-        $typeSlug = $this->type->name;
-
-        return "{$baseUrl}/dashboard/{$typeSlug}s/{$this->id}";
+        return $this->getFilamentUrl();
     }
 }

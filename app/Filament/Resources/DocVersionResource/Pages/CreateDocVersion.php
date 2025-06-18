@@ -4,32 +4,26 @@ namespace App\Filament\Resources\DocVersionResource\Pages;
 
 use App\Filament\Resources\DocResource;
 use App\Filament\Resources\DocVersionResource;
-use App\Models\Doc;
 use App\Services\VersionService;
+use App\Traits\HasDocContext;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class CreateDocVersion extends CreateRecord
 {
+    use HasDocContext;
+
     protected static string $resource = DocVersionResource::class;
-
-    public $docModel = null;
-
-    public ?string $doc_id = null;
 
     public function mount(): void
     {
         parent::mount();
-
-        $this->doc_id = request()->route('doc');
-
-        $doc = Doc::findOrFail($this->doc_id);
-
-        $this->docModel = $doc;
+        $this->loadDocContext();
     }
 
-    protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
+    protected function handleRecordCreation(array $data): Model
     {
         $path = $data['path'];
         $name = $data['name'];
@@ -75,7 +69,7 @@ class CreateDocVersion extends CreateRecord
                 ->label($this->docModel?->getContextPath())
                 ->icon('heroicon-o-information-circle')
                 ->disabled()
-                ->color('grey'),
+                ->color('gray'),
         ];
     }
 

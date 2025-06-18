@@ -30,13 +30,13 @@ class DashboardPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         FilamentColor::register([
+            'primary' => Color::hex(config('filament-colors.primary.hex')),
+            'secondary' => Color::hex(config('filament-colors.secondary.hex')),
             'indigo' => Color::hex(config('filament-colors.indigo.hex')),
             'success' => Color::hex(config('filament-colors.success.hex')),
             'danger' => Color::hex(config('filament-colors.danger.hex')),
             'warning' => Color::hex(config('filament-colors.warning.hex')),
-            'grey' => Color::hex(config('filament-colors.grey.hex')),
-            'secondary' => Color::hex(config('filament-colors.secondary.hex')),
-            'primary' => Color::hex(config('filament-colors.primary.hex')),
+            'darkextra' => Color::hex(config('filament-colors.darkextra.hex')),
 
         ]);
 
@@ -81,32 +81,32 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->databaseNotifications();
-        /* ->userMenuItems([
-            // Subproceso
-            UserMenuItem::make()
-                ->label(function () {
-                    return auth()->user()?->leaderOfSubProcess()?->title;
-                })
-                ->icon('heroicon-o-puzzle-piece') // ícono para subproceso
-                ->url(null)
-                ->sort(2)
-                ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                    auth()->user()?->hasRole('super_admin')
-                ),
-            // Proceso
-            UserMenuItem::make()
-                ->label(function () {
-                    $subProcess = auth()->user()?->leaderOfSubProcess();
+            ])->databaseNotifications()
+            ->userMenuItems([
+                // Subproceso
+                UserMenuItem::make()
+                    ->label(function () {
+                        return auth()->user()?->leaderOfSubProcess()?->title;
+                    })
+                    ->icon('heroicon-o-puzzle-piece') // ícono para subproceso
+                    ->url(null)
+                    ->sort(2)
+                    ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
+                        auth()->user()?->hasRole('super_admin')
+                    ),
+                // Proceso
+                UserMenuItem::make()
+                    ->label(function () {
+                        $subProcess = auth()->user()?->leaderOfSubProcess();
 
-                    return $subProcess?->process?->title;
-                })
-                ->icon('heroicon-o-rectangle-group') // ícono para proceso
-                ->url(null)
-                ->sort(1)
-                ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                    auth()->user()?->hasRole('super_admin')
-                ),
-        ]); */
+                        return $subProcess?->process?->title;
+                    })
+                    ->icon('heroicon-o-rectangle-group') // ícono para proceso
+                    ->url(null)
+                    ->sort(1)
+                    ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
+                        auth()->user()?->hasRole('super_admin')
+                    ),
+            ]);
     }
 }

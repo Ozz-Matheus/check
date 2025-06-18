@@ -46,6 +46,17 @@ class File extends Model
         return Storage::url($this->path);
     }
 
+    public function getReadableMimeTypeAttribute(): string
+    {
+        return match ($this->mime_type) {
+            'application/pdf' => 'PDF',
+            'application/msword' => 'Word',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
+            default => __('Otro'),
+        };
+    }
+
     public function getReadableSizeAttribute(): string
     {
         $bytes = $this->size;

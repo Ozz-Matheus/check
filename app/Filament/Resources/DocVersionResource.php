@@ -61,17 +61,8 @@ class DocVersionResource extends Resource
                     ->label(__('Title'))
                     ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file.mime_type')
-                    ->label('Type')
-                    ->formatStateUsing(function ($state) {
-                        return match ($state) {
-                            'application/pdf' => 'PDF',
-                            'application/msword' => 'Word',
-                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
-                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
-                            default => __('Otro'),
-                        };
-                    }),
+                Tables\Columns\TextColumn::make('file.readable_mime_type')
+                    ->label(__('Type')),
                 Tables\Columns\TextColumn::make('file.readable_size')
                     ->label('Size'),
                 Tables\Columns\TextColumn::make('status.label')
@@ -131,7 +122,7 @@ class DocVersionResource extends Resource
                     Action::make('pending')
                         ->label(fn ($record) => Status::labelFromTitle('pending') ?? 'Pending')
                         ->icon(fn ($record) => Status::iconFromTitle('pending') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('pending') ?? 'grey')
+                        ->color(fn ($record) => Status::colorFromTitle('pending') ?? 'gray')
                         ->requiresConfirmation()
                         ->action(function ($record, array $data) {
                             redirect(DocResource::getUrl('versions.pending', [
@@ -149,7 +140,7 @@ class DocVersionResource extends Resource
                     Action::make('restore')
                         ->label(fn ($record) => Status::labelFromTitle('restore') ?? 'Restore')
                         ->icon(fn ($record) => Status::iconFromTitle('restore') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('restore') ?? 'grey')
+                        ->color(fn ($record) => Status::colorFromTitle('restore') ?? 'gray')
                         ->authorize(fn ($record) => auth()->user()->can('create_doc::version', $record))
                         ->form([
                             Textarea::make('comment')
@@ -175,7 +166,7 @@ class DocVersionResource extends Resource
                     Action::make('approved')
                         ->label(fn ($record) => Status::labelFromTitle('approved') ?? 'Approved')
                         ->icon(fn ($record) => Status::iconFromTitle('approved') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('approved') ?? 'grey')
+                        ->color(fn ($record) => Status::colorFromTitle('approved') ?? 'gray')
                         ->requiresConfirmation()
                         ->action(function ($record) {
                             redirect(DocResource::getUrl('versions.approved', [
@@ -193,7 +184,7 @@ class DocVersionResource extends Resource
                     Action::make('rejected')
                         ->label(fn ($record) => Status::labelFromTitle('rejected') ?? 'Rejected')
                         ->icon(fn ($record) => Status::iconFromTitle('rejected') ?? 'heroicon-o-information-circle')
-                        ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'grey')
+                        ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'gray')
                         ->form([
                             Textarea::make('change_reason')
                                 ->label(__('Confirm Rejection'))

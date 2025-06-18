@@ -4,47 +4,21 @@ namespace App\Filament\Resources\DocVersionResource\Pages;
 
 use App\Filament\Resources\DocResource;
 use App\Filament\Resources\DocVersionResource;
-use App\Models\Doc;
-use App\Models\Status;
+use App\Traits\HasDocContext;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 class ListDocVersions extends ListRecords
 {
+    use HasDocContext;
+
     protected static string $resource = DocVersionResource::class;
-
-    public $docModel = null;
-
-    public ?string $doc_id = null;
 
     public function mount(): void
     {
         parent::mount();
-
-        $this->doc_id = request()->route('doc');
-
-        $doc = Doc::findOrFail($this->doc_id);
-
-        $this->docModel = $doc;
-
-        $user = auth()->user();
-
-        abort_if(! $user->canAccessSubProcess($doc->sub_process_id), 403);
-
-        if (session()->has('version_status')) {
-
-            $data = session('version_status');
-
-            $status = Status::byContextAndTitle('doc', $data['status_title']);
-
-            Notification::make()
-                ->title('Version successfully '.$status->label)
-                ->icon($status->iconName())
-                ->color($status->colorName())
-                ->status($status->colorName())
-                ->send();
-        }
+        $this->loadDocContext();
+        $this->checkVersionStatusNotice();
     }
 
     public function getTableQuery(): ?\Illuminate\Database\Eloquent\Builder
@@ -74,7 +48,7 @@ class ListDocVersions extends ListRecords
                 ->label($this->docModel?->getContextPath())
                 ->icon('heroicon-o-information-circle')
                 ->disabled()
-                ->color('grey'),
+                ->color('gray'),
 
             Action::make('addFile')
                 ->label(__('Upload file'))
@@ -87,7 +61,7 @@ class ListDocVersions extends ListRecords
                 ->label(__('Return'))
                 ->url(fn (): string => DocResource::getUrl('index'))
                 ->button()
-                ->color('grey'),
+                ->color('gray'),
 
         ];
     }

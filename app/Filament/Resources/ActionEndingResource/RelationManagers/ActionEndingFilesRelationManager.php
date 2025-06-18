@@ -18,17 +18,9 @@ class ActionEndingFilesRelationManager extends RelationManager
             Tables\Columns\TextColumn::make('name')
                 ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
                 ->searchable(),
-            Tables\Columns\TextColumn::make('mime_type')
-                ->label('Type')
-                ->formatStateUsing(function ($state) {
-                    return match ($state) {
-                        'application/pdf' => 'PDF',
-                        'application/msword' => 'Word',
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
-                        default => __('Otro'),
-                    };
-                }),            Tables\Columns\TextColumn::make('readable_size')
+            Tables\Columns\TextColumn::make('readable_mime_type')
+                ->label(__('Type')),
+            Tables\Columns\TextColumn::make('readable_size')
                 ->label('Size'),
             Tables\Columns\TextColumn::make('created_at')
                 ->date('l, d \d\e F \d\e Y'),

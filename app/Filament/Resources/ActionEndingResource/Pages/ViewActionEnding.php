@@ -3,35 +3,20 @@
 namespace App\Filament\Resources\ActionEndingResource\Pages;
 
 use App\Filament\Resources\ActionEndingResource;
-use App\Models\Action;
+use App\Traits\HasActionContext;
 use Filament\Actions\Action as FilamentAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewActionEnding extends ViewRecord
 {
+    use HasActionContext;
+
     protected static string $resource = ActionEndingResource::class;
-
-    public ?int $action_id = null;
-
-    public ?Action $ActionModel = null;
-
-    public ?string $ActionModelName = null;
-
-    public ?string $ActionModelResource = null;
 
     public function mount(string|int $record): void
     {
         parent::mount($record);
-
-        $this->action_id = request()->route('action_id');
-
-        $action = Action::findOrFail($this->action_id);
-
-        $this->ActionModel = $action;
-
-        $this->ActionModelName = ucfirst($action->type->name);
-
-        $this->ActionModelResource = '\\App\\Filament\\Resources\\'.$this->ActionModelName.'Resource';
+        $this->loadActionContext();
     }
 
     protected function getHeaderActions(): array
@@ -41,11 +26,9 @@ class ViewActionEnding extends ViewRecord
 
             FilamentAction::make('back')
                 ->label('Return')
-                ->url(fn ($record): string => $this->ActionModelResource::getUrl('view', [
-                    'record' => $this->action_id,
-                ]))
+                ->url(fn ($record): string => $record->action->getFilamentUrl())
                 ->button()
-                ->color('grey'),
+                ->color('gray'),
         ];
     }
 
@@ -57,7 +40,7 @@ class ViewActionEnding extends ViewRecord
     public function getBreadcrumbs(): array
     {
         return [
-            $this->ActionModelResource::getUrl('view', ['record' => $this->action_id]) => $this->ActionModelName,
+            $this->ActionModel->getFilamentUrl() => ucfirst($this->ActionModel->type->name),
             false => 'View',
         ];
     }

@@ -63,7 +63,7 @@ class ViewImprove extends ViewRecord
                 ->label('Return')
                 ->url(fn (): string => ImproveResource::getUrl('index'))
                 ->button()
-                ->color('grey'),
+                ->color('gray'),
 
             // Actions\DeleteAction::make(),
         ];

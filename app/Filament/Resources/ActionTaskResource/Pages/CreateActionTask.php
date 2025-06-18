@@ -3,38 +3,22 @@
 namespace App\Filament\Resources\ActionTaskResource\Pages;
 
 use App\Filament\Resources\ActionTaskResource;
-use App\Models\Action;
 use App\Models\Status;
 use App\Services\ActionStatusService;
+use App\Traits\HasActionContext;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateActionTask extends CreateRecord
 {
+    use HasActionContext;
+
     protected static string $resource = ActionTaskResource::class;
-
-    public ?int $action_id = null;
-
-    public ?Action $ActionModel = null;
-
-    public ?string $ActionModelName = null;
-
-    public ?string $ActionModelResource = null;
 
     public function mount(): void
     {
         parent::mount();
-
-        $this->action_id = request()->route('action_id');
-
-        $action = Action::findOrFail($this->action_id);
-
-        $this->ActionModel = $action;
-
-        $this->ActionModelName = ucfirst($action->type->name);
-
-        $this->ActionModelResource = '\\App\\Filament\\Resources\\'.$this->ActionModelName.'Resource';
-
+        $this->loadActionContext();
     }
 
     protected function handleRecordCreation(array $data): Model
@@ -57,7 +41,7 @@ class CreateActionTask extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->ActionModelResource::getUrl('view', ['record' => $this->action_id]);
+        return $this->ActionModel->getFilamentUrl();
     }
 
     public static function canCreateAnother(): bool
@@ -73,7 +57,7 @@ class CreateActionTask extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            $this->ActionModelResource::getUrl('view', ['record' => $this->action_id]) => $this->ActionModelName,
+            $this->ActionModel->getFilamentUrl() => ucfirst($this->ActionModel->type->name),
             false => 'Task',
         ];
     }
