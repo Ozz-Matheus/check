@@ -4,11 +4,14 @@ namespace App\Console\Commands;
 
 use App\Models\Action;
 use App\Notifications\ActionDeadlineNotice;
+use App\Traits\LogsToSchedulerFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 
 class NotifyActionDeadlines extends Command
 {
+    use LogsToSchedulerFile;
+
     protected $signature = 'notify:action-deadlines';
 
     protected $description = 'Notifica a los responsables de acciones de mejora que vencen hoy o en 10 días.';
@@ -32,15 +35,5 @@ class NotifyActionDeadlines extends Command
         $this->logToSchedulerFile('Finalizó revisión de acciones');
 
         return Command::SUCCESS;
-    }
-
-    protected function logToSchedulerFile(string $message): void
-    {
-        $timestamp = now()->format('Y-m-d H:i:s');
-        file_put_contents(
-            storage_path('logs/scheduler.log'),
-            "[$timestamp] $message".PHP_EOL,
-            FILE_APPEND
-        );
     }
 }

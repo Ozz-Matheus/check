@@ -4,11 +4,14 @@ namespace App\Console\Commands;
 
 use App\Models\ActionTask;
 use App\Notifications\TaskDeadlineNotice;
+use App\Traits\LogsToSchedulerFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 
 class NotifyTaskDeadlines extends Command
 {
+    use LogsToSchedulerFile;
+
     protected $signature = 'notify:task-deadlines';
 
     protected $description = 'Notifica a los responsables de tareas que vencen hoy o en 10 días.';
@@ -44,15 +47,5 @@ class NotifyTaskDeadlines extends Command
         $this->logToSchedulerFile('Finalizó revisión de tareas');
 
         return Command::SUCCESS;
-    }
-
-    protected function logToSchedulerFile(string $message): void
-    {
-        $timestamp = now()->format('Y-m-d H:i:s');
-        file_put_contents(
-            storage_path('logs/scheduler.log'),
-            "[$timestamp] $message".PHP_EOL,
-            FILE_APPEND
-        );
     }
 }
