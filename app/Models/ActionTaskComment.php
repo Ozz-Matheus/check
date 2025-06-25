@@ -2,23 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Traits\FixedMorphType;
 
-class ActionTaskComment extends Model
+class ActionTaskComment extends Comment
 {
-    protected $fillable = [
-        'action_task_id',
-        'content',
-    ];
+    use FixedMorphType;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relaciones
-    |--------------------------------------------------------------------------
-    */
+    protected $table = 'comments';
 
-    public function actionTask()
-    {
-        return $this->belongsTo(ActionTask::class, 'action_task_id');
-    }
+    protected static string $fixedMorphType = ActionTask::class;
 }

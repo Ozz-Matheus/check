@@ -44,4 +44,14 @@ class Status extends Model
     {
         return $this->hasMany(ActionTask::class);
     }
+
+    public function audits()
+    {
+        return $this->hasMany(Audit::class);
+    }
+
+    public function findings()
+    {
+        return $this->hasMany(Finding::class);
+    }
 }

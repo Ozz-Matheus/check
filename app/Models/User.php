@@ -96,6 +96,16 @@ class User extends Authenticatable implements FilamentUser
     //     return $this->hasMany(SubProcess::class, 'user_id');
     // }
 
+    public function audits()
+    {
+        return $this->belongsToMany(Audit::class, 'audit_has_users');
+    }
+
+    public function findings()
+    {
+        return $this->hasMany(Finding::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accesores / Métodos útiles

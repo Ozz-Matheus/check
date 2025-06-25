@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('action_task_comments', function (Blueprint $table) {
+        Schema::create('audit_has_sub_processes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('action_task_id')->constrained()->onDelete('cascade');
-            $table->text('content');
+            $table->foreignId('audit_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sub_process_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('action_task_comments');
+        Schema::dropIfExists('audit_has_sub_processes');
     }
 };

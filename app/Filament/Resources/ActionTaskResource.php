@@ -5,9 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ActionTaskResource\Pages;
 use App\Filament\Resources\ActionTaskResource\RelationManagers\ActionTaskCommentsRelationManager;
 use App\Filament\Resources\ActionTaskResource\RelationManagers\ActionTaskFilesRelationManager;
-use App\Models\Action;
 use App\Models\ActionTask;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -27,10 +25,6 @@ class ActionTaskResource extends Resource
                     ->description('')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\TextInput::make('action_id')
-                            ->default(request('action_id'))
-                            ->dehydrated()
-                            ->visible(false), // Se deja este campo dehidrated y sin visibilidad para dejar seteado el valor de la acción
                         Forms\Components\TextInput::make('title')
                             ->required()
                             ->maxLength(255)
@@ -39,22 +33,16 @@ class ActionTaskResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('responsible_by_id')
-                            ->label('Responsible')
-                            ->options(
-                                fn (Forms\Get $get): array => User::whereHas('subProcesses', function ($query) use ($get) {
-                                    $action = Action::find($get('action_id'));
-                                    if (! $action) {
-                                        return;
-                                    }
-                                    $query->where('sub_process_id', $action->sub_process_id);
-                                })->pluck('name', 'id')->toArray()
-                            )
+                            ->label('Responsable')
+                            ->options(fn ($livewire) => method_exists($livewire, 'getResponsibleUserOptions')
+                                ? $livewire->getResponsibleUserOptions()
+                                : [])
                             ->preload()
                             ->searchable()
                             ->required(),
                         Forms\Components\DatePicker::make('start_date')
                             ->minDate(now()->format('Y-m-d'))
-                            ->maxDate(fn (Forms\Get $get) => Action::find($get('action_id'))?->deadline)
+                            ->maxDate(fn ($livewire) => method_exists($livewire, 'getMaxStartDate') ? $livewire->getMaxStartDate() : null)
                             ->afterStateUpdated(function (Forms\Set $set) {
                                 $set('deadline', null);
                             })
@@ -62,10 +50,10 @@ class ActionTaskResource extends Resource
                             ->required(),
                         Forms\Components\DatePicker::make('deadline')
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))
-                            ->maxDate(fn (Forms\Get $get) => Action::find($get('action_id'))?->deadline)
-                            ->live()
+                            ->maxDate(fn ($livewire) => method_exists($livewire, 'getMaxStartDate') ? $livewire->getMaxStartDate() : null)
                             ->required()
-                            ->disabled(fn (Forms\Get $get) => $get('start_date') === null),
+                            ->disabled(fn (Forms\Get $get) => empty($get('start_date')))
+                            ->reactive(),
                         Forms\Components\TextInput::make('status_label')
                             ->label(__('Status'))
                             ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')

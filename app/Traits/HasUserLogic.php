@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\Audit;
 use App\Models\DocVersion;
 use App\Models\SubProcess;
 
@@ -49,5 +50,19 @@ trait HasUserLogic
     public function canApproveAndReject(?int $subProcessId): bool
     {
         return $this->hasRole('super_admin') || $this->isLeaderOfSubProcess($subProcessId);
+    }
+
+    // Verifica los usuarios con rol auditor
+
+    public static function getAuditorUsers(): array
+    {
+        return self::role('auditor')->pluck('name', 'id')->toArray();
+    }
+
+    // Metodos para auditoria
+
+    public function canCreateFinding(Audit $audit)
+    {
+        return auth()->id() === $audit->leader_auditor_id;
     }
 }

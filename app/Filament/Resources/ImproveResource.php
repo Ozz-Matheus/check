@@ -3,21 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Exports\ActionExport;
+use App\Filament\Resources\ActionResource\Forms\ImproveSchema;
 use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationManager;
 use App\Filament\Resources\ImproveResource\Pages;
 use App\Models\Improve;
-use App\Models\SubProcess;
-use App\Models\User;
-use Filament\Forms;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ImproveResource extends Resource
@@ -37,74 +31,7 @@ class ImproveResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Section::make('Action Data')
-                    ->columns(2)
-                    ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        Forms\Components\Textarea::make('description')
-                            ->required()
-                            ->columnSpanFull(),
-                        Forms\Components\Select::make('process_id')
-                            ->relationship('process', 'title')
-                            ->afterStateUpdated(function (Set $set) {
-                                $set('sub_process_id', null);
-                                $set('responsible_by_id', null);
-                            })
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->required(),
-                        Forms\Components\Select::make('sub_process_id')
-                            ->label('Sub Process')
-                            ->options(
-                                fn (Get $get): Collection => SubProcess::query()
-                                    ->where('process_id', $get('process_id'))
-                                    ->pluck('title', 'id')
-                            )
-                            ->afterStateUpdated(fn (Set $set) => $set('responsible_by_id', null))
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->required(),
-                        Forms\Components\Select::make('action_origin_id')
-                            ->label('Origin')
-                            ->relationship('origin', 'title')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-                        Forms\Components\Select::make('responsible_by_id')
-                            ->label('Responsible')
-                            ->options(
-                                fn (Get $get): array => User::whereHas(
-                                    'subProcesses',
-                                    fn ($query) => $query->where('sub_process_id', $get('sub_process_id'))
-                                )
-                                    ->pluck('name', 'id')
-                                    ->toArray()
-                            )
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->required(),
-                        Forms\Components\Textarea::make('expected_impact')
-                            ->required()
-                            ->columnSpanFull(),
-                        Forms\Components\DatePicker::make('deadline')
-                            ->minDate(now()->format('Y-m-d'))
-                            ->required(),
-                        Forms\Components\TextInput::make('status_label')
-                            ->label(__('Status'))
-                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
-                            ->disabled()
-                            ->dehydrated(false)
-                            ->visible(fn (string $context) => $context === 'view'),
-                    ]),
-            ]);
+        return $form->schema(ImproveSchema::get());
     }
 
     public static function table(Table $table): Table

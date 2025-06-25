@@ -46,9 +46,14 @@ class ActionTask extends Model
         return $this->belongsTo(Status::class);
     }
 
+    public function taskComments()
+    {
+        return $this->hasMany(Comment::class, 'commentable_id');
+    }
+
     public function comments()
     {
-        return $this->hasMany(ActionTaskComment::class, 'action_task_id');
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     public function taskFiles()

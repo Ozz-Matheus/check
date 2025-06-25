@@ -136,5 +136,55 @@ class StatusSeeder extends Seeder
             'icon' => 'heroicon-o-exclamation-triangle',
             'protected' => true,
         ]);
+        // --------- Context: audit ---------
+        Status::factory()->create([
+            'context' => 'audit',
+            'title' => 'planned',
+            'label' => 'Planificada',
+            'color' => 'gray',
+            'icon' => 'heroicon-o-pencil-square',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'audit',
+            'title' => 'in_execution',
+            'label' => 'En ejecución',
+            'color' => 'indigo',
+            'icon' => 'heroicon-o-clock',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'audit',
+            'title' => 'closed',
+            'label' => 'Cerrado',
+            'color' => 'success',
+            'icon' => 'heroicon-o-check-circle',
+            'protected' => true,
+        ]);
+        // --------- Context: audit ---------
+        Status::factory()->create([
+            'context' => 'finding',
+            'title' => 'open',
+            'label' => 'Abierto',
+            'color' => 'gray',
+            'icon' => 'heroicon-o-pencil-square',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'finding',
+            'title' => 'in_execution',
+            'label' => 'En ejecución',
+            'color' => 'indigo',
+            'icon' => 'heroicon-o-clock',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'finding',
+            'title' => 'closed',
+            'label' => 'Cerrado',
+            'color' => 'success',
+            'icon' => 'heroicon-o-check-circle',
+            'protected' => true,
+        ]);
     }
 }

@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 
 class ActionTaskCommentsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'comments';
+    protected static string $relationship = 'taskComments';
 
     protected static ?string $title = 'Comments';
 

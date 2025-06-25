@@ -13,9 +13,9 @@ class Action extends Model
 
     protected $fillable = [
         'action_type_id',
+        'finding_id',
         'title',
         'description',
-        'registration_date',
 
         'process_id',
         'sub_process_id',
@@ -28,6 +28,7 @@ class Action extends Model
         'detection_date',
 
         // Solo para Correctiva
+        'registration_date',
         'containment_action',
         'action_analysis_cause_id',
         'corrective_action',
@@ -68,6 +69,11 @@ class Action extends Model
     public function type()
     {
         return $this->belongsTo(ActionType::class, 'action_type_id');
+    }
+
+    public function finding()
+    {
+        return $this->belongsTo(Finding::class, 'finding_id');
     }
 
     public function process()

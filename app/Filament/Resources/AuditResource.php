@@ -1,0 +1,150 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\AuditResource\Pages;
+use App\Filament\Resources\AuditResource\RelationManagers\FindingsRelationManager;
+use App\Models\Audit;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+
+class AuditResource extends Resource
+{
+    protected static ?string $model = Audit::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\Section::make(__('Audit Data'))
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('audit_code')
+                            ->required()
+                            ->columnSpanFull()
+                            ->maxLength(255),
+                        Forms\Components\DatePicker::make('start_date')
+                            ->minDate(now()->format('Y-m-d'))
+                            ->afterStateUpdated(function (Forms\Set $set) {
+                                $set('end_date', null);
+                            })
+                            ->live()
+                            ->required(),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->minDate(fn (Forms\Get $get) => $get('start_date'))
+                            ->live()
+                            ->required()
+                            ->disabled(fn (Forms\Get $get) => $get('start_date') === null),
+                        Forms\Components\Textarea::make('objective')
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('scope')
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('involvedSubProcesses')
+                            ->relationship('involvedSubProcesses', 'title')
+                            ->required()
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
+                        Forms\Components\Select::make('leader_auditor_id')
+                            ->label(__('Leader auditor'))
+                            ->options(User::getAuditorUsers())
+                            ->required()
+                            ->preload()
+                            ->searchable(),
+                        Forms\Components\Select::make('assignedAuditors')
+                            ->label(__('Assigned auditors'))
+                            ->relationship('assignedAuditors', 'name')
+                            ->required()
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
+                        Forms\Components\Select::make('audit_criteria_id')
+                            ->relationship('auditCriteria', 'title')
+                            ->required()
+                            ->preload()
+                            ->searchable(),
+                    ]),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('audit_code')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->date()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->date()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('involvedSubProcesses.title')
+                    ->searchable()
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->involvedSubProcesses->pluck('title')->join(', ')),
+                Tables\Columns\TextColumn::make('leaderAuditor.name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('assignedAuditors.name')
+                    ->searchable()
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->assignedAuditors->pluck('name')->join(', ')),
+                Tables\Columns\TextColumn::make('status.label')
+                    ->searchable()
+                    ->badge()
+                    ->color(fn ($record) => $record->status->colorName()),
+                Tables\Columns\TextColumn::make('auditCriteria.title')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                // Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+            FindingsRelationManager::class,
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListAudits::route('/'),
+            'create' => Pages\CreateAudit::route('/create'),
+            'view' => Pages\ViewAudit::route('/{record}'),
+            // 'edit' => Pages\EditAudit::route('/{record}/edit'),
+            'audit_finding.create' => \App\Filament\Resources\FindingResource\Pages\CreateFinding::route('/{audit}/finding/create'),
+            'audit_finding.view' => \App\Filament\Resources\FindingResource\Pages\EditFinding::route('/{audit}/finding/{record}'),
+        ];
+    }
+}
