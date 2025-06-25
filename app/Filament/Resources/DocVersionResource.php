@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Exports\VersionExport;
 use App\Models\DocVersion;
 use App\Models\Status;
+use App\Traits\HasStandardFileUpload;
 use Filament\Forms;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
@@ -19,6 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DocVersionResource extends Resource
 {
+    use HasStandardFileUpload;
+
     protected static ?string $model = DocVersion::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -29,20 +32,10 @@ class DocVersionResource extends Resource
             ->schema([
                 Forms\Components\Section::make(__('File Data'))
                     ->schema([
-                        Forms\Components\FileUpload::make('path')
+                        static::baseFileUpload('path')
                             ->label(__('File'))
-                            ->storeFileNamesIn('name')
-                            ->disk('public')
                             ->directory('docs/versions')
                             ->required()
-                            ->acceptedFileTypes([
-                                'application/pdf',
-                                'application/msword',
-                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',       // .xlsx
-                            ])
-                            ->maxSize(10240) // en KB, 10MB ejemplo
-                            ->helperText('Allowed types: PDF, DOC, DOCX, XLS, XLSX (max. 10MB)')
                             ->columnSpanFull(),
                         TextArea::make('comment')
                             ->label(__('Comment'))

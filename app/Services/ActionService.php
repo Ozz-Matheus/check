@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use app\Models\Action;
+use App\Models\Action;
 use App\Models\Status;
 
 /**

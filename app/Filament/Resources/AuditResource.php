@@ -38,7 +38,6 @@ class AuditResource extends Resource
                             ->required(),
                         Forms\Components\DatePicker::make('end_date')
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))
-                            ->live()
                             ->required()
                             ->disabled(fn (Forms\Get $get) => $get('start_date') === null),
                         Forms\Components\Textarea::make('objective')

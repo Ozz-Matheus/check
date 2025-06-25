@@ -4,13 +4,15 @@ namespace App\Filament\Resources\ActionTaskResource\RelationManagers;
 
 use App\Filament\Resources\ActionResource;
 use App\Services\TaskService;
-use Filament\Forms;
+use App\Traits\HasStandardFileUpload;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 
 class ActionTaskFilesRelationManager extends RelationManager
 {
+    use HasStandardFileUpload;
+
     protected static string $relationship = 'taskFiles';
 
     protected static ?string $title = 'Files';
@@ -34,19 +36,9 @@ class ActionTaskFilesRelationManager extends RelationManager
                     ->button()
                     ->color('primary')
                     ->form([
-                        Forms\Components\FileUpload::make('path')
+                        static::baseFileUpload('path')
                             ->label('Files Data')
-                            ->storeFileNamesIn('name')
-                            ->disk('public')
                             ->directory('actions/tasks/files')
-                            ->acceptedFileTypes([
-                                'application/pdf',
-                                'application/msword',
-                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                            ])
-                            ->maxSize(10240) // en KB, 10MB ejemplo
-                            ->helperText('Permitido: PDF, DOC, DOCX, XLS, XLSX (máx. 10MB)')
                             ->multiple()
                             ->maxParallelUploads(1)
                             ->columnSpanFull()

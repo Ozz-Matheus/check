@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ActionEndingResource\Pages;
 use App\Filament\Resources\ActionEndingResource\RelationManagers\ActionEndingFilesRelationManager;
 use App\Models\ActionEnding;
+use App\Traits\HasStandardFileUpload;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -14,6 +15,8 @@ use Filament\Tables\Table;
 
 class ActionEndingResource extends Resource
 {
+    use HasStandardFileUpload;
+
     protected static ?string $model = ActionEnding::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -31,19 +34,9 @@ class ActionEndingResource extends Resource
                         Forms\Components\Textarea::make('result')
                             ->required()
                             ->columnSpanFull(),
-                        Forms\Components\FileUpload::make('path')
+                        static::baseFileUpload('path')
                             ->label('Support files')
-                            ->storeFileNamesIn('name')
-                            ->disk('public')
                             ->directory('actions/support/files')
-                            ->acceptedFileTypes([
-                                'application/pdf',
-                                'application/msword',
-                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',       // .xlsx
-                            ])
-                            ->maxSize(10240) // en KB, 10MB ejemplo
-                            ->helperText('Allowed types: PDF, DOC, DOCX, XLS, XLSX (max. 10MB)')
                             ->multiple()
                             ->maxParallelUploads(1)
                             ->columnSpanFull()

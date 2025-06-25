@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Exports\DocExport;
 use App\Filament\Resources\DocResource\Pages;
 use App\Models\Doc;
-use App\Models\SubProcess;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -18,7 +17,6 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DocResource extends Resource
@@ -66,15 +64,14 @@ class DocResource extends Resource
                             ->live()
                             ->required(),
                         Forms\Components\Select::make('sub_process_id')
-                            ->label(__('Sub process'))
-                            ->options(
-                                fn (Get $get): Collection => SubProcess::query()
-                                    ->where('process_id', $get('process_id'))
-                                    ->pluck('title', 'id')
+                            ->relationship(
+                                name: 'subProcess',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('process_id'))
                             )
+                            ->label(__('Sub process'))
                             ->searchable()
                             ->preload()
-                            ->live()
                             ->required(),
                         Forms\Components\Select::make('doc_ending_id')
                             ->relationship('ending', 'label')
