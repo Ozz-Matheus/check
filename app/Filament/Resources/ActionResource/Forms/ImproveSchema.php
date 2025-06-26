@@ -21,10 +21,6 @@ class ImproveSchema
             Section::make('Action Data')
                 ->columns(2)
                 ->schema([
-                    Select::make('finding_id')
-                        ->label(__('Finding'))
-                        ->relationship('finding', 'title')
-                        ->native(false),
                     TextInput::make('title')
                         ->required()
                         ->maxLength(255)

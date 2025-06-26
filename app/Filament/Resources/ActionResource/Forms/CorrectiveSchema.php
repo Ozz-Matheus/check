@@ -18,18 +18,20 @@ class CorrectiveSchema
     public static function get(): array
     {
         return [
-
             Section::make('Action Data')
                 ->columns(2)
                 ->schema([
                     TextInput::make('title')
+                        ->label(__('Title'))
                         ->required()
                         ->maxLength(255)
                         ->columnSpanFull(),
                     Textarea::make('description')
+                        ->label(__('Description'))
                         ->required()
                         ->columnSpanFull(),
                     Select::make('process_id')
+                        ->label(__('Process'))
                         ->relationship('process', 'title')
                         ->afterStateUpdated(function (Set $set) {
                             $set('sub_process_id', null);
@@ -40,7 +42,7 @@ class CorrectiveSchema
                         ->live()
                         ->required(),
                     Select::make('sub_process_id')
-                        ->label('Sub Process')
+                        ->label(__('Sub Process'))
                         ->options(
                             fn (Get $get): Collection => SubProcess::query()
                                 ->where('process_id', $get('process_id'))
@@ -52,13 +54,13 @@ class CorrectiveSchema
                         ->live()
                         ->required(),
                     Select::make('action_origin_id')
-                        ->label('Origin')
+                        ->label(__('Origin'))
                         ->relationship('origin', 'title')
                         ->searchable()
                         ->preload()
                         ->required(),
                     Select::make('responsible_by_id')
-                        ->label('Responsible')
+                        ->label(__('Responsible'))
                         ->options(
                             fn (Get $get): array => User::whereHas(
                                 'subProcesses',
@@ -71,10 +73,35 @@ class CorrectiveSchema
                         ->preload()
                         ->live()
                         ->required(),
-                    Textarea::make('expected_impact')
+                    DatePicker::make('detection_date')
+                        ->label(__('Detection date'))
+                        ->format('Y-m-d')
+                        ->required(),
+                    Textarea::make('containment_action')
+                        ->label(__('Containment action'))
+                        ->columnSpanFull()
+                        ->required(),
+                    Select::make('action_analysis_cause_id')
+                        ->label(__('Analysis cause'))
+                        ->relationship('analysisCause', 'title')
                         ->required()
-                        ->columnSpanFull(),
+                        ->native(false),
+                    Textarea::make('corrective_action')
+                        ->label(__('Corrective action'))
+                        ->columnSpanFull()
+                        ->required(),
+                    Select::make('action_verification_method_id')
+                        ->label(__('Verification method'))
+                        ->relationship('verificationMethod', 'title')
+                        ->required()
+                        ->native(false),
+                    Select::make('verification_responsible_by_id')
+                        ->label(__('Verification responsible'))
+                        ->relationship('verificationResponsible', 'name')
+                        ->required()
+                        ->native(false),
                     DatePicker::make('deadline')
+                        ->label(__('Deadline'))
                         ->minDate(now()->format('Y-m-d'))
                         ->required(),
                     TextInput::make('status_label')

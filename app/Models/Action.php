@@ -11,7 +11,7 @@ class Action extends Model
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory, HasFilamentResource;
 
-    protected $fillable = [
+    /* protected $fillable = [
         'action_type_id',
         'finding_id',
         'title',
@@ -25,10 +25,9 @@ class Action extends Model
         'responsible_by_id',
 
         // Correctiva / Preventiva
-        'detection_date',
+        // 'detection_date',
 
         // Solo para Correctiva
-        'registration_date',
         'containment_action',
         'action_analysis_cause_id',
         'corrective_action',
@@ -50,10 +49,9 @@ class Action extends Model
         'deadline',
         'actual_closing_date',
         'reason_for_cancellation',
-    ];
+    ]; */
 
     protected $casts = [
-        'registration_date' => 'date',
         'deadline' => 'date',
         'actual_closing_date' => 'date',
         'created_at' => 'datetime',
@@ -99,21 +97,6 @@ class Action extends Model
     public function responsibleBy()
     {
         return $this->belongsTo(User::class, 'responsible_by_id');
-    }
-
-    public function analysisCause()
-    {
-        return $this->belongsTo(ActionAnalysisCause::class, 'action_analysis_cause_id');
-    }
-
-    public function verificationMethod()
-    {
-        return $this->belongsTo(ActionVerificationMethod::class, 'action_verification_method_id');
-    }
-
-    public function verificationResponsible()
-    {
-        return $this->belongsTo(User::class, 'verification_responsible_by_id');
     }
 
     public function status()

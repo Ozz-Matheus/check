@@ -143,7 +143,7 @@ class AuditResource extends Resource
             'view' => Pages\ViewAudit::route('/{record}'),
             // 'edit' => Pages\EditAudit::route('/{record}/edit'),
             'audit_finding.create' => \App\Filament\Resources\FindingResource\Pages\CreateFinding::route('/{audit}/finding/create'),
-            'audit_finding.view' => \App\Filament\Resources\FindingResource\Pages\EditFinding::route('/{audit}/finding/{record}'),
+            'audit_finding.view' => \App\Filament\Resources\FindingResource\Pages\ViewFinding::route('/{audit}/finding/{record}'),
         ];
     }
 }

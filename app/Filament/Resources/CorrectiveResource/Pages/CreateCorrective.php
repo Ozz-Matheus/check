@@ -13,7 +13,6 @@ class CreateCorrective extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['registration_date'] = now()->toDateString();
         $data['registered_by_id'] = auth()->id();
         $data['status_id'] = Status::byContextAndTitle('action', 'proposal')?->id;
 

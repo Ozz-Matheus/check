@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('action_type_id')->constrained();   // nuevo: tipo de acción
+            $table->foreignId('finding_id')->nullable()->constrained();
             $table->string('title');
             $table->text('description');
-            $table->date('registration_date');
 
             $table->foreignId('process_id')->constrained();
             $table->foreignId('sub_process_id')->constrained();
@@ -37,8 +37,8 @@ return new class extends Migration
             $table->date('verification_date')->nullable();
 
             // Solo para Preventiva
-            $table->enum('risk_probability', ['1 - Muy baja', '2 - Baja', '3 - Media', '4 - Alta', '5 - Muy alta'])->nullable();
-            $table->enum('risk_impact', ['1 - Insignificante', '2 - Menor', '3 - Moderado', '4 - Mayor', '5 - Catastrofico'])->nullable();
+            $table->enum('risk_probability', ['Muy baja', 'Baja', 'Media', 'Alta', 'Muy alta'])->nullable();
+            $table->enum('risk_impact', ['Insignificante', 'Menor', 'Moderado', 'Mayor', 'Catastrofico'])->nullable();
             $table->enum('risk_evaluation', ['Bajo', 'Medio', 'Alto', 'Critico'])->nullable();
             $table->text('prevention_action')->nullable();
             $table->text('effectiveness_indicator')->nullable(); // Posibilidad dejarlo como un select, indicadores comunes por proceso (ej. "Tasa de fallas", "N° de reportes", etc.), pero también permitir definir nuevos.

@@ -23,6 +23,11 @@ class Finding extends Model
         return $this->belongsTo(Audit::class, 'audit_id');
     }
 
+    public function subProcess()
+    {
+        return $this->belongsTo(SubProcess::class, 'audited_sub_process_id');
+    }
+
     public function responsibleAuditor()
     {
         return $this->belongsTo(User::class, 'responsible_auditor_id');

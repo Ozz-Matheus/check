@@ -4,8 +4,6 @@ namespace App\Filament\Resources\AuditResource\RelationManagers;
 
 use App\Filament\Resources\AuditResource;
 use App\Models\User;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,22 +12,34 @@ class FindingsRelationManager extends RelationManager
 {
     protected static string $relationship = 'findings';
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('description')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
-
     public function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('subProcess.title')
+                    ->label(__('Audited sub process'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('type_of_finding')
+                    ->label('Tipo de hallazgo')
+                    ->formatStateUsing(function ($state) {
+                        return match ($state) {
+                            'major_nonconformity' => 'No conformidad mayor',
+                            'minor_nonconformity' => 'No conformidad menor',
+                            'observation' => 'Observación',
+                            'opportunity_for_improvement' => 'Oportunidad de mejora',
+                            default => $state,
+                        };
+                    })
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status.label')
+                    ->label(__('Status'))
+                    ->searchable()
+                    ->badge()
+                    ->color(fn ($record) => $record->status->colorName()),
             ])
             ->filters([
                 //
@@ -51,19 +61,16 @@ class FindingsRelationManager extends RelationManager
                     ->label('Follow-up')
                     ->color('primary')
                     ->icon('heroicon-o-eye')
+                    ->authorize(
+                        fn (User $user) => $user->canCreateFinding($this->getOwnerRecord())
+                    )// 📌 aqui se cambiará el metodo para que tambien ingrese el responsable (lider del proceso en este caso)
                     ->url(fn ($record) => AuditResource::getUrl('audit_finding.view', [
                         'audit' => $this->getOwnerRecord()->id,
                         'record' => $record->id,
                     ])),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\BulkActionGroup::make([]),
             ]);
     }
 }

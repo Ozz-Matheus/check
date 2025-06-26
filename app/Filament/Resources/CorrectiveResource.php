@@ -39,41 +39,66 @@ class CorrectiveResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('type.label')
-                    ->sortable(),
+                    ->label(__('Type'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable()
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title),
                 Tables\Columns\TextColumn::make('process.title')
+                    ->label(__('Process'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('subProcess.title')
+                    ->label(__('Sub process'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('origin.title')
-                    ->label('Origin')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('registration_date')
-                    ->date()
+                    ->label(__('Origin'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('registeredBy.name')
+                    ->label(__('Registered by'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
+                    ->label(__('Responsible by'))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('detection_date')
+                    ->label(__('Detection date'))
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('analysisCause.title')
+                    ->label(__('Analysis cause'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('verificationMethod.title')
+                    ->label(__('Verification method'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('verificationResponsible.name')
+                    ->label(__('Verification responsible'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('status.label')
+                    ->label(__('Status'))
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
                 Tables\Columns\TextColumn::make('deadline')
+                    ->label(__('Deadline'))
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('verification_date')
+                    ->label(__('Verification date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actual_closing_date')
+                    ->label(__('Actual closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -98,7 +123,6 @@ class CorrectiveResource extends Resource
                         )),
                 ]),
             ]);
-
     }
 
     public static function getRelations(): array

@@ -39,41 +39,62 @@ class PreventiveResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('type.label')
-                    ->sortable(),
+                    ->label(__('Type'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable()
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title),
                 Tables\Columns\TextColumn::make('process.title')
+                    ->label(__('Process'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('subProcess.title')
+                    ->label(__('Sub process'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('origin.title')
-                    ->label('Origin')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('registration_date')
-                    ->date()
+                    ->label(__('Origin'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('registeredBy.name')
+                    ->label(__('Registered by'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
+                    ->label(__('Responsible by'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
+                    ->label(__('Status'))
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
+                Tables\Columns\TextColumn::make('risk_probability')
+                    ->label(__('Risk probability'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('risk_impact')
+                    ->label(__('Risk impact'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('risk_evaluation')
+                    ->label(__('Risk evaluation'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('detection_date')
+                    ->label(__('Detection date'))
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('deadline')
+                    ->label(__('Deadline'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actual_closing_date')
+                    ->label(__('Actual closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -90,7 +111,7 @@ class PreventiveResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     //
                     BulkAction::make('export')
-                        ->label('Export selected')
+                        ->label(__('Export selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(fn ($records) => Excel::download(
                             new ActionExport($records->pluck('id')->toArray()),

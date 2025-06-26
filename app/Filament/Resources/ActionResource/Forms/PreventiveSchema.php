@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ActionResource\Forms;
 
+use App\Models\Preventive;
 use App\Models\SubProcess;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
@@ -71,6 +72,54 @@ class PreventiveSchema
                         ->preload()
                         ->live()
                         ->required(),
+                    DatePicker::make('detection_date')
+                        ->format('Y-m-d')
+                        ->required(),
+                    Select::make('risk_probability')
+                        ->label(__('Probability'))
+                        ->options([
+                            1 => 'Muy baja',
+                            2 => 'Baja',
+                            3 => 'Media',
+                            4 => 'Alta',
+                            5 => 'Muy alta',
+                        ])
+                        ->required()
+                        ->reactive()
+                        ->afterStateUpdated(function (Set $set, Get $get) {
+                            $probability = $get('risk_probability');
+                            $impact = $get('risk_impact');
+
+                            $set('risk_evaluation', Preventive::evaluateRiskLevel($probability, $impact));
+                        })
+                        ->native(false),
+                    Select::make('risk_impact')
+                        ->label(__('Impact'))
+                        ->options([
+                            1 => 'Insignificante',
+                            2 => 'Menor',
+                            3 => 'Moderado',
+                            4 => 'Mayor',
+                            5 => 'Catastrófico',
+                        ])
+                        ->required()
+                        ->reactive()
+                        ->afterStateUpdated(function ($record, Set $set, Get $get) {
+                            $probability = $get('risk_probability');
+                            $impact = $get('risk_impact');
+
+                            $set('risk_evaluation', Preventive::evaluateRiskLevel($probability, $impact));
+                        })
+                        ->native(false),
+                    TextInput::make('risk_evaluation')
+                        ->label(__('Risk evaluation'))
+                        ->readOnly()
+                        ->dehydrated(true),
+                    Textarea::make('prevention_action')
+                        ->required(),
+                    Textarea::make('effectiveness_indicator')
+                        ->required(),
+
                     Textarea::make('expected_impact')
                         ->required()
                         ->columnSpanFull(),

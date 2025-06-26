@@ -52,4 +52,9 @@ class SubProcess extends Model
     {
         return $this->belongsToMany(Audit::class, 'audit_has_sub_processes');
     }
+
+    public function findings()
+    {
+        return $this->hasMany(Finding::class);
+    }
 }

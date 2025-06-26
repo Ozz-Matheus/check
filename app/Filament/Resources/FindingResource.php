@@ -3,13 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\FindingResource\Pages;
+use App\Filament\Resources\FindingResource\RelationManagers\ActionsRelationManager;
 use App\Models\Audit;
 use App\Models\Finding;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 
 class FindingResource extends Resource
 {
@@ -69,49 +68,11 @@ class FindingResource extends Resource
             ]);
     }
 
-    /* public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('audit_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('audited_sub_process_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type_of_finding'),
-                Tables\Columns\TextColumn::make('responsible_auditor_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    } */
-
     public static function getRelations(): array
     {
         return [
             //
+            ActionsRelationManager::class,
         ];
     }
 
@@ -120,7 +81,13 @@ class FindingResource extends Resource
         return [
             'index' => Pages\ListFindings::route('/'),
             'create' => Pages\CreateFinding::route('/create'),
+            'view' => Pages\ViewFinding::route('/{record}'),
             'edit' => Pages\EditFinding::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
     }
 }

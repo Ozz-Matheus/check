@@ -61,6 +61,10 @@ class RolePermissionSeeder extends Seeder
         $permissionCreateActionEnding = Permission::findByName('create_action::ending');
         $permissionViewActionEnding = Permission::findByName('view_action::ending');
 
+        // Acciones
+        $permissionViewAnyAction = Permission::findByName('view_any_action');
+        $permissionViewAction = Permission::findByName('view_action');
+
         // Improve
         $permissionViewAnyImprove = Permission::findByName('view_any_improve');
         $permissionCreateImprove = Permission::findByName('create_improve');
@@ -98,6 +102,15 @@ class RolePermissionSeeder extends Seeder
         $permissionViewAnyAudit = Permission::findByName('view_any_audit');
         $permissionCreateAudit = Permission::findByName('create_audit');
         $permissionViewAudit = Permission::findByName('view_audit');
+
+        $permissionViewAnyAuditCriteria = Permission::findByName('view_any_audit::criteria');
+        $permissionCreateAuditCriteria = Permission::findByName('create_audit::criteria');
+        $permissionViewAuditCriteria = Permission::findByName('view_audit::criteria');
+
+        // Permisos hallazgos
+        $permissionViewAnyFinding = Permission::findByName('view_any_finding');
+        $permissionCreateFinding = Permission::findByName('create_finding');
+        $permissionViewFinding = Permission::findByName('view_finding');
 
         /* Asignación de permisos */
         // Permisos globales
@@ -181,6 +194,11 @@ class RolePermissionSeeder extends Seeder
         $roleAuditor->givePermissionTo($permissionViewAnyActionEnding);
         $roleAuditor->givePermissionTo($permissionViewActionEnding);
 
+        /* ************************* */
+        $roleAuditor->givePermissionTo($permissionViewAnyAction);
+        $roleAuditor->givePermissionTo($permissionViewAction);
+        /* ************************* */
+
         $roleAuditor->givePermissionTo($permissionViewAnyImprove);
         // $roleAuditor->givePermissionTo($permissionCreateImprove);
         $roleAuditor->givePermissionTo($permissionViewImprove);
@@ -226,6 +244,11 @@ class RolePermissionSeeder extends Seeder
         $roleStandard->givePermissionTo($permissionViewActionTask);
 
         // Permisos auditoria
+        // Admin
+        $roleAdmin->givePermissionTo($permissionViewAnyAuditCriteria);
+        $roleAdmin->givePermissionTo($permissionCreateAuditCriteria);
+        $roleAdmin->givePermissionTo($permissionViewAuditCriteria);
+
         // Auditor
         $roleAuditor->givePermissionTo($permissionViewAnyAudit);
         $roleAuditor->givePermissionTo($permissionCreateAudit);
@@ -234,6 +257,16 @@ class RolePermissionSeeder extends Seeder
         // Auditado
         $roleAudited->givePermissionTo($permissionViewAnyAudit);
         $roleAudited->givePermissionTo($permissionViewAudit);
+
+        // Permisos hallazgos
+        // Auditor
+        $roleAuditor->givePermissionTo($permissionViewAnyFinding);
+        $roleAuditor->givePermissionTo($permissionCreateFinding);
+        $roleAuditor->givePermissionTo($permissionViewFinding);
+
+        // Auditado
+        $roleAudited->givePermissionTo($permissionViewAnyFinding);
+        $roleAudited->givePermissionTo($permissionViewFinding);
 
         // Permisos Panel User
         $rolePanelUser->givePermissionTo($permissionViewAnyDoc);
