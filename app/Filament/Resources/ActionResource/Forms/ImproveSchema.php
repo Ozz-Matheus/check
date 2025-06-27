@@ -18,7 +18,7 @@ class ImproveSchema
     public static function get(): array
     {
         return [
-            Section::make('Action Data')
+            Section::make('Action Improve Data')
                 ->columns(2)
                 ->schema([
                     TextInput::make('title')

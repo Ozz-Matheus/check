@@ -134,6 +134,8 @@ class User extends Authenticatable implements FilamentUser
                 ->danger()
                 ->persistent()
                 ->send();
+
+            return false;
         }
 
         return true;

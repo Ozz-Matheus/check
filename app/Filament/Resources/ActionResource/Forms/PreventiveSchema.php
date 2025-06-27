@@ -20,7 +20,7 @@ class PreventiveSchema
     {
         return [
 
-            Section::make('Action Data')
+            Section::make('Action Preventive Data')
                 ->columns(2)
                 ->schema([
                     TextInput::make('title')

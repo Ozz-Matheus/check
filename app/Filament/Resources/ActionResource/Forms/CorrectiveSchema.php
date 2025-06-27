@@ -18,7 +18,7 @@ class CorrectiveSchema
     public static function get(): array
     {
         return [
-            Section::make('Action Data')
+            Section::make('Action Corrective Data')
                 ->columns(2)
                 ->schema([
                     TextInput::make('title')

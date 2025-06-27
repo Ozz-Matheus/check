@@ -42,4 +42,20 @@ class Finding extends Model
     {
         return $this->hasMany(Action::class);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accesores / Métodos útiles
+    |--------------------------------------------------------------------------
+    */
+
+    public function getMappedActionType(): string
+    {
+        return match ($this->type_of_finding) {
+            'major_nonconformity' => 'corrective',
+            'observation' => 'preventive',
+            'opportunity_for_improvement' => 'improve',
+            default => 'improve',
+        };
+    }
 }

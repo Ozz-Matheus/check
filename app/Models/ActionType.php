@@ -25,4 +25,15 @@ class ActionType extends Model
     {
         return $this->hasMany(Action::class, 'action_type_id');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accesores / Métodos útiles
+    |--------------------------------------------------------------------------
+    */
+
+    public static function getIdByKey(string $key): ?int
+    {
+        return static::where('name', $key)->value('id');
+    }
 }
