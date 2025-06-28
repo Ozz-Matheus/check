@@ -52,6 +52,14 @@ class CreateAction extends CreateRecord
         return $this->getRedirectUrl();
     }
 
+    public function getBreadcrumbs(): array
+    {
+        return [
+            $this->getRedirectUrl() ?? url('/dashboard') => ucfirst($this->typeAction ?? 'Action'),
+            false => 'Action',
+        ];
+    }
+
     public static function canCreateAnother(): bool
     {
         return false;

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\FindingResource\RelationManagers;
 
 use App\Filament\Resources\ActionResource;
-use App\Models\Action;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -70,7 +69,7 @@ class ActionsRelationManager extends RelationManager
                     ->label(__('View'))
                     ->icon('heroicon-m-eye')
                     ->url(fn ($record) => $record->getFilamentUrl('view'))
-                    ->openUrlInNewTab()
+                    ->openUrlInNewTab(),
             ])
             ->defaultSort('id', 'desc')
             ->headerActions([

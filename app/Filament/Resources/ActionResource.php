@@ -27,7 +27,6 @@ class ActionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActions::route('/'), // Evita el Error y devuele un 404
             'create' => Pages\CreateAction::route('/{finding}/create'),
             'action_endings.create' => \App\Filament\Resources\ActionEndingResource\Pages\CreateActionEnding::route('/{action_id}/endings/create'),
             'action_endings.view' => \App\Filament\Resources\ActionEndingResource\Pages\ViewActionEnding::route('/{action_id}/endings/{record}'),
