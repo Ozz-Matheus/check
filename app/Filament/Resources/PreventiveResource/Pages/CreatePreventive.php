@@ -11,8 +11,18 @@ class CreatePreventive extends CreateRecord
 {
     protected static string $resource = PreventiveResource::class;
 
+    public ?int $finding_id = null;
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        $this->finding_id = request()->route('finding');
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['finding_id'] = $this->finding_id ?? null;
         $data['registered_by_id'] = auth()->id();
         $data['status_id'] = Status::byContextAndTitle('action', 'proposal')?->id;
 

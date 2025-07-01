@@ -142,8 +142,12 @@ class AuditResource extends Resource
             'create' => Pages\CreateAudit::route('/create'),
             'view' => Pages\ViewAudit::route('/{record}'),
             // 'edit' => Pages\EditAudit::route('/{record}/edit'),
+
             'audit_finding.create' => \App\Filament\Resources\FindingResource\Pages\CreateFinding::route('/{audit}/finding/create'),
             'audit_finding.view' => \App\Filament\Resources\FindingResource\Pages\ViewFinding::route('/{audit}/finding/{record}'),
+            'improve_action.create' => \App\Filament\Resources\ImproveResource\Pages\CreateImprove::route('/{audit}/finding/{finding}/improves/create'),
+            'corrective_action.create' => \App\Filament\Resources\CorrectiveResource\Pages\CreateCorrective::route('/{audit}/finding/{finding}/correctives/create'),
+            'preventive_action.create' => \App\Filament\Resources\PreventiveResource\Pages\CreatePreventive::route('/{audit}/finding/{finding}/preventives/create'),
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\FindingResource\RelationManagers;
 
-use App\Filament\Resources\ActionResource;
+use App\Filament\Resources\AuditResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -74,12 +74,23 @@ class ActionsRelationManager extends RelationManager
             ->defaultSort('id', 'desc')
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label('New action')
+                    ->label('New finding')
                     ->button()
                     ->color('primary')
-                    ->url(fn () => ActionResource::getUrl('create', [
-                        'finding' => $this->getOwnerRecord()->id,
-                    ])),
+                    ->url(function () {
+                        $finding = $this->getOwnerRecord();
+
+                        if (! $finding) {
+                            return null;
+                        }
+
+                        $actionType = $finding->getMappedActionType();
+
+                        return AuditResource::getUrl("{$actionType}_action.create", [
+                            'audit' => $finding->audit_id,
+                            'finding' => $finding->id,
+                        ]);
+                    }),
             ])->recordUrl(false);
     }
 }

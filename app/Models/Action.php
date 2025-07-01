@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Filament\Resources\ActionResource\Forms\CorrectiveSchema;
-use App\Filament\Resources\ActionResource\Forms\ImproveSchema;
-use App\Filament\Resources\ActionResource\Forms\PreventiveSchema;
 use App\Traits\HasFilamentResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,8 +10,6 @@ class Action extends Model
 {
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory, HasFilamentResource;
-
-    protected $guarded = [];
 
     /* protected $fillable = [
         'action_type_id',
@@ -128,15 +123,5 @@ class Action extends Model
     public function getUrlAttribute(): ?string
     {
         return $this->getFilamentUrl();
-    }
-
-    public static function getDynamicSchema($typeAction): array
-    {
-        return match ($typeAction) {
-            'corrective' => CorrectiveSchema::get(),
-            'preventive' => PreventiveSchema::get(),
-            'improve' => ImproveSchema::get(),
-            default => [],
-        };
     }
 }
