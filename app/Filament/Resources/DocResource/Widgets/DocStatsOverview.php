@@ -9,6 +9,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class DocStatsOverview extends BaseWidget
 {
+    protected static ?int $sort = 1; // orden en el dashboard
+
     protected function getStats(): array
     {
         $totalDocs = Doc::count();

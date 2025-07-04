@@ -9,6 +9,8 @@ class DocStatusesChart extends ChartWidget
 {
     protected static ?string $heading = 'Doc Statuses Chart';
 
+    protected static ?int $sort = 2; // orden en el dashboard
+
     protected function getData(): array
     {
         $statusColors = [

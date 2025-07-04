@@ -54,7 +54,7 @@ class AuditResource extends Resource
                         Forms\Components\Textarea::make('scope')
                             ->required()
                             ->columnSpanFull(),
-                        Forms\Components\Select::make('involvedProcess')
+                        Forms\Components\Select::make('involved_process_id')
                             ->relationship('involvedProcess', 'title')
                             ->required()
                             ->preload()
@@ -68,7 +68,7 @@ class AuditResource extends Resource
                             ->relationship(
                                 'risks',
                                 'title',
-                                modifyQueryUsing: fn (Forms\Get $get, $query) => $query->where('process_id', $get('involvedProcess'))
+                                modifyQueryUsing: fn (Forms\Get $get, $query) => $query->where('process_id', $get('involved_process_id'))
                             )
                             ->required()
                             ->preload()

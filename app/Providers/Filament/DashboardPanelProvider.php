@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\ActionResource\Widgets\ActionStatsOverview;
 use App\Filament\Resources\ActionResource\Widgets\ActionStatusChart;
+use App\Filament\Resources\ActionTaskResource\Widgets\UserTaskList;
 use App\Filament\Resources\DocResource\Widgets\DocStatsOverview;
 use App\Filament\Resources\DocResource\Widgets\DocStatusesChart;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -64,6 +65,7 @@ class DashboardPanelProvider extends PanelProvider
                 ActionStatsOverview::class,
                 DocStatusesChart::class,
                 ActionStatusChart::class,
+                UserTaskList::class,
             ])
             ->middleware([
                 EncryptCookies::class,

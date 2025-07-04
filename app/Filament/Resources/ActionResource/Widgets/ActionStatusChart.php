@@ -10,6 +10,8 @@ class ActionStatusChart extends ChartWidget
 {
     protected static ?string $heading = 'Action Status Chart';
 
+    protected static ?int $sort = 4; // orden en el dashboard
+
     public ?string $filter = 'improve';
 
     protected function getFilters(): ?array

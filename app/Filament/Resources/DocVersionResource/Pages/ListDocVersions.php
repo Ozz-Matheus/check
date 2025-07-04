@@ -7,6 +7,7 @@ use App\Filament\Resources\DocVersionResource;
 use App\Traits\HasDocContext;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListDocVersions extends ListRecords
 {
@@ -21,7 +22,7 @@ class ListDocVersions extends ListRecords
         $this->checkVersionStatusNotice();
     }
 
-    public function getTableQuery(): ?\Illuminate\Database\Eloquent\Builder
+    public function getTableQuery(): ?Builder
     {
         $query = parent::getTableQuery();
 
