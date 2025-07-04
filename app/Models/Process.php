@@ -34,4 +34,9 @@ class Process extends Model
     {
         return $this->hasMany(Action::class);
     }
+
+    public function audits()
+    {
+        return $this->hasMany(Audit::class);
+    }
 }

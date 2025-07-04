@@ -11,45 +11,7 @@ class Action extends Model
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory, HasFilamentResource;
 
-    /* protected $fillable = [
-        'action_type_id',
-        'finding_id',
-        'title',
-        'description',
-
-        'process_id',
-        'sub_process_id',
-        'action_origin_id',
-
-        'registered_by_id',
-        'responsible_by_id',
-
-        // Correctiva / Preventiva
-        // 'detection_date',
-
-        // Solo para Correctiva
-        'containment_action',
-        'action_analysis_cause_id',
-        'corrective_action',
-        'action_verification_method_id',
-        'verification_responsible_by_id',
-        'verification_date',
-
-        // Solo para Preventiva
-        'risk_probability',
-        'risk_impact',
-        'risk_evaluation',
-        'prevention_action',
-        'effectiveness_indicator',
-
-        // Mejora / Preventiva
-        'expected_impact',
-
-        'status_id',
-        'deadline',
-        'actual_closing_date',
-        'reason_for_cancellation',
-    ]; */
+    protected $guarded = [];
 
     protected $casts = [
         'deadline' => 'date',

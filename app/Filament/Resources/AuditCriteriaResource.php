@@ -14,7 +14,16 @@ class AuditCriteriaResource extends Resource
 {
     protected static ?string $model = AuditCriteria::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = null;
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Audit Management');
+    }
+
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+
+    protected static ?int $navigationSort = 16;
 
     public static function form(Form $form): Form
     {

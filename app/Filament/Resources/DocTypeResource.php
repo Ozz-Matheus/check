@@ -18,12 +18,12 @@ class DocTypeResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return __('Record Management');
+        return __('Document Management');
     }
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 9;
 
     public static function form(Form $form): Form
     {

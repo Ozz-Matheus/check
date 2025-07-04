@@ -60,7 +60,7 @@ class PreventiveResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->live()
+                            ->reactive()
                             ->required(),
                         Select::make('sub_process_id')
                             ->label('Sub Process')
@@ -72,7 +72,7 @@ class PreventiveResource extends Resource
                             ->afterStateUpdated(fn (Set $set) => $set('responsible_by_id', null))
                             ->searchable()
                             ->preload()
-                            ->live()
+                            ->reactive()
                             ->required(),
                         Select::make('action_origin_id')
                             ->label('Origin')
@@ -92,7 +92,7 @@ class PreventiveResource extends Resource
                             )
                             ->searchable()
                             ->preload()
-                            ->live()
+                            ->reactive()
                             ->required(),
                         DatePicker::make('detection_date')
                             ->format('Y-m-d')

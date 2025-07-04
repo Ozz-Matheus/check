@@ -61,7 +61,7 @@ class DocResource extends Resource
                             ->afterStateUpdated(fn (Set $set) => $set('sub_process_id', null))
                             ->searchable()
                             ->preload()
-                            ->live()
+                            ->reactive()
                             ->required(),
                         Forms\Components\Select::make('sub_process_id')
                             ->relationship(

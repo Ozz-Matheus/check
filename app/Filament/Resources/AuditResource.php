@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AuditResource\Pages;
 use App\Filament\Resources\AuditResource\RelationManagers\FindingsRelationManager;
 use App\Models\Audit;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,7 +15,16 @@ class AuditResource extends Resource
 {
     protected static ?string $model = Audit::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = null;
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Audits');
+    }
+
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
@@ -34,7 +42,7 @@ class AuditResource extends Resource
                             ->afterStateUpdated(function (Forms\Set $set) {
                                 $set('end_date', null);
                             })
-                            ->live()
+                            ->reactive()
                             ->required(),
                         Forms\Components\DatePicker::make('end_date')
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))
@@ -46,21 +54,61 @@ class AuditResource extends Resource
                         Forms\Components\Textarea::make('scope')
                             ->required()
                             ->columnSpanFull(),
-                        Forms\Components\Select::make('involvedSubProcesses')
-                            ->relationship('involvedSubProcesses', 'title')
+                        Forms\Components\Select::make('involvedProcess')
+                            ->relationship('involvedProcess', 'title')
                             ->required()
-                            ->multiple()
                             ->preload()
+                            ->afterStateUpdated(function (Forms\Set $set) {
+                                $set('risks', null);
+                                $set('controls', null);
+                            })
+                            ->reactive()
+                            ->searchable(),
+                        Forms\Components\Select::make('risks')
+                            ->relationship(
+                                'risks',
+                                'title',
+                                modifyQueryUsing: fn (Forms\Get $get, $query) => $query->where('process_id', $get('involvedProcess'))
+                            )
+                            ->required()
+                            ->preload()
+                            ->multiple()
+                            ->reactive()
+                            ->afterStateUpdated(fn (Forms\Set $set) => $set('controls', null))
+                            // Pendiente una manera para que cuando se quite un resk, si ya hay controls seleccionados
+                            // de ese risk se quiten solo esos automaticamente
+                            ->columnSpanFull()
+                            ->searchable(),
+                        Forms\Components\Select::make('controls')
+                            ->relationship(
+                                'controls',
+                                'title',
+                                modifyQueryUsing: fn (Forms\Get $get, $query) => $query->whereIn('risk_id', $get('risks') ?? [])
+                            )
+                            ->required()
+                            ->preload()
+                            ->multiple()
+                            ->reactive()
+                            ->columnSpanFull()
+                            ->disabled(fn (Forms\Get $get) => $get('risks') === null)
                             ->searchable(),
                         Forms\Components\Select::make('leader_auditor_id')
                             ->label(__('Leader auditor'))
-                            ->options(User::getAuditorUsers())
+                            ->relationship(
+                                'leaderAuditor',
+                                'name',
+                                modifyQueryUsing: fn ($query) => $query->role('auditor') // Filtro para que solo muestre auditores
+                            )
                             ->required()
                             ->preload()
                             ->searchable(),
                         Forms\Components\Select::make('assignedAuditors')
                             ->label(__('Assigned auditors'))
-                            ->relationship('assignedAuditors', 'name')
+                            ->relationship(
+                                'assignedAuditors',
+                                'name',
+                                modifyQueryUsing: fn ($query) => $query->role('auditor') // Filtro para que solo muestre auditores
+                            )
                             ->required()
                             ->multiple()
                             ->preload()
@@ -88,10 +136,12 @@ class AuditResource extends Resource
                     ->date()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('involvedSubProcesses.title')
+                Tables\Columns\TextColumn::make('involvedProcess.title')
+                    ->searchable(),
+                /* Tables\Columns\TextColumn::make('involvedSubProcesses.title')
                     ->searchable()
                     ->limit(30)
-                    ->tooltip(fn ($record) => $record->involvedSubProcesses->pluck('title')->join(', ')),
+                    ->tooltip(fn($record) => $record->involvedSubProcesses->pluck('title')->join(', ')), */
                 Tables\Columns\TextColumn::make('leaderAuditor.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('assignedAuditors.name')

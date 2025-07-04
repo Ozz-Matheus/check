@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('audit_has_sub_processes', function (Blueprint $table) {
+        Schema::create('audit_has_controls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('audit_id')->constrained()->onDelete('cascade');
-            $table->foreignId('sub_process_id')->constrained()->onDelete('cascade');
+            $table->foreignId('control_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('audit_has_sub_processes');
+        Schema::dropIfExists('audit_has_controls');
     }
 };

@@ -46,7 +46,7 @@ class ActionTaskResource extends Resource
                             ->afterStateUpdated(function (Forms\Set $set) {
                                 $set('deadline', null);
                             })
-                            ->live()
+                            ->reactive()
                             ->required(),
                         Forms\Components\DatePicker::make('deadline')
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))

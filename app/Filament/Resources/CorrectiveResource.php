@@ -63,7 +63,7 @@ class CorrectiveResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->live()
+                            ->reactive()
                             ->required(),
                         Select::make('sub_process_id')
                             ->label(__('Sub Process'))
@@ -75,7 +75,7 @@ class CorrectiveResource extends Resource
                             ->afterStateUpdated(fn (Set $set) => $set('responsible_by_id', null))
                             ->searchable()
                             ->preload()
-                            ->live()
+                            ->reactive()
                             ->required(),
                         Select::make('action_origin_id')
                             ->label(__('Origin'))
@@ -95,7 +95,7 @@ class CorrectiveResource extends Resource
                             )
                             ->searchable()
                             ->preload()
-                            ->live()
+                            ->reactive()
                             ->required(),
                         DatePicker::make('detection_date')
                             ->label(__('Detection date'))

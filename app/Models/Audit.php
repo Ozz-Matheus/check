@@ -13,14 +13,28 @@ class Audit extends Model
         'end_date',
         'objective',
         'scope',
+        'involved_process_id',
+        // risks (pivot)
+        // controls (pivot)
         'leader_auditor_id',
+        // asigned auditors (pivot)
         'status_id',
         'audit_criteria_id',
     ];
 
-    public function involvedSubProcesses()
+    public function involvedProcess()
     {
-        return $this->belongsToMany(SubProcess::class, 'audit_has_sub_processes');
+        return $this->belongsTo(Process::class, 'involved_process_id');
+    }
+
+    public function risks()
+    {
+        return $this->belongsToMany(Risk::class, 'audit_has_risks');
+    }
+
+    public function controls()
+    {
+        return $this->belongsToMany(Control::class, 'audit_has_controls');
     }
 
     public function leaderAuditor()

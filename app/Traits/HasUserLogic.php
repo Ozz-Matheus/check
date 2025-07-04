@@ -52,13 +52,6 @@ trait HasUserLogic
         return $this->hasRole('super_admin') || $this->isLeaderOfSubProcess($subProcessId);
     }
 
-    // Verifica los usuarios con rol auditor
-
-    public static function getAuditorUsers(): array
-    {
-        return self::role('auditor')->pluck('name', 'id')->toArray();
-    }
-
     // Metodos para auditoria
 
     public function canCreateFinding(Audit $audit)

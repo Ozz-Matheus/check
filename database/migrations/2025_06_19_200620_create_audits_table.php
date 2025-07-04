@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->text('objective');
             $table->text('scope');
+            $table->foreignId('involved_process_id')->constrained('processes');
             $table->foreignId('leader_auditor_id')->constrained('users');
             $table->foreignId('status_id')->constrained('statuses');
             $table->foreignId('audit_criteria_id')->constrained('audit_criterias');
