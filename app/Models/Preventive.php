@@ -2,8 +2,18 @@
 
 namespace App\Models;
 
+use App\Enums\RiskEvaluation;
+use App\Enums\RiskImpact;
+use App\Enums\RiskProbability;
+
 class Preventive extends Action
 {
+    protected $casts = [
+        'risk_probability' => RiskProbability::class,
+        'risk_impact' => RiskImpact::class,
+        'risk_evaluation' => RiskEvaluation::class,
+    ];
+
     protected $table = 'actions';
 
     protected static function booted()
@@ -48,15 +58,10 @@ class Preventive extends Action
         'reason_for_cancellation',
     ];
 
-    public static function evaluateRiskLevel(?int $probability, ?int $impact): string
+    public static function evaluateRiskLevel(?int $probability, ?int $impact): RiskEvaluation
     {
         $risk = ($probability ?? 0) * ($impact ?? 0);
 
-        return match (true) {
-            $risk <= 5 => 'Bajo',
-            $risk <= 10 => 'Medio',
-            $risk <= 15 => 'Alto',
-            default => 'Crítico',
-        };
+        return RiskEvaluation::fromScore($risk);
     }
 }

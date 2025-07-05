@@ -37,9 +37,10 @@ return new class extends Migration
             $table->date('verification_date')->nullable();
 
             // Solo para Preventiva
-            $table->enum('risk_probability', ['Muy baja', 'Baja', 'Media', 'Alta', 'Muy alta'])->nullable();
-            $table->enum('risk_impact', ['Insignificante', 'Menor', 'Moderado', 'Mayor', 'Catastrofico'])->nullable();
-            $table->enum('risk_evaluation', ['Bajo', 'Medio', 'Alto', 'Critico'])->nullable();
+            $table->unsignedTinyInteger('risk_probability')->nullable();
+            $table->unsignedTinyInteger('risk_impact')->nullable();
+            $table->string('risk_evaluation')->nullable();
+
             $table->text('prevention_action')->nullable();
             $table->text('effectiveness_indicator')->nullable(); // Posibilidad dejarlo como un select, indicadores comunes por proceso (ej. "Tasa de fallas", "N° de reportes", etc.), pero también permitir definir nuevos.
 
