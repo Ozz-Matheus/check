@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             ActionVerificationMethodSeeder::class,
             AuditCriteriaSeeder::class,
             RiskSeeder::class,
-            ControlSeeder::class,
+            ControlTypeSeeder::class,
             // RolePermissionSeeder::class,
         ]);
     }

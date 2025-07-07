@@ -7,7 +7,6 @@ use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationMa
 use App\Filament\Resources\ImproveResource\Pages;
 use App\Models\Improve;
 use App\Models\SubProcess;
-use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -61,6 +60,7 @@ class ImproveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
+                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('sub_process_id')
                             ->label('Sub Process')
@@ -73,6 +73,7 @@ class ImproveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
+                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('action_origin_id')
                             ->label('Origin')
@@ -82,13 +83,22 @@ class ImproveResource extends Resource
                             ->required(),
                         Select::make('responsible_by_id')
                             ->label('Responsible')
-                            ->options(
-                                fn (Get $get): array => User::whereHas(
-                                    'subProcesses',
-                                    fn ($query) => $query->where('sub_process_id', $get('sub_process_id'))
-                                )
-                                    ->pluck('name', 'id')
-                                    ->toArray()
+                            ->relationship(
+                                'responsibleBy',
+                                'name',
+                                modifyQueryUsing: function ($query, Get $get, $livewire) {
+                                    if (isset($livewire->finding_id)) {
+                                        return $query->whereHas(
+                                            'subProcesses',
+                                            fn ($q) => $q->where('sub_process_id', $livewire->FindingModel->audited_sub_process_id)
+                                        );
+                                    }
+
+                                    return $query->whereHas(
+                                        'subProcesses',
+                                        fn ($q) => $q->where('sub_process_id', $get('sub_process_id'))
+                                    );
+                                }
                             )
                             ->searchable()
                             ->preload()

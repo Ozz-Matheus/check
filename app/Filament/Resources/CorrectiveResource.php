@@ -64,6 +64,7 @@ class CorrectiveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
+                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('sub_process_id')
                             ->label(__('Sub Process'))
@@ -76,6 +77,7 @@ class CorrectiveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
+                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('action_origin_id')
                             ->label(__('Origin'))
@@ -85,14 +87,32 @@ class CorrectiveResource extends Resource
                             ->required(),
                         Select::make('responsible_by_id')
                             ->label(__('Responsible'))
-                            ->options(
-                                fn (Get $get): array => User::whereHas(
-                                    'subProcesses',
-                                    fn ($query) => $query->where('sub_process_id', $get('sub_process_id'))
-                                )
+                            ->relationship(
+                                'responsibleBy',
+                                'name',
+                                modifyQueryUsing: function ($query, Get $get, $livewire) {
+                                    if (isset($livewire->finding_id)) {
+                                        return $query->whereHas(
+                                            'subProcesses',
+                                            fn ($q) => $q->where('sub_process_id', $livewire->FindingModel->audited_sub_process_id)
+                                        );
+                                    }
+
+                                    return $query->whereHas(
+                                        'subProcesses',
+                                        fn ($q) => $q->where('sub_process_id', $get('sub_process_id'))
+                                    );
+                                }
+                            )
+                            /* ->options(
+                                fn(Get $get, $livewire) => isset($livewire->finding_id)
+                                    ? User::whereHas('subProcesses', fn($query) => $query->where('sub_process_id', $livewire->FindingModel->audited_sub_process_id))
                                     ->pluck('name', 'id')
                                     ->toArray()
-                            )
+                                    : User::whereHas('subProcesses', fn($query) => $query->where('sub_process_id', $get('sub_process_id')))
+                                    ->pluck('name', 'id')
+                                    ->toArray()
+                            ) */ // Otra opción
                             ->searchable()
                             ->preload()
                             ->reactive()

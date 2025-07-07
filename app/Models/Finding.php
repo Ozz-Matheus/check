@@ -8,7 +8,7 @@ class Finding extends Model
 {
     //
     protected $fillable = [
-        'audit_id',
+        'control_id',
         'title',
         'audited_sub_process_id',
         'type_of_finding',
@@ -18,9 +18,9 @@ class Finding extends Model
         'status_id',
     ];
 
-    public function audit()
+    public function control()
     {
-        return $this->belongsTo(Audit::class, 'audit_id');
+        return $this->belongsTo(Control::class, 'control_id');
     }
 
     public function subProcess()

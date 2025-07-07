@@ -54,8 +54,8 @@ trait HasUserLogic
 
     // Metodos para auditoria
 
-    public function canCreateFinding(Audit $audit)
+    /* public function canCreateFinding(Audit $audit)
     {
         return auth()->id() === $audit->leader_auditor_id;
-    }
+    } */
 }

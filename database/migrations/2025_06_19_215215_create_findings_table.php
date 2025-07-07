@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('findings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('audit_id')->constrained('audits');
+            $table->foreignId('control_id')->constrained('controls');
             $table->string('title');
             $table->foreignId('audited_sub_process_id')->constrained('sub_processes');
             $table->enum('type_of_finding', ['major_nonconformity', 'minor_nonconformity', 'observation', 'opportunity_for_improvement']);

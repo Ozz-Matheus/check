@@ -87,7 +87,8 @@ class ActionsRelationManager extends RelationManager
                         $actionType = $finding->getMappedActionType();
 
                         return AuditResource::getUrl("{$actionType}_action.create", [
-                            'audit' => $finding->audit_id,
+                            'audit' => $finding->control->audit_id,
+                            'control' => $finding->control_id,
                             'finding' => $finding->id,
                         ]);
                     }),

@@ -50,6 +50,11 @@ class Status extends Model
         return $this->hasMany(Audit::class);
     }
 
+    public function controls()
+    {
+        return $this->hasMany(Control::class);
+    }
+
     public function findings()
     {
         return $this->hasMany(Finding::class);

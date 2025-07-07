@@ -23,21 +23,26 @@ class FindingResource extends Resource
                 Forms\Components\Section::make(__('Audit Data'))
                     ->columns(2)
                     ->schema([
-                        Forms\Components\TextInput::make('audit_id')
-                            ->default(request('audit'))
-                            ->dehydrated()
-                            ->visible(false),
                         Forms\Components\TextInput::make('title')
                             ->columnSpanFull()
                             ->required(),
                         Forms\Components\Select::make('audited_sub_process_id')
+                            ->label(__('Audited sub process'))
+                            ->relationship(
+                                'subProcess',
+                                'title',
+                                modifyQueryUsing: fn ($query, $livewire) => $query->where('process_id', $livewire->ControlModel->audit->involved_process_id)
+                            )
+                            ->native(false)
+                            ->required(),
+                        /* Forms\Components\Select::make('audited_sub_process_id')
                             ->label(__('Audited sub process'))
                             ->options(fn (Forms\Get $get): array => Audit::findOrFail($get('audit_id'))
                                 ?->involvedSubProcesses
                                 ?->pluck('title', 'id')
                                 ?->toArray() ?? [])
                             ->native(false)
-                            ->required(),
+                            ->required(), */
                         Forms\Components\Select::make('type_of_finding')
                             ->label(__('Type of finding'))
                             ->options([
@@ -55,15 +60,13 @@ class FindingResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('responsible_auditor_id')
-                            ->options(fn (Forms\Get $get): array => Audit::findOrFail($get('audit_id'))
-                                ?->assignedAuditors
-                                ?->pluck('name', 'id')
-                                ?->toArray() ?? [])
+                            ->relationship(
+                                'responsibleAuditor',
+                                'name',
+                                modifyQueryUsing: fn ($query) => $query->role('auditor')
+                            )
                             ->native(false)
                             ->required(),
-                        /* Forms\Components\TextInput::make('status_id')
-                            ->required()
-                            ->numeric(), */
                     ]),
             ]);
     }

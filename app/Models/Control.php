@@ -11,17 +11,40 @@ class Control extends Model
     use HasFactory;
 
     protected $fillable = [
+        'audit_id',
+        'control_type_id',
         'title',
-        'risk_id',
+        'comment',
+        'status_id',
     ];
 
-    public function risk()
+    public function audit()
     {
-        return $this->belongsTo(Risk::class, 'risk_id');
+        return $this->belongsTo(Audit::class, 'audit_id');
     }
 
-    public function audits()
+    public function controlType()
     {
-        return $this->belongsToMany(Audit::class, 'audit_has_controls');
+        return $this->belongsTo(ControlType::class, 'control_type_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    public function controlFiles()
+    {
+        return $this->hasMany(ControlFile::class, 'fileable_id');
+    }
+
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+
+    public function findings()
+    {
+        return $this->hasMany(Finding::class);
     }
 }

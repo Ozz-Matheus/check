@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AuditResource\Pages;
-use App\Filament\Resources\AuditResource\RelationManagers\FindingsRelationManager;
+use App\Filament\Resources\AuditResource\RelationManagers\ControlsRelationManager;
 use App\Models\Audit;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -60,7 +60,6 @@ class AuditResource extends Resource
                             ->preload()
                             ->afterStateUpdated(function (Forms\Set $set) {
                                 $set('risks', null);
-                                $set('controls', null);
                             })
                             ->reactive()
                             ->searchable(),
@@ -74,23 +73,7 @@ class AuditResource extends Resource
                             ->preload()
                             ->multiple()
                             ->reactive()
-                            ->afterStateUpdated(fn (Forms\Set $set) => $set('controls', null))
-                            // Pendiente una manera para que cuando se quite un resk, si ya hay controls seleccionados
-                            // de ese risk se quiten solo esos automaticamente
                             ->columnSpanFull()
-                            ->searchable(),
-                        Forms\Components\Select::make('controls')
-                            ->relationship(
-                                'controls',
-                                'title',
-                                modifyQueryUsing: fn (Forms\Get $get, $query) => $query->whereIn('risk_id', $get('risks') ?? [])
-                            )
-                            ->required()
-                            ->preload()
-                            ->multiple()
-                            ->reactive()
-                            ->columnSpanFull()
-                            ->disabled(fn (Forms\Get $get) => $get('risks') === null)
                             ->searchable(),
                         Forms\Components\Select::make('leader_auditor_id')
                             ->label(__('Leader auditor'))
@@ -102,22 +85,17 @@ class AuditResource extends Resource
                             ->required()
                             ->preload()
                             ->searchable(),
-                        Forms\Components\Select::make('assignedAuditors')
-                            ->label(__('Assigned auditors'))
-                            ->relationship(
-                                'assignedAuditors',
-                                'name',
-                                modifyQueryUsing: fn ($query) => $query->role('auditor') // Filtro para que solo muestre auditores
-                            )
-                            ->required()
-                            ->multiple()
-                            ->preload()
-                            ->searchable(),
                         Forms\Components\Select::make('audit_criteria_id')
                             ->relationship('auditCriteria', 'title')
                             ->required()
                             ->preload()
                             ->searchable(),
+                        Forms\Components\TextInput::make('status_id')
+                            ->label(__('Status'))
+                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->visible(fn (string $context) => $context === 'view'),
                     ]),
             ]);
     }
@@ -138,16 +116,8 @@ class AuditResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('involvedProcess.title')
                     ->searchable(),
-                /* Tables\Columns\TextColumn::make('involvedSubProcesses.title')
-                    ->searchable()
-                    ->limit(30)
-                    ->tooltip(fn($record) => $record->involvedSubProcesses->pluck('title')->join(', ')), */
                 Tables\Columns\TextColumn::make('leaderAuditor.name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('assignedAuditors.name')
-                    ->searchable()
-                    ->limit(30)
-                    ->tooltip(fn ($record) => $record->assignedAuditors->pluck('name')->join(', ')),
                 Tables\Columns\TextColumn::make('status.label')
                     ->searchable()
                     ->badge()
@@ -181,7 +151,7 @@ class AuditResource extends Resource
     {
         return [
             //
-            FindingsRelationManager::class,
+            ControlsRelationManager::class,
         ];
     }
 
@@ -193,11 +163,13 @@ class AuditResource extends Resource
             'view' => Pages\ViewAudit::route('/{record}'),
             // 'edit' => Pages\EditAudit::route('/{record}/edit'),
 
-            'audit_finding.create' => \App\Filament\Resources\FindingResource\Pages\CreateFinding::route('/{audit}/finding/create'),
-            'audit_finding.view' => \App\Filament\Resources\FindingResource\Pages\ViewFinding::route('/{audit}/finding/{record}'),
-            'improve_action.create' => \App\Filament\Resources\ImproveResource\Pages\CreateImprove::route('/{audit}/finding/{finding}/improves/create'),
-            'corrective_action.create' => \App\Filament\Resources\CorrectiveResource\Pages\CreateCorrective::route('/{audit}/finding/{finding}/correctives/create'),
-            'preventive_action.create' => \App\Filament\Resources\PreventiveResource\Pages\CreatePreventive::route('/{audit}/finding/{finding}/preventives/create'),
+            'audit_control.create' => \App\Filament\Resources\ControlResource\Pages\CreateControl::route('/{audit}/control/create'),
+            'audit_control.view' => \App\Filament\Resources\ControlResource\Pages\ViewControl::route('/{audit}/control/{record}'),
+            'audit_finding.create' => \App\Filament\Resources\FindingResource\Pages\CreateFinding::route('/{audit}/control/{control}/finding/create'),
+            'audit_finding.view' => \App\Filament\Resources\FindingResource\Pages\ViewFinding::route('/{audit}/control/{control}/finding/{record}'),
+            'improve_action.create' => \App\Filament\Resources\ImproveResource\Pages\CreateImprove::route('/{audit}/control/{control}/finding/{finding}/improves/create'),
+            'corrective_action.create' => \App\Filament\Resources\CorrectiveResource\Pages\CreateCorrective::route('/{audit}/control/{control}/finding/{finding}/correctives/create'),
+            'preventive_action.create' => \App\Filament\Resources\PreventiveResource\Pages\CreatePreventive::route('/{audit}/control/{control}/finding/{finding}/preventives/create'),
         ];
     }
 }

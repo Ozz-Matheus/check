@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\AuditResource\RelationManagers\FindingsRelationManager;
 use App\Filament\Resources\ControlResource\Pages;
+use App\Filament\Resources\ControlResource\RelationManagers\ControlFilesRelationManager;
 use App\Models\Control;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 
 class ControlResource extends Resource
 {
@@ -20,44 +20,31 @@ class ControlResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('risk_id')
-                    ->relationship('risk', 'title')
-                    ->preload()
-                    ->searchable()
-                    ->required(),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('risk.title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Forms\Components\Section::make(__('Control Data'))
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Select::make('control_type_id')
+                            ->relationship(
+                                'controlType',
+                                'title',
+                                modifyQueryUsing: fn ($livewire, $query) => $query->whereIn('risk_id', $livewire->AuditModel->risks->pluck('id') ?? [])
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('comment')
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('status_id')
+                            ->label(__('Status'))
+                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->visible(fn (string $context) => $context === 'view'),
+                    ]),
             ]);
     }
 
@@ -65,6 +52,8 @@ class ControlResource extends Resource
     {
         return [
             //
+            ControlFilesRelationManager::class,
+            FindingsRelationManager::class,
         ];
     }
 
@@ -73,7 +62,8 @@ class ControlResource extends Resource
         return [
             'index' => Pages\ListControls::route('/'),
             'create' => Pages\CreateControl::route('/create'),
-            'edit' => Pages\EditControl::route('/{record}/edit'),
+            'view' => Pages\ViewControl::route('/{record}'),
+            // 'edit' => Pages\EditControl::route('/{record}/edit'),
         ];
     }
 }

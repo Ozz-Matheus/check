@@ -161,7 +161,40 @@ class StatusSeeder extends Seeder
             'icon' => 'heroicon-o-check-circle',
             'protected' => true,
         ]);
-        // --------- Context: audit ---------
+        // --------- Context: control ---------
+        Status::factory()->create([
+            'context' => 'control',
+            'title' => 'unrated',
+            'label' => 'Sin calificar',
+            'color' => 'gray',
+            'icon' => 'heroicon-o-pencil-square',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'control',
+            'title' => 'pass',
+            'label' => 'Pasa',
+            'color' => 'success',
+            'icon' => 'heroicon-o-check-circle',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'control',
+            'title' => 'fail',
+            'label' => 'No pasa',
+            'color' => 'danger',
+            'icon' => 'heroicon-o-x-circle',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'control',
+            'title' => 'partial',
+            'label' => 'Parcial',
+            'color' => 'warning',
+            'icon' => 'heroicon-o-exclamation-triangle',
+            'protected' => true,
+        ]);
+        // --------- Context: finding ---------
         Status::factory()->create([
             'context' => 'finding',
             'title' => 'open',

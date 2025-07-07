@@ -14,10 +14,7 @@ class Audit extends Model
         'objective',
         'scope',
         'involved_process_id',
-        // risks (pivot)
-        // controls (pivot)
         'leader_auditor_id',
-        // asigned auditors (pivot)
         'status_id',
         'audit_criteria_id',
     ];
@@ -34,17 +31,12 @@ class Audit extends Model
 
     public function controls()
     {
-        return $this->belongsToMany(Control::class, 'audit_has_controls');
+        return $this->hasMany(Control::class);
     }
 
     public function leaderAuditor()
     {
         return $this->belongsTo(User::class, 'leader_auditor_id');
-    }
-
-    public function assignedAuditors()
-    {
-        return $this->belongsToMany(User::class, 'audit_has_users');
     }
 
     public function status()
@@ -55,10 +47,5 @@ class Audit extends Model
     public function auditCriteria()
     {
         return $this->belongsTo(AuditCriteria::class, 'audit_criteria_id');
-    }
-
-    public function findings()
-    {
-        return $this->hasMany(Finding::class);
     }
 }
