@@ -52,7 +52,7 @@ class UserTaskList extends BaseWidget implements HasTable
                 ->color('primary')
                 ->icon('heroicon-o-eye')
                 ->url(fn ($record) => ActionResource::getUrl('action_tasks.view', [
-                    'action_id' => $record->action_id,
+                    'action' => $record->action_id,
                     'record' => $record->id,
                 ])),
         ];

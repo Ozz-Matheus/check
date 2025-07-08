@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\AuditResource\RelationManagers;
+// namespace App\Filament\Resources\AuditResource\RelationManagers;
+
+namespace App\Filament\Resources\ControlResource\RelationManagers;
 
 use App\Filament\Resources\AuditResource;
 use Filament\Resources\RelationManagers\RelationManager;

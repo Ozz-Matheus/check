@@ -59,7 +59,7 @@ class ActionTasksRelationManager extends RelationManager
                         fn () => app(TaskService::class)->canCreateTask($this->getOwnerRecord()->responsible_by_id, $this->getOwnerRecord()->status_id)
                     )
                     ->url(fn () => ActionResource::getUrl('action_tasks.create', [
-                        'action_id' => $this->getOwnerRecord()->id,
+                        'action' => $this->getOwnerRecord()->id,
                     ])),
             ])
             ->actions([
@@ -68,7 +68,7 @@ class ActionTasksRelationManager extends RelationManager
                     ->color('primary')
                     ->icon('heroicon-o-eye')
                     ->url(fn ($record) => ActionResource::getUrl('action_tasks.view', [
-                        'action_id' => $this->getOwnerRecord()->id,
+                        'action' => $this->getOwnerRecord()->id,
                         'record' => $record->id,
                     ])),
             ]);

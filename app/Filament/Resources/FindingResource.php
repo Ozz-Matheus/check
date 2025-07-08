@@ -31,7 +31,7 @@ class FindingResource extends Resource
                             ->relationship(
                                 'subProcess',
                                 'title',
-                                modifyQueryUsing: fn ($query, $livewire) => $query->where('process_id', $livewire->ControlModel->audit->involved_process_id)
+                                modifyQueryUsing: fn ($query, $livewire) => $query->where('process_id', $livewire->controlModel->audit->involved_process_id)
                             )
                             ->native(false)
                             ->required(),

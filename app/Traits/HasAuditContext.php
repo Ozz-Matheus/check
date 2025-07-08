@@ -8,12 +8,12 @@ trait HasAuditContext
 {
     public ?int $audit_id = null;
 
-    public ?Audit $AuditModel = null;
+    public ?Audit $auditModel = null;
 
     public function loadAuditContext(): void
     {
         $this->audit_id = request()->route('audit');
 
-        $this->AuditModel = Audit::findOrFail($this->audit_id);
+        $this->auditModel = Audit::findOrFail($this->audit_id);
     }
 }

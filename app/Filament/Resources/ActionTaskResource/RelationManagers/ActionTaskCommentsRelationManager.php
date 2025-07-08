@@ -61,7 +61,7 @@ class ActionTaskCommentsRelationManager extends RelationManager
                         app(TaskService::class)->createComment($this->getOwnerRecord(), $data);
 
                         redirect(ActionResource::getUrl('action_tasks.view', [
-                            'action_id' => $this->getOwnerRecord()->action_id,
+                            'action' => $this->getOwnerRecord()->action_id,
                             'record' => $this->getOwnerRecord()->id,
 
                         ]));

@@ -50,7 +50,7 @@ class ActionTaskFilesRelationManager extends RelationManager
                     ->action(function (array $data) {
                         app(TaskService::class)->createFiles($this->getOwnerRecord(), $data);
                         redirect(ActionResource::getUrl('action_tasks.view', [
-                            'action_id' => $this->getOwnerRecord()->action_id,
+                            'action' => $this->getOwnerRecord()->action_id,
                             'record' => $this->getOwnerRecord()->id,
                         ]));
                     }),

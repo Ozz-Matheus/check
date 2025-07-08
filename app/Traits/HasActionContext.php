@@ -8,12 +8,12 @@ trait HasActionContext
 {
     public ?int $action_id = null;
 
-    public ?Action $ActionModel = null;
+    public ?Action $actionModel = null;
 
     public function loadActionContext(): void
     {
-        $this->action_id = request()->route('action_id');
+        $this->action_id = request()->route('action');
 
-        $this->ActionModel = Action::findOrFail($this->action_id);
+        $this->actionModel = Action::findOrFail($this->action_id);
     }
 }

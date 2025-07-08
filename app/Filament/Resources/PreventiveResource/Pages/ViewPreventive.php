@@ -25,7 +25,7 @@ class ViewPreventive extends ViewRecord
                 ->color('primary')
                 ->authorize(fn ($record) => app(ActionService::class)->canViewActionEnding($record->status_id))
                 ->url(fn ($record) => ActionResource::getUrl('action_endings.view', [
-                    'action_id' => $record->id,
+                    'action' => $record->id,
                     'record' => $record->ending->id,
                 ])),
 
@@ -38,7 +38,7 @@ class ViewPreventive extends ViewRecord
 
                 )
                 ->url(fn ($record) => ActionResource::getUrl('action_endings.create', [
-                    'action_id' => $record->id,
+                    'action' => $record->id,
                 ])),
 
             Action::make('cancel')

@@ -39,7 +39,8 @@ class ActionTaskResource extends Resource
                                 : [])
                             ->preload()
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->visible(fn (string $context) => $context === 'create'),
                         Forms\Components\DatePicker::make('start_date')
                             ->minDate(now()->format('Y-m-d'))
                             ->maxDate(fn ($livewire) => method_exists($livewire, 'getMaxStartDate') ? $livewire->getMaxStartDate() : null)

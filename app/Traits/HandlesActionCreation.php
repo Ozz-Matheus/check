@@ -14,19 +14,21 @@ trait HandlesActionCreation
 
     public ?int $finding_id = null;
 
-    public ?Finding $FindingModel = null;
+    public ?Finding $findingModel = null;
 
     public function mount(): void
     {
+        parent::mount();
+
         $this->audit_id = request()->route('audit');
         $this->control_id = request()->route('control');
         $this->finding_id = request()->route('finding');
 
         if ($this->finding_id) {
-            $this->FindingModel = Finding::findOrFail($this->finding_id);
+
+            $this->findingModel = Finding::findOrFail($this->finding_id);
         }
 
-        parent::mount();
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
@@ -34,8 +36,8 @@ trait HandlesActionCreation
         // dd($data);
         $data['finding_id'] = $this->finding_id ?? null;
         if ($this->finding_id) {
-            $data['process_id'] = $this->FindingModel->control->audit->involved_process_id;
-            $data['sub_process_id'] = $this->FindingModel->audited_sub_process_id;
+            $data['process_id'] = $this->findingModel->control->audit->involved_process_id;
+            $data['sub_process_id'] = $this->findingModel->audited_sub_process_id;
         }
         $data['registered_by_id'] = auth()->id();
         $data['status_id'] = Status::byContextAndTitle('action', 'proposal')?->id;

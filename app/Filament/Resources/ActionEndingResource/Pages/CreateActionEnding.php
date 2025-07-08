@@ -42,15 +42,15 @@ class CreateActionEnding extends CreateRecord
 
         }
 
-        app(ActionStatusService::class)->statusChangesInActions($this->ActionModel, 'finished');
-        app(ActionStatusService::class)->closingDateInActions($this->ActionModel);
+        app(ActionStatusService::class)->statusChangesInActions($this->actionModel, 'finished');
+        app(ActionStatusService::class)->closingDateInActions($this->actionModel);
 
         return $ending;
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->ActionModel->getFilamentUrl();
+        return $this->actionModel->getFilamentUrl();
     }
 
     public static function canCreateAnother(): bool
@@ -60,13 +60,13 @@ class CreateActionEnding extends CreateRecord
 
     public function getSubheading(): ?string
     {
-        return $this->ActionModel->title;
+        return $this->actionModel->title;
     }
 
     public function getBreadcrumbs(): array
     {
         return [
-            $this->ActionModel->getFilamentUrl() => ucfirst($this->ActionModel->type->name),
+            $this->actionModel->getFilamentUrl() => ucfirst($this->actionModel->type->name),
             false => 'Completion',
         ];
     }

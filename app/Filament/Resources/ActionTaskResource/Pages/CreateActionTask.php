@@ -39,14 +39,14 @@ class CreateActionTask extends CreateRecord
 
         $task->responsibleBy?->notify(new TaskAssignedNotice($task));
 
-        app(ActionStatusService::class)->statusChangesInActions($this->ActionModel, 'in_execution');
+        app(ActionStatusService::class)->statusChangesInActions($this->actionModel, 'in_execution');
 
         return $task;
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->ActionModel->getFilamentUrl();
+        return $this->actionModel->getFilamentUrl();
     }
 
     public static function canCreateAnother(): bool
@@ -56,13 +56,13 @@ class CreateActionTask extends CreateRecord
 
     public function getSubheading(): ?string
     {
-        return $this->ActionModel->title;
+        return $this->actionModel->title;
     }
 
     public function getBreadcrumbs(): array
     {
         return [
-            $this->ActionModel->getFilamentUrl() => ucfirst($this->ActionModel->type->name),
+            $this->actionModel->getFilamentUrl() => ucfirst($this->actionModel->type->name),
             false => 'Task',
         ];
     }
@@ -82,6 +82,6 @@ class CreateActionTask extends CreateRecord
 
     public function getMaxStartDate(): ?string
     {
-        return $this->ActionModel?->deadline?->toDateString();
+        return $this->actionModel?->deadline?->toDateString();
     }
 }

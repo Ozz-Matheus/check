@@ -36,7 +36,7 @@ class CreateFinding extends CreateRecord
             'status_id' => Status::byContextAndTitle('finding', 'open')?->id,
         ]);
 
-        // app(AuditStatusService::class)->statusChangesInAudits($this->AuditModel, 'in_execution');
+        // app(AuditStatusService::class)->statusChangesInAudits($this->auditModel, 'in_execution');
 
         return $finding;
     }
@@ -44,7 +44,7 @@ class CreateFinding extends CreateRecord
     protected function getRedirectUrl(): string
     {
         return AuditResource::getUrl('audit_control.view', [
-            'audit' => $this->ControlModel->audit_id,
+            'audit' => $this->controlModel->audit_id,
             'record' => $this->control_id]);
     }
 
@@ -55,14 +55,14 @@ class CreateFinding extends CreateRecord
 
     /* public function getSubheading(): ?string
     {
-        return $this->AuditModel?->audit_code;
+        return $this->auditModel?->audit_code;
     } */
 
     /* public function getBreadcrumbs(): array
     {
         return [
             AuditResource::getUrl('view', ['record' => $this->control_id]) => 'Audit',
-            AuditResource::getUrl('audit_finding.create', ['auditId' => $this->control_id]) => 'Finding',
+            AuditResource::getUrl('audit_finding.create', ['audit' => $this->control_id]) => 'Finding',
             false => 'Create',
         ];
     } */

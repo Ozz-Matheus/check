@@ -90,7 +90,7 @@ class ImproveResource extends Resource
                                     if (isset($livewire->finding_id)) {
                                         return $query->whereHas(
                                             'subProcesses',
-                                            fn ($q) => $q->where('sub_process_id', $livewire->FindingModel->audited_sub_process_id)
+                                            fn ($q) => $q->where('sub_process_id', $livewire->findingModel->audited_sub_process_id)
                                         );
                                     }
 

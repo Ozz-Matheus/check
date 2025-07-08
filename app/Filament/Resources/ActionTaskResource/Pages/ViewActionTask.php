@@ -46,13 +46,13 @@ class ViewActionTask extends ViewRecord
 
     public function getSubheading(): ?string
     {
-        return $this->ActionModel->title;
+        return $this->actionModel->title;
     }
 
     public function getBreadcrumbs(): array
     {
         return [
-            $this->ActionModel->getFilamentUrl() => ucfirst($this->ActionModel->type->name),
+            $this->actionModel->getFilamentUrl() => ucfirst($this->actionModel->type->name),
             false => 'View',
         ];
     }

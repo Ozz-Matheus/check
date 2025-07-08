@@ -4,7 +4,7 @@ namespace App\Filament\Resources\ControlResource\Pages;
 
 use App\Filament\Resources\AuditResource;
 use App\Filament\Resources\ControlResource;
-use App\Models\Audit;
+use App\Traits\HasAuditContext;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -12,15 +12,12 @@ class ViewControl extends ViewRecord
 {
     protected static string $resource = ControlResource::class;
 
-    public ?int $audit_id = null;
-
-    public ?Audit $auditModel = null;
+    use HasAuditContext;
 
     public function mount(string|int $record): void
     {
         parent::mount($record);
-        $this->audit_id = request()->route('audit');
-        $this->auditModel = Audit::findOrFail($this->audit_id);
+        $this->loadAuditContext();
     }
 
     protected function getHeaderActions(): array
@@ -33,7 +30,7 @@ class ViewControl extends ViewRecord
                 ->color('primary')
             // ->authorize(fn($record) => app(ActionService::class)->canViewActionEnding($record->status_id))
             /* ->url(fn($record) => ActionResource::getUrl('action_endings.view', [
-                    'action_id' => $record->id,
+                    'action' => $record->id,
                     'record' => $record->ending->id,
                 ])) */,
             Action::make('back')

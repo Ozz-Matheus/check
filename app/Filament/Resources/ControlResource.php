@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\AuditResource\RelationManagers\FindingsRelationManager;
+// use App\Filament\Resources\AuditResource\RelationManagers\FindingsRelationManager;
 use App\Filament\Resources\ControlResource\Pages;
 use App\Filament\Resources\ControlResource\RelationManagers\ControlFilesRelationManager;
+use App\Filament\Resources\ControlResource\RelationManagers\FindingsRelationManager;
 use App\Models\Control;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -27,7 +28,7 @@ class ControlResource extends Resource
                             ->relationship(
                                 'controlType',
                                 'title',
-                                modifyQueryUsing: fn ($livewire, $query) => $query->whereIn('risk_id', $livewire->AuditModel->risks->pluck('id') ?? [])
+                                modifyQueryUsing: fn ($livewire, $query) => $query->whereIn('risk_id', $livewire->auditModel->risks->pluck('id') ?? [])
                             )
                             ->searchable()
                             ->preload()

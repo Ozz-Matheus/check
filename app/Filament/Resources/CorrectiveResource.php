@@ -94,7 +94,7 @@ class CorrectiveResource extends Resource
                                     if (isset($livewire->finding_id)) {
                                         return $query->whereHas(
                                             'subProcesses',
-                                            fn ($q) => $q->where('sub_process_id', $livewire->FindingModel->audited_sub_process_id)
+                                            fn ($q) => $q->where('sub_process_id', $livewire->findingModel->audited_sub_process_id)
                                         );
                                     }
 
@@ -106,7 +106,7 @@ class CorrectiveResource extends Resource
                             )
                             /* ->options(
                                 fn(Get $get, $livewire) => isset($livewire->finding_id)
-                                    ? User::whereHas('subProcesses', fn($query) => $query->where('sub_process_id', $livewire->FindingModel->audited_sub_process_id))
+                                    ? User::whereHas('subProcesses', fn($query) => $query->where('sub_process_id', $livewire->findingModel->audited_sub_process_id))
                                     ->pluck('name', 'id')
                                     ->toArray()
                                     : User::whereHas('subProcesses', fn($query) => $query->where('sub_process_id', $get('sub_process_id')))
