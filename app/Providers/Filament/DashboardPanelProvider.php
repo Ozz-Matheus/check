@@ -25,6 +25,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use TomatoPHP\FilamentTenancy\FilamentTenancyPlugin;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -79,6 +80,7 @@ class DashboardPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->plugins([
+                FilamentTenancyPlugin::make()->panel('app'),
                 FilamentShieldPlugin::make(),
             ])
             ->authMiddleware([

@@ -13,11 +13,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasPanelShield, HasRoles, HasUserLogic, Notifiable;
+    use BelongsToTenant, HasFactory, HasPanelShield, HasRoles, HasUserLogic, Notifiable;
 
     /**
      * The attributes that are mass assignable.
