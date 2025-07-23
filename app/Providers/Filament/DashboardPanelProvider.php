@@ -62,8 +62,8 @@ class DashboardPanelProvider extends PanelProvider
             ->widgets([
                 // Widgets\AccountWidget::class,
                 DocStatsOverview::class,
-                ActionStatsOverview::class,
                 DocStatusesChart::class,
+                ActionStatsOverview::class,
                 ActionStatusChart::class,
                 UserTaskList::class,
             ])

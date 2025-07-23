@@ -8,18 +8,21 @@ use Filament\Widgets\ChartWidget;
 
 class ActionStatusChart extends ChartWidget
 {
-    protected static ?string $heading = 'Action Status Chart';
+    protected static ?string $heading = null;
 
-    protected static ?int $sort = 4; // orden en el dashboard
+    public function __construct()
+    {
+        self::$heading = __('action_statuses_chart');
+    }
 
     public ?string $filter = 'improve';
 
     protected function getFilters(): ?array
     {
         return [
-            'improve' => 'Improve',
-            'preventive' => 'Preventive',
-            'corrective' => 'Corrective',
+            'improve' => __('Improve'),
+            'preventive' => __('Preventive'),
+            'corrective' => __('Corrective'),
         ];
     }
 

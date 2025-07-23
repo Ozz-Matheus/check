@@ -30,6 +30,7 @@ class ActionAnalysisCauseResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label(__('Title'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -40,15 +41,19 @@ class ActionAnalysisCauseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label(__('Created at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label(__('Updated at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //

@@ -29,7 +29,7 @@ class CreateFinding extends CreateRecord
             'control_id' => $this->control_id,
             'title' => $data['title'],
             'audited_sub_process_id' => $data['audited_sub_process_id'],
-            'type_of_finding' => $data['type_of_finding'],
+            'finding_type' => $data['finding_type'],
             'description' => $data['description'],
             'criteria_not_met' => $data['criteria_not_met'],
             'responsible_auditor_id' => $data['responsible_auditor_id'],

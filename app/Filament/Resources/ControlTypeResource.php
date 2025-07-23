@@ -40,13 +40,16 @@ class ControlTypeResource extends Resource
                 Tables\Columns\TextColumn::make('risk.title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label(__('Created at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label(__('Updated at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //

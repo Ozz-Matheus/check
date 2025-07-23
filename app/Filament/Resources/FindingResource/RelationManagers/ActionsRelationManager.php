@@ -6,10 +6,18 @@ use App\Filament\Resources\AuditResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ActionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'actions';
+
+    protected static ?string $title = null;
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Actions');
+    }
 
     public function table(Table $table): Table
     {
@@ -17,7 +25,7 @@ class ActionsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('type.label')
-                    ->label(__('Type'))
+                    ->label(__('Action type'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
@@ -37,7 +45,7 @@ class ActionsRelationManager extends RelationManager
                     ->label(__('Registered by'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->label(__('Responsible by'))
+                    ->label(__('Responsible'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
@@ -55,14 +63,15 @@ class ActionsRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->actions([
                 Tables\Actions\Action::make('view')
@@ -74,7 +83,7 @@ class ActionsRelationManager extends RelationManager
             ->defaultSort('id', 'desc')
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label('New finding')
+                    ->label(__('New action'))
                     ->button()
                     ->color('primary')
                     ->url(function () {

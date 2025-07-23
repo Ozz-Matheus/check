@@ -14,7 +14,7 @@ class ViewAudit extends ViewRecord
     {
         return [
             Action::make('back')
-                ->label('Return')
+                ->label(__('Return'))
                 ->url(fn (): string => AuditResource::getUrl('index'))
                 ->button()
                 ->color('gray'),

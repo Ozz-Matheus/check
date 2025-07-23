@@ -38,7 +38,7 @@ class VersionStatusService
         $changeReason = Str::limit(strip_tags(request()->query('change_reason', $reasonMessage)), 255);
         $extra = [
             'decided_by_id' => auth()->id(),
-            'decision_at' => now(),
+            'decided_at' => now(),
         ];
 
         $this->updateVersionStatus($docVersion, $status, $changeReason, $extra);

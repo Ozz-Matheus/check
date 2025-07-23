@@ -30,16 +30,16 @@ class DocEndingResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
-                    ->label('Internal title')
+                    ->label(__('Internal title'))
                     ->required()
-                    ->helperText('This is the Final Disposition identifier.')
+                    ->helperText(__('This is the Final Disposition identifier.'))
                     ->columnSpanFull(),
 
                 Forms\Components\TextInput::make('label')
-                    ->label('Display name')
+                    ->label(__('Display name'))
                     ->required()
                     ->maxLength(255)
-                    ->placeholder(fn ($record) => $record?->title ?? 'Final Disposition title')
+                    ->placeholder(fn ($record) => $record?->title ?? __('Final Disposition title'))
                     ->columnSpanFull(),
             ]);
     }
@@ -49,15 +49,17 @@ class DocEndingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('label')
-                    ->label('Name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label(__('Created at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label(__('Updated at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

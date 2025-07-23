@@ -18,6 +18,6 @@ trait HasStandardFileUpload
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ])
             ->maxSize(10240)
-            ->helperText('Allowed types: PDF, DOC, DOCX, XLS, XLSX (max. 10MB)');
+            ->helperText(__('Allowed types: PDF, DOC, DOCX, XLS, XLSX (max. 10MB)'));
     }
 }

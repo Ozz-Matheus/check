@@ -23,15 +23,35 @@ class DocResource extends Resource
 {
     protected static ?string $model = Doc::class;
 
-    protected static ?string $modelLabel = 'Document';
+    protected static ?string $modelLabel = null;
 
-    protected static ?string $pluralModelLabel = 'Documents';
+    protected static ?string $pluralModelLabel = null;
 
-    protected static ?string $navigationLabel = 'Documents';
+    protected static ?string $navigationLabel = null;
 
-    protected static ?string $navigationGroup = 'Documents';
+    protected static ?string $navigationGroup = null;
 
-    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    public static function getModelLabel(): string
+    {
+        return __('Document');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Documents');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Documents');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Documents');
+    }
+
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 1;
 
@@ -131,9 +151,9 @@ class DocResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('expiration')
-                    ->label(__('Expiration state'))
+                    ->label(__('Expiration status'))
                     ->badge()
-                    ->formatStateUsing(fn ($state) => (bool) $state ? 'Expired' : 'Current')
+                    ->formatStateUsing(fn ($state) => (bool) $state ? __('Expired') : __('Current'))
                     ->color(fn ($state) => (bool) $state ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
@@ -173,10 +193,10 @@ class DocResource extends Resource
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('expiration')
-                    ->label(__('Expiration state'))
+                    ->label(__('Expiration status'))
                     ->options([
-                        1 => 'Expired',
-                        0 => 'Current',
+                        1 => __('Expired'),
+                        0 => __('Current'),
                     ])
                     ->searchable()
                     ->preload(),

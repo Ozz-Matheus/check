@@ -34,7 +34,7 @@ class ViewControl extends ViewRecord
                     'record' => $record->ending->id,
                 ])) */,
             Action::make('back')
-                ->label('Return')
+                ->label(__('Return'))
                 ->url(fn (): string => AuditResource::getUrl('view', ['record' => $this->audit_id]))
                 ->button()
                 ->color('gray'),

@@ -28,6 +28,27 @@ class ImproveResource extends Resource
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Improve action');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Improve actions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Improve actions');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('Actions');
@@ -41,17 +62,20 @@ class ImproveResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Action Data')
+                Section::make(__('Action Data'))
                     ->columns(2)
                     ->schema([
                         TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
                         Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Select::make('process_id')
+                            ->label(__('Process'))
                             ->relationship('process', 'title')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('sub_process_id', null);
@@ -63,7 +87,7 @@ class ImproveResource extends Resource
                             ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('sub_process_id')
-                            ->label('Sub Process')
+                            ->label(__('Sub process'))
                             ->options(
                                 fn (Get $get): Collection => SubProcess::query()
                                     ->where('process_id', $get('process_id'))
@@ -76,13 +100,13 @@ class ImproveResource extends Resource
                             ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('action_origin_id')
-                            ->label('Origin')
+                            ->label(__('Origin'))
                             ->relationship('origin', 'title')
                             ->searchable()
                             ->preload()
                             ->required(),
                         Select::make('responsible_by_id')
-                            ->label('Responsible')
+                            ->label(__('Responsible'))
                             ->relationship(
                                 'responsibleBy',
                                 'name',
@@ -105,21 +129,23 @@ class ImproveResource extends Resource
                             ->reactive()
                             ->required(),
                         Textarea::make('expected_impact')
+                            ->label(__('Expected impact'))
                             ->required()
                             ->columnSpanFull(),
                         DatePicker::make('deadline')
+                            ->label(__('Deadline'))
                             ->minDate(now()->format('Y-m-d'))
-                            ->required(),
+                            ->required()
+                            ->native(false),
                         TextInput::make('status_label')
                             ->label(__('Status'))
-                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
+                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? __('Stateless'))
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
                     ]),
 
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -147,7 +173,7 @@ class ImproveResource extends Resource
                     ->label(__('Registered by'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->label(__('Responsible by'))
+                    ->label(__('Responsible'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
@@ -165,14 +191,15 @@ class ImproveResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->defaultSort('id', 'desc')
             ->filters([

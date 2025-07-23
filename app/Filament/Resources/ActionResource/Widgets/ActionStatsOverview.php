@@ -9,8 +9,6 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ActionStatsOverview extends BaseWidget
 {
-    protected static ?int $sort = 3; // orden en el dashboard
-
     protected function getStats(): array
     {
         $totalActions = Action::count('id');

@@ -7,9 +7,11 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/filament/filament/app.css')}}"/>
     <style>
         :root{
-            --primary-600: 217, 119, 6;
-            --primary-500: 245, 158, 11;
-            --primary-700: 180, 83, 9;
+
+            --primary-500: 59, 130, 246;
+            --primary-600: 37, 99, 235;
+            --primary-700: 29, 78, 216;
+
             --gray-50: 250, 250, 250;
             --gray-400: 161, 161, 170;
             --gray-700: 63, 63, 70;

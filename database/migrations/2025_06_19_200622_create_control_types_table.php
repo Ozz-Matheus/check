@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('control_types', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignId('risk_id')->constrained('risks');
+            $table->foreignId('process_risk_id')->constrained('process_risks');
             $table->timestamps();
         });
     }

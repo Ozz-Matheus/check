@@ -24,9 +24,9 @@ class Audit extends Model
         return $this->belongsTo(Process::class, 'involved_process_id');
     }
 
-    public function risks()
+    public function processRisks()
     {
-        return $this->belongsToMany(Risk::class, 'audit_has_risks');
+        return $this->belongsToMany(ProcessRisk::class, 'audit_has_process_risks');
     }
 
     public function controls()

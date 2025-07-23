@@ -29,6 +29,27 @@ class CorrectiveResource extends Resource
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Corrective action');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Corrective actions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Corrective actions');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('Actions');
@@ -42,7 +63,7 @@ class CorrectiveResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Action Data')
+                Section::make(__('Action Data'))
                     ->columns(2)
                     ->schema([
                         TextInput::make('title')
@@ -120,7 +141,8 @@ class CorrectiveResource extends Resource
                         DatePicker::make('detection_date')
                             ->label(__('Detection date'))
                             ->format('Y-m-d')
-                            ->required(),
+                            ->required()
+                            ->native(false),
                         Textarea::make('containment_action')
                             ->label(__('Containment action'))
                             ->columnSpanFull()
@@ -147,10 +169,11 @@ class CorrectiveResource extends Resource
                         DatePicker::make('deadline')
                             ->label(__('Deadline'))
                             ->minDate(now()->format('Y-m-d'))
-                            ->required(),
+                            ->required()
+                            ->native(false),
                         TextInput::make('status_label')
                             ->label(__('Status'))
-                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
+                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? __('Stateless'))
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
@@ -219,14 +242,15 @@ class CorrectiveResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->defaultSort('id', 'desc')
             ->filters([

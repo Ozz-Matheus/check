@@ -14,16 +14,31 @@ class FindingResource extends Resource
 {
     protected static ?string $model = Finding::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Finding');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Findings');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Audit Data'))
+                Forms\Components\Section::make(__('Finding data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->columnSpanFull()
                             ->required(),
                         Forms\Components\Select::make('audited_sub_process_id')
@@ -43,8 +58,8 @@ class FindingResource extends Resource
                                 ?->toArray() ?? [])
                             ->native(false)
                             ->required(), */
-                        Forms\Components\Select::make('type_of_finding')
-                            ->label(__('Type of finding'))
+                        Forms\Components\Select::make('finding_type')
+                            ->label(__('Finding type'))
                             ->options([
                                 'major_nonconformity' => 'No conformidad mayor',
                                 'minor_nonconformity' => 'No conformidad menor',
@@ -54,12 +69,15 @@ class FindingResource extends Resource
                             ->native(false)
                             ->required(),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('criteria_not_met')
+                            ->label(__('Criteria not met'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('responsible_auditor_id')
+                            ->label(__('Responsible auditor'))
                             ->relationship(
                                 'responsibleAuditor',
                                 'name',

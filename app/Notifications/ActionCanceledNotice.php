@@ -39,7 +39,7 @@ class ActionCanceledNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('The Action has canceled'))
+            ->subject(__('The Action has canceled!'))
             ->view('emails.action-canceled', [
                 'user' => $notifiable,
                 'action' => $this->action,

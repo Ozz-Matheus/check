@@ -31,6 +31,27 @@ class PreventiveResource extends Resource
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Preventive action');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Preventive actions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Preventive actions');
+    }
+
     public static function getNavigationGroup(): string
     {
         return __('Actions');
@@ -44,17 +65,20 @@ class PreventiveResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Action Data')
+                Section::make(__('Action Data'))
                     ->columns(2)
                     ->schema([
                         TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
                         Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Select::make('process_id')
+                            ->label(__('Process'))
                             ->relationship('process', 'title')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('sub_process_id', null);
@@ -66,7 +90,7 @@ class PreventiveResource extends Resource
                             ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('sub_process_id')
-                            ->label('Sub Process')
+                            ->label(__('Sub process'))
                             ->options(
                                 fn (Get $get): Collection => SubProcess::query()
                                     ->where('process_id', $get('process_id'))
@@ -79,13 +103,13 @@ class PreventiveResource extends Resource
                             ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
                         Select::make('action_origin_id')
-                            ->label('Origin')
+                            ->label(__('Origin'))
                             ->relationship('origin', 'title')
                             ->searchable()
                             ->preload()
                             ->required(),
                         Select::make('responsible_by_id')
-                            ->label('Responsible')
+                            ->label(__('Responsible'))
                             ->relationship(
                                 'responsibleBy',
                                 'name',
@@ -108,10 +132,12 @@ class PreventiveResource extends Resource
                             ->reactive()
                             ->required(),
                         DatePicker::make('detection_date')
+                            ->label(__('Detection date'))
                             ->format('Y-m-d')
-                            ->required(),
+                            ->required()
+                            ->native(false),
                         Select::make('risk_probability')
-                            ->label(__('Probability'))
+                            ->label(__('Risk probability'))
                             ->options(RiskProbability::options())
                             ->required()
                             ->reactive()
@@ -123,7 +149,7 @@ class PreventiveResource extends Resource
                             ->native(false),
 
                         Select::make('risk_impact')
-                            ->label(__('Impact'))
+                            ->label(__('Risk impact'))
                             ->options(RiskImpact::options())
                             ->required()
                             ->reactive()
@@ -139,16 +165,20 @@ class PreventiveResource extends Resource
                             ->disabled()
                             ->dehydrated(true),
                         Textarea::make('prevention_action')
+                            ->label(__('Prevention action'))
                             ->required(),
                         Textarea::make('effectiveness_indicator')
+                            ->label(__('Effectiveness indicator'))
                             ->required(),
-
                         Textarea::make('expected_impact')
+                            ->label(__('Expected impact'))
                             ->required()
                             ->columnSpanFull(),
                         DatePicker::make('deadline')
+                            ->label(__('Deadline'))
                             ->minDate(now()->format('Y-m-d'))
-                            ->required(),
+                            ->required()
+                            ->native(false),
                         TextInput::make('status_label')
                             ->label(__('Status'))
                             ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
@@ -184,7 +214,7 @@ class PreventiveResource extends Resource
                     ->label(__('Registered by'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->label(__('Responsible by'))
+                    ->label(__('Responsible'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
@@ -218,14 +248,15 @@ class PreventiveResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Updated_at'))
-                    ->dateTime()
+                    ->label(__('Updated at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->defaultSort('id', 'desc')
             ->filters([

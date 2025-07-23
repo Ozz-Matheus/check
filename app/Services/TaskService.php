@@ -75,7 +75,7 @@ class TaskService
         $this->updateTaskStatus($actionTask);
         $this->assignActualStartDate($actionTask);
 
-        $this->taskNotification('Comment saved successfully');
+        $this->taskNotification(__('Comment saved successfully'));
     }
 
     public function createFiles(ActionTask $actionTask, array $data): void
@@ -97,7 +97,7 @@ class TaskService
         $this->updateTaskStatus($actionTask);
         $this->assignActualStartDate($actionTask);
 
-        $this->taskNotification('Support files uploaded successfully');
+        $this->taskNotification(__('Support files uploaded successfully'));
     }
 
     public function closeTask(ActionTask $actionTask): bool

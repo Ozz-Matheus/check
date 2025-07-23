@@ -1,17 +1,23 @@
 <?php
 
-// namespace App\Filament\Resources\AuditResource\RelationManagers;
-
 namespace App\Filament\Resources\ControlResource\RelationManagers;
 
 use App\Filament\Resources\AuditResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class FindingsRelationManager extends RelationManager
 {
     protected static string $relationship = 'findings';
+
+    protected static ?string $title = null;
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Findings');
+    }
 
     public function table(Table $table): Table
     {
@@ -24,14 +30,14 @@ class FindingsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('subProcess.title')
                     ->label(__('Audited sub process'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type_of_finding')
-                    ->label('Tipo de hallazgo')
+                Tables\Columns\TextColumn::make('finding_type')
+                    ->label(__('Finding type'))
                     ->formatStateUsing(function ($state) {
                         return match ($state) {
-                            'major_nonconformity' => 'No conformidad mayor',
-                            'minor_nonconformity' => 'No conformidad menor',
-                            'observation' => 'Observación',
-                            'opportunity_for_improvement' => 'Oportunidad de mejora',
+                            'major_nonconformity' => __('Major nonconformity'),
+                            'minor_nonconformity' => __('Minor nonconformity'),
+                            'observation' => __('Observation'),
+                            'opportunity_for_improvement' => __('Opportunity for improvement'),
                             default => $state,
                         };
                     })
@@ -47,7 +53,7 @@ class FindingsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label('New finding')
+                    ->label(__('New finding'))
                     ->button()
                     ->color('primary')
                     ->authorize(
@@ -60,7 +66,7 @@ class FindingsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\Action::make('follow-up')
-                    ->label('Follow-up')
+                    ->label(__('Follow-up'))
                     ->color('primary')
                     ->icon('heroicon-o-eye')
                     ->authorize(

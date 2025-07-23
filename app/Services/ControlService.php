@@ -27,7 +27,7 @@ class ControlService
             $control->files()->create($fileMetadata);
         }
 
-        $this->taskNotification('Support files uploaded successfully');
+        $this->taskNotification(__('Support files uploaded successfully'));
     }
 
     // Métodos auxiliares privados.

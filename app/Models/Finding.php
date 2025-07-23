@@ -11,7 +11,7 @@ class Finding extends Model
         'control_id',
         'title',
         'audited_sub_process_id',
-        'type_of_finding',
+        'finding_type',
         'description',
         'criteria_not_met',
         'responsible_auditor_id',
@@ -51,7 +51,7 @@ class Finding extends Model
 
     public function getMappedActionType(): string
     {
-        return match ($this->type_of_finding) {
+        return match ($this->finding_type) {
             'major_nonconformity', 'minor_nonconformity' => 'corrective',
             'observation' => 'preventive',
             'opportunity_for_improvement' => 'improve',

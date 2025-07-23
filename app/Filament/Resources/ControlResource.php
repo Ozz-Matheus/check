@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-// use App\Filament\Resources\AuditResource\RelationManagers\FindingsRelationManager;
 use App\Filament\Resources\ControlResource\Pages;
 use App\Filament\Resources\ControlResource\RelationManagers\ControlFilesRelationManager;
 use App\Filament\Resources\ControlResource\RelationManagers\FindingsRelationManager;
@@ -15,6 +14,20 @@ class ControlResource extends Resource
 {
     protected static ?string $model = Control::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Control');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Controls');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -25,18 +38,21 @@ class ControlResource extends Resource
                     ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('control_type_id')
+                            ->label(__('Control type'))
                             ->relationship(
                                 'controlType',
                                 'title',
-                                modifyQueryUsing: fn ($livewire, $query) => $query->whereIn('risk_id', $livewire->auditModel->risks->pluck('id') ?? [])
+                                modifyQueryUsing: fn ($livewire, $query) => $query->whereIn('process_risk_id', $livewire->auditModel->processRisks->pluck('id') ?? [])
                             )
                             ->searchable()
                             ->preload()
                             ->required(),
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('comment')
+                            ->label(__('Comment'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('status_id')

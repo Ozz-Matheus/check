@@ -26,7 +26,7 @@ class ViewActionTask extends ViewRecord
         return [
 
             FilamentAction::make('finish_task')
-                ->label('End task')
+                ->label(__('End task'))
                 ->button()
                 ->color('success')
                 ->authorize(fn ($record) => app(TaskService::class)->canCloseTask($record))
@@ -36,7 +36,7 @@ class ViewActionTask extends ViewRecord
                 }),
 
             FilamentAction::make('back')
-                ->label('Return')
+                ->label(__('Return'))
                 ->url(fn ($record): string => $record->action->getFilamentUrl())
                 ->button()
                 ->color('gray'),

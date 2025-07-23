@@ -10,8 +10,6 @@ use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 
 class ActionEndingResource extends Resource
 {
@@ -19,23 +17,32 @@ class ActionEndingResource extends Resource
 
     protected static ?string $model = ActionEnding::class;
 
+    protected static ?string $modelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Action ending');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make('Ending Data')
-                    ->description('Enter the completion data and upload your supports')
+                Section::make(__('Ending data'))
+                    ->description(__('Enter the completion data and upload your supports'))
                     ->schema([
                         Forms\Components\Textarea::make('real_impact')
+                            ->label(__('Real impact'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('result')
+                            ->label(__('Result'))
                             ->required()
                             ->columnSpanFull(),
                         static::baseFileUpload('path')
-                            ->label('Support files')
+                            ->label(__('Support files'))
                             ->directory('actions/support/files')
                             ->multiple()
                             ->maxParallelUploads(1)
@@ -45,35 +52,6 @@ class ActionEndingResource extends Resource
                     ->columns(2),
             ]);
     }
-
-    // public static function table(Table $table): Table
-    // {
-    //     return $table
-    //         ->columns([
-    //             Tables\Columns\TextColumn::make('action_id')
-    //                 ->numeric()
-    //                 ->sortable(),
-    //             Tables\Columns\TextColumn::make('created_at')
-    //                 ->dateTime()
-    //                 ->sortable()
-    //                 ->toggleable(isToggledHiddenByDefault: true),
-    //             Tables\Columns\TextColumn::make('updated_at')
-    //                 ->dateTime()
-    //                 ->sortable()
-    //                 ->toggleable(isToggledHiddenByDefault: true),
-    //         ])
-    //         ->filters([
-    //             //
-    //         ])
-    //         ->actions([
-    //             Tables\Actions\EditAction::make(),
-    //         ])
-    //         ->bulkActions([
-    //             Tables\Actions\BulkActionGroup::make([
-    //                 Tables\Actions\DeleteBulkAction::make(),
-    //             ]),
-    //         ]);
-    // }
 
     public static function getRelations(): array
     {

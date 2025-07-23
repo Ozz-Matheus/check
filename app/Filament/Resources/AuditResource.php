@@ -15,7 +15,28 @@ class AuditResource extends Resource
 {
     protected static ?string $model = Audit::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Audit');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Audits');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Audits');
+    }
 
     public static function getNavigationGroup(): string
     {
@@ -34,38 +55,47 @@ class AuditResource extends Resource
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('audit_code')
+                            ->label(__('Audit code'))
                             ->required()
                             ->columnSpanFull()
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('start_date')
+                            ->label(__('Start date'))
                             ->minDate(now()->format('Y-m-d'))
                             ->afterStateUpdated(function (Forms\Set $set) {
                                 $set('end_date', null);
                             })
                             ->reactive()
-                            ->required(),
+                            ->required()
+                            ->native(false),
                         Forms\Components\DatePicker::make('end_date')
+                            ->label(__('End date'))
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))
                             ->required()
+                            ->native(false)
                             ->disabled(fn (Forms\Get $get) => $get('start_date') === null),
                         Forms\Components\Textarea::make('objective')
+                            ->label(__('Objective'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('scope')
+                            ->label(__('Scope'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('involved_process_id')
+                            ->label(__('Involved process'))
                             ->relationship('involvedProcess', 'title')
                             ->required()
                             ->preload()
                             ->afterStateUpdated(function (Forms\Set $set) {
-                                $set('risks', null);
+                                $set('process_risks', null);
                             })
                             ->reactive()
                             ->searchable(),
-                        Forms\Components\Select::make('risks')
+                        Forms\Components\Select::make('process_risks')
+                            ->label(__('Process risks'))
                             ->relationship(
-                                'risks',
+                                'processRisks',
                                 'title',
                                 modifyQueryUsing: fn (Forms\Get $get, $query) => $query->where('process_id', $get('involved_process_id'))
                             )
@@ -86,6 +116,7 @@ class AuditResource extends Resource
                             ->preload()
                             ->searchable(),
                         Forms\Components\Select::make('audit_criteria_id')
+                            ->label(__('Audit criteria'))
                             ->relationship('auditCriteria', 'title')
                             ->required()
                             ->preload()
@@ -105,33 +136,43 @@ class AuditResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('audit_code')
+                    ->label(__('Audit code'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('start_date')
+                    ->label(__('Start date'))
                     ->date()
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_date')
+                    ->label(__('End date'))
                     ->date()
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('involvedProcess.title')
+                    ->label(__('Involved process'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('leaderAuditor.name')
+                    ->label(__('Leader auditor'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status.label')
+                    ->label(__('Status'))
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
                 Tables\Columns\TextColumn::make('auditCriteria.title')
+                    ->label(__('Audit criteria'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->searchable()
+                    ->label(__('Created at'))
+                    ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->searchable()
+                    ->label(__('Updated at'))
+                    ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //

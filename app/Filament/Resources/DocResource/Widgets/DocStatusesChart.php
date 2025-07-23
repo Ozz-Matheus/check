@@ -7,9 +7,12 @@ use Filament\Widgets\ChartWidget;
 
 class DocStatusesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Doc Statuses Chart';
+    protected static ?string $heading = null;
 
-    protected static ?int $sort = 2; // orden en el dashboard
+    public function __construct()
+    {
+        self::$heading = __('doc_statuses_chart');
+    }
 
     protected function getData(): array
     {

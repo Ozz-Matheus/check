@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('control_id')->constrained('controls');
             $table->string('title');
             $table->foreignId('audited_sub_process_id')->constrained('sub_processes');
-            $table->enum('type_of_finding', ['major_nonconformity', 'minor_nonconformity', 'observation', 'opportunity_for_improvement']);
+            $table->enum('finding_type', ['major_nonconformity', 'minor_nonconformity', 'observation', 'opportunity_for_improvement']);
             $table->text('description');
             $table->text('criteria_not_met');
             $table->foreignId('responsible_auditor_id')->constrained('users');

@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Risk extends Model
+class ProcessRisk extends Model
 {
-    /** @use HasFactory<\Database\Factories\RiskFactory> */
+    /** @use HasFactory<\Database\Factories\ProcessRiskFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -22,6 +22,6 @@ class Risk extends Model
 
     public function audits()
     {
-        return $this->belongsToMany(Audit::class, 'audit_has_risks');
+        return $this->belongsToMany(Audit::class, 'audit_has_process_risks');
     }
 }

@@ -20,7 +20,7 @@ class ViewImprove extends ViewRecord
         return [
 
             Action::make('view')
-                ->label('View action completion')
+                ->label(__('View action completion'))
                 ->button()
                 ->color('primary')
                 ->authorize(fn ($record) => app(ActionService::class)->canViewActionEnding($record->status_id))
@@ -30,7 +30,7 @@ class ViewImprove extends ViewRecord
                 ])),
 
             Action::make('finish')
-                ->label('End action')
+                ->label(__('End action'))
                 ->button()
                 ->color('success')
                 ->authorize(
@@ -42,7 +42,7 @@ class ViewImprove extends ViewRecord
                 ])),
 
             Action::make('cancel')
-                ->label('Cancel')
+                ->label(__('Cancel'))
                 ->button()
                 ->color('danger')
                 ->authorize(
@@ -50,9 +50,9 @@ class ViewImprove extends ViewRecord
                 )
                 ->form([
                     Textarea::make('reason_for_cancellation')
-                        ->label('Reason for cancellation')
+                        ->label(__('Reason for cancellation'))
                         ->required()
-                        ->placeholder('Write the reason for cancellation'),
+                        ->placeholder(__('Write the reason for cancellation')),
                 ])
                 ->action(function ($record, array $data) {
                     app(ActionStatusService::class)->statusAssignmentCanceled($record, $data);
@@ -60,7 +60,7 @@ class ViewImprove extends ViewRecord
                 }),
 
             Action::make('back')
-                ->label('Return')
+                ->label(__('Return'))
                 ->url(fn (): string => ImproveResource::getUrl('index'))
                 ->button()
                 ->color('gray'),

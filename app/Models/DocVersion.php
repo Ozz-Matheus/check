@@ -15,7 +15,7 @@ class DocVersion extends Model
         'comment',
         'change_reason',
         'sha256_hash',
-        'decision_at',
+        'decided_at',
         'status_id',
         'doc_id',
         'created_by_id',
@@ -26,7 +26,7 @@ class DocVersion extends Model
         'version' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'decision_at' => 'datetime',
+        'decided_at' => 'datetime',
     ];
 
     /*

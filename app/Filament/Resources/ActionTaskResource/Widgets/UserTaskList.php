@@ -12,9 +12,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserTaskList extends BaseWidget implements HasTable
 {
-    protected static ?string $heading = 'My tasks';
+    protected static ?string $heading = null;
 
-    protected static ?int $sort = 5;
+    public function __construct()
+    {
+        self::$heading = __('My tasks');
+    }
 
     protected function getTableQuery(): ?Builder
     {

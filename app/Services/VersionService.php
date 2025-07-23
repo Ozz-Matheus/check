@@ -34,7 +34,7 @@ class VersionService
             'version' => in_array('version', $preserve) ? ($data['version'] ?? null) : $newVersion,
             'created_by_id' => in_array('created_by_id', $preserve) ? ($data['created_by_id'] ?? null) : $user->id,
             'decided_by_id' => in_array('decided_by_id', $preserve) ? ($data['decided_by_id'] ?? null) : ($hasApprovalAccess ? auth()->id() : null),
-            'decision_at' => in_array('decision_at', $preserve) ? ($data['decision_at'] ?? null) : ($hasApprovalAccess ? now() : null),
+            'decided_at' => in_array('decided_at', $preserve) ? ($data['decided_at'] ?? null) : ($hasApprovalAccess ? now() : null),
         ]);
     }
 }

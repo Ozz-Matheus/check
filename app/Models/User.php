@@ -129,8 +129,8 @@ class User extends Authenticatable implements FilamentUser
             Auth::logout();
 
             Notification::make()
-                ->title('Deactivated accounts')
-                ->body('Your account has been deactivated. Contact the administrator.')
+                ->title(__('Account deactivated'))
+                ->body(__('Your account has been deactivated. Contact the administrator.'))
                 ->danger()
                 ->persistent()
                 ->send();

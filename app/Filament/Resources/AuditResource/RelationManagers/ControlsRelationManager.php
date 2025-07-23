@@ -3,24 +3,20 @@
 namespace App\Filament\Resources\AuditResource\RelationManagers;
 
 use App\Filament\Resources\AuditResource;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ControlsRelationManager extends RelationManager
 {
     protected static string $relationship = 'controls';
 
-    public function form(Form $form): Form
+    protected static ?string $title = null;
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return __('Controls');
     }
 
     public function table(Table $table): Table
@@ -29,8 +25,10 @@ class ControlsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('controlType.title')
+                    ->label(__('Control type'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
@@ -38,20 +36,23 @@ class ControlsRelationManager extends RelationManager
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label(__('Created at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label(__('Updated at'))
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label('New finding')
+                    ->label(__('New control'))
                     ->button()
                     ->color('primary')
                     /* ->authorize(
@@ -63,7 +64,7 @@ class ControlsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\Action::make('follow-up')
-                    ->label('Follow-up')
+                    ->label(__('Follow-up'))
                     ->color('primary')
                     ->icon('heroicon-o-eye')
                     /* ->authorize(

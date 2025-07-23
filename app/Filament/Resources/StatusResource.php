@@ -34,7 +34,7 @@ class StatusResource extends Resource
                     ->required()
                     ->disabled(fn () => ! auth()->user()?->hasRole('super_admin'))
                     ->dehydrated(fn () => auth()->user()?->hasRole('super_admin'))
-                    ->helperText(__('This is the status identifier. Only super admins can edit it.'))
+                    ->helperText(__('This is the status identifier. Only admins can edit it.'))
                     ->columnSpanFull(),
 
                 Forms\Components\TextInput::make('label')
@@ -51,7 +51,7 @@ class StatusResource extends Resource
                     ->label(__('Icon')),
 
                 Forms\Components\Select::make('context')
-                    ->label(__('Context'))
+                    ->label(__('Type'))
                     ->options([
                         'doc' => 'Doc',
                         'action' => 'Action',
@@ -88,14 +88,15 @@ class StatusResource extends Resource
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
-                    ->dateTime()
                     ->sortable()
+                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //

@@ -2,17 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RiskResource\Pages;
-use App\Models\Risk;
+use App\Filament\Resources\ProcessRiskResource\Pages;
+use App\Models\ProcessRisk;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class RiskResource extends Resource
+class ProcessRiskResource extends Resource
 {
-    protected static ?string $model = Risk::class;
+    protected static ?string $model = ProcessRisk::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -25,8 +25,8 @@ class RiskResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Select::make('process_id')
                     ->relationship('process', 'title')
-                    ->preload()
                     ->searchable()
+                    ->preload()
                     ->required(),
             ]);
     }
@@ -38,7 +38,8 @@ class RiskResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -71,9 +72,9 @@ class RiskResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRisks::route('/'),
-            'create' => Pages\CreateRisk::route('/create'),
-            'edit' => Pages\EditRisk::route('/{record}/edit'),
+            'index' => Pages\ListProcessRisks::route('/'),
+            'create' => Pages\CreateProcessRisk::route('/create'),
+            'edit' => Pages\EditProcessRisk::route('/{record}/edit'),
         ];
     }
 }

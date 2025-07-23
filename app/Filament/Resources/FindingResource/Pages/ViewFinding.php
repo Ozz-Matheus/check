@@ -25,7 +25,7 @@ class ViewFinding extends ViewRecord
         return [
 
             Action::make('back')
-                ->label('Return')
+                ->label(__('Return'))
                 ->url(fn (): string => AuditResource::getUrl('audit_control.view', ['audit' => $this->controlModel->audit_id, 'record' => $this->control_id]))
                 ->button()
                 ->color('gray'),

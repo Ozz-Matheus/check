@@ -4,28 +4,21 @@ namespace App\Filament\Resources\ActionTaskResource\RelationManagers;
 
 use App\Filament\Resources\ActionResource;
 use App\Services\TaskService;
-use Filament\Forms;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ActionTaskCommentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'taskComments';
 
-    protected static ?string $title = 'Comments';
+    protected static ?string $title = null;
 
-    public function form(Form $form): Form
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return $form
-            ->schema([
-                Forms\Components\Textarea::make('content')
-                    ->label('Comment')
-                    ->required()
-                    ->columnSpanFull(),
-            ]);
+        return __('Comments');
     }
 
     public function table(Table $table): Table
@@ -33,10 +26,13 @@ class ActionTaskCommentsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('content')
+                    ->label(__('Content'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->content),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->label(__('Created at'))
+                    ->date('l, d \d\e F \d\e Y'),
+
             ])
             ->filters([
                 //
@@ -44,14 +40,14 @@ class ActionTaskCommentsRelationManager extends RelationManager
             ->headerActions([
 
                 Tables\Actions\Action::make('create')
-                    ->label(__('New task comment'))
+                    ->label(__('New comment'))
                     ->button()
                     ->color('primary')
                     ->form([
                         Textarea::make('content')
                             ->label(__('Comment'))
                             ->required()
-                            ->placeholder('Follow up comment'),
+                            ->placeholder(__('Follow up comment')),
                     ])
                     ->authorize(
                         fn () => app(TaskService::class)->canTaskUploadFollowUp($this->getOwnerRecord())
@@ -70,7 +66,7 @@ class ActionTaskCommentsRelationManager extends RelationManager
                 /* Tables\Actions\CreateAction::make(), */
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                // Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),

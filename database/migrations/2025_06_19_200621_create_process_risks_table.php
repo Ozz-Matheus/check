@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('risks', function (Blueprint $table) {
+        Schema::create('process_risks', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->foreignId('process_id')->constrained('processes');
