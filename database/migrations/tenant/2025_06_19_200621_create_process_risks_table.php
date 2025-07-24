@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('process_risks', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('title');
             $table->foreignId('process_id')->constrained('processes');
             $table->timestamps();

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('context')->index(); // Ej: 'doc_version', 'action', 'task'
             $table->string('title')->index();   // Ej: 'approved', 'pending'
             $table->string('label');            // Ej: 'Aprobado', 'Pendiente'

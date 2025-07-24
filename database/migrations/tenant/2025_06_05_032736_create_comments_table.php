@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->morphs('commentable');
             $table->text('content');
             $table->timestamps();

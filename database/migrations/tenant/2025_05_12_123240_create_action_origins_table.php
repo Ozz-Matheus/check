@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('action_origins', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('title');
             $table->timestamps();
         });

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('doc_expirations', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->foreignId('doc_type_id')->unique()->constrained(); // Cada tipo documental tiene su regla
             $table->integer('management_review_years'); // Años para revisión
             $table->integer('central_expiration_years'); // Años para vencimiento central

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->foreignId('action_type_id')->constrained();   // nuevo: tipo de acción
             $table->foreignId('finding_id')->nullable()->constrained();
             $table->string('title');

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('controls', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->foreignId('audit_id')->constrained('audits');
             $table->foreignId('control_type_id')->constrained('control_types');
             $table->string('title');

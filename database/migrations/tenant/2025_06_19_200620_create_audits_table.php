@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('audits', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('audit_code');
             $table->date('start_date');
             $table->date('end_date');

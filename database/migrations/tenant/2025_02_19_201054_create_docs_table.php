@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('docs', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('title')->unique();
             $table->foreignId('process_id')->constrained();
             $table->foreignId('sub_process_id')->constrained();

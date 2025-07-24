@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sub_processes', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('title');
             $table->string('acronym');
             $table->foreignId('process_id')->constrained()->onDelete('cascade');

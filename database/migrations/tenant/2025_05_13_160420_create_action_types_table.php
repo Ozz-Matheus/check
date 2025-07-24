@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('action_types', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('name')->unique(); // Ej: 'correctiva', 'mejora'
             $table->string('label');
             $table->timestamps();

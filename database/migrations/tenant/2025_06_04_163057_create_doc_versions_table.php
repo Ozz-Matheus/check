@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('doc_versions', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->nullable()->index();
             $table->string('version');
             $table->string('comment')->nullable();
             $table->string('change_reason')->nullable();
