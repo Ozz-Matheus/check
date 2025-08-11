@@ -8,7 +8,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateImprove extends CreateRecord
 {
-    use HandlesActionCreation;
-
     protected static string $resource = ImproveResource::class;
+
+    use HandlesActionCreation;
 }

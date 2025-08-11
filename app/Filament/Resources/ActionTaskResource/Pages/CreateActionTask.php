@@ -67,7 +67,7 @@ class CreateActionTask extends CreateRecord
         ];
     }
 
-    public function getResponsibleUserOptions(): array
+    /* public function getResponsibleUserOptions(): array
     {
         $action = Action::find($this->action_id);
 
@@ -78,10 +78,10 @@ class CreateActionTask extends CreateRecord
         return User::whereHas('subProcesses', function ($query) use ($action) {
             $query->where('sub_process_id', $action->sub_process_id);
         })->pluck('name', 'id')->toArray();
-    }
+    } */
 
-    public function getMaxStartDate(): ?string
+    /* public function getMaxStartDate(): ?string
     {
         return $this->actionModel?->deadline?->toDateString();
-    }
+    } */
 }

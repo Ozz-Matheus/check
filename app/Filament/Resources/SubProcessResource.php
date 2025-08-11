@@ -49,6 +49,7 @@ class SubProcessResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('leader_by_id')
                     ->label(__('Leader'))
+                    ->label('Assigned thread leader')
                     ->options(fn ($record) => $record->users()->pluck('users.name', 'users.id') ?? [])
                     ->searchable()
                     ->preload()
@@ -73,18 +74,18 @@ class SubProcessResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('leader.name')
                     ->label(__('Leader'))
+                    ->label('Thread leader')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
             ->filters([
                 //

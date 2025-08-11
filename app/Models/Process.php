@@ -35,8 +35,8 @@ class Process extends Model
         return $this->hasMany(Action::class);
     }
 
-    public function audits()
+    public function riskPlans()
     {
-        return $this->hasMany(Audit::class);
+        return $this->hasMany(RiskPlan::class);
     }
 }

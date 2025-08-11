@@ -37,7 +37,7 @@ class ActionDeadlineNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Action close to expiration!'))
+            ->subject(__('Action close to expiration'))
             ->view('emails.action-expiration', [
                 'user' => $notifiable,
                 'action' => $this->action,

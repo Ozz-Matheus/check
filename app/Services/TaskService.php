@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\ActionTask;
+use App\Models\ActionTaskComment;
 use App\Models\Status;
 use App\Notifications\TaskCompletedNotice;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Servicio para las tareas
@@ -69,13 +71,16 @@ class TaskService
 
     public function createComment(ActionTask $actionTask, array $data): void
     {
+        ActionTaskComment::create([
+            'action_task_id' => $actionTask->id,
+            'content' => Str::limit(strip_tags($data['content']), 255),
 
-        $actionTask->comments()->create($data);
+        ]);
 
         $this->updateTaskStatus($actionTask);
         $this->assignActualStartDate($actionTask);
 
-        $this->taskNotification(__('Comment saved successfully'));
+        $this->taskNotification('Comment saved successfully');
     }
 
     public function createFiles(ActionTask $actionTask, array $data): void
@@ -97,7 +102,7 @@ class TaskService
         $this->updateTaskStatus($actionTask);
         $this->assignActualStartDate($actionTask);
 
-        $this->taskNotification(__('Support files uploaded successfully'));
+        $this->taskNotification('Support files uploaded successfully');
     }
 
     public function closeTask(ActionTask $actionTask): bool

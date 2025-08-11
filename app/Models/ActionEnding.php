@@ -23,7 +23,7 @@ class ActionEnding extends Model
         return $this->belongsTo(Action::class);
     }
 
-    public function ActionEndingFiles()
+    public function actionEndingFiles()
     {
         return $this->hasMany(ActionEndingFile::class, 'fileable_id');
     }

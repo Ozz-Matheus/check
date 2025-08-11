@@ -24,20 +24,6 @@ class DocVersionResource extends Resource
 
     protected static ?string $model = DocVersion::class;
 
-    protected static ?string $modelLabel = null;
-
-    protected static ?string $pluralModelLabel = null;
-
-    public static function getModelLabel(): string
-    {
-        return __('Version');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Versions');
-    }
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -71,7 +57,7 @@ class DocVersionResource extends Resource
                 Tables\Columns\TextColumn::make('file.readable_mime_type')
                     ->label(__('Type')),
                 Tables\Columns\TextColumn::make('file.readable_size')
-                    ->label(__('Size')),
+                    ->label('Size'),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
                     ->searchable()
@@ -96,11 +82,11 @@ class DocVersionResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('decidedBy.name')
-                    ->label(__('Decided by'))
+                    ->label(__('Decided By'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('decided_at')
-                    ->label(__('Decided at'))
+                Tables\Columns\TextColumn::make('decision_at')
+                    ->label(__('Decision at'))
                     ->sortable()
                     ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -127,7 +113,7 @@ class DocVersionResource extends Resource
 
                     // PENDING
                     Action::make('pending')
-                        ->label(fn ($record) => Status::labelFromTitle('pending') ?? __('Pending'))
+                        ->label(fn ($record) => Status::labelFromTitle('pending') ?? 'Pending')
                         ->icon(fn ($record) => Status::iconFromTitle('pending') ?? 'heroicon-o-information-circle')
                         ->color(fn ($record) => Status::colorFromTitle('pending') ?? 'gray')
                         ->requiresConfirmation()
@@ -145,7 +131,7 @@ class DocVersionResource extends Resource
 
                     // RESTORE
                     Action::make('restore')
-                        ->label(fn ($record) => Status::labelFromTitle('restore') ?? __('Restore'))
+                        ->label(fn ($record) => Status::labelFromTitle('restore') ?? 'Restore')
                         ->icon(fn ($record) => Status::iconFromTitle('restore') ?? 'heroicon-o-information-circle')
                         ->color(fn ($record) => Status::colorFromTitle('restore') ?? 'gray')
                         ->authorize(fn ($record) => auth()->user()->can('create_doc::version', $record))
@@ -171,7 +157,7 @@ class DocVersionResource extends Resource
 
                     // APPROVED
                     Action::make('approved')
-                        ->label(fn ($record) => Status::labelFromTitle('approved') ?? __('Approved'))
+                        ->label(fn ($record) => Status::labelFromTitle('approved') ?? 'Approved')
                         ->icon(fn ($record) => Status::iconFromTitle('approved') ?? 'heroicon-o-information-circle')
                         ->color(fn ($record) => Status::colorFromTitle('approved') ?? 'gray')
                         ->requiresConfirmation()
@@ -189,7 +175,7 @@ class DocVersionResource extends Resource
 
                     // REJECTED
                     Action::make('rejected')
-                        ->label(fn ($record) => Status::labelFromTitle('rejected') ?? __('Rejected'))
+                        ->label(fn ($record) => Status::labelFromTitle('rejected') ?? 'Rejected')
                         ->icon(fn ($record) => Status::iconFromTitle('rejected') ?? 'heroicon-o-information-circle')
                         ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'gray')
                         ->form([
@@ -233,7 +219,7 @@ class DocVersionResource extends Resource
                         }),
 
                     // Tables\Actions\EditAction::make(),
-                ])->color('primary')->link()->label(false)->tooltip(__('Actions')),
+                ])->color('primary')->link()->label(false)->tooltip('Actions'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

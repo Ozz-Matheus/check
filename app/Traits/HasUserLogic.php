@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Models\Audit;
 use App\Models\DocVersion;
 use App\Models\SubProcess;
 
@@ -51,11 +50,4 @@ trait HasUserLogic
     {
         return $this->hasRole('super_admin') || $this->isLeaderOfSubProcess($subProcessId);
     }
-
-    // Metodos para auditoria
-
-    /* public function canCreateFinding(Audit $audit)
-    {
-        return auth()->id() === $audit->leader_auditor_id;
-    } */
 }

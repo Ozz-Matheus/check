@@ -23,35 +23,15 @@ class DocResource extends Resource
 {
     protected static ?string $model = Doc::class;
 
-    protected static ?string $modelLabel = null;
+    protected static ?string $modelLabel = 'Document';
 
-    protected static ?string $pluralModelLabel = null;
+    protected static ?string $pluralModelLabel = 'Documents';
 
-    protected static ?string $navigationLabel = null;
+    protected static ?string $navigationLabel = 'Documents';
 
-    protected static ?string $navigationGroup = null;
+    // protected static ?string $navigationGroup = 'Documents';
 
-    public static function getModelLabel(): string
-    {
-        return __('Document');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Documents');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Documents');
-    }
-
-    public static function getNavigationGroup(): string
-    {
-        return __('Documents');
-    }
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
     protected static ?int $navigationSort = 1;
 
@@ -151,19 +131,19 @@ class DocResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('expiration')
-                    ->label(__('Expiration status'))
+                    ->label(__('Expiration state'))
                     ->badge()
-                    ->formatStateUsing(fn ($state) => (bool) $state ? __('Expired') : __('Current'))
+                    ->formatStateUsing(fn ($state) => (bool) $state ? 'Expired' : 'Current')
                     ->color(fn ($state) => (bool) $state ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
+                    ->date()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
+                    ->date()
                     ->toggleable(isToggledHiddenByDefault: true),
 
             ])->defaultSort('id', 'desc')
@@ -193,10 +173,10 @@ class DocResource extends Resource
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('expiration')
-                    ->label(__('Expiration status'))
+                    ->label(__('Expiration state'))
                     ->options([
-                        1 => __('Expired'),
-                        0 => __('Current'),
+                        1 => 'Expired',
+                        0 => 'Current',
                     ])
                     ->searchable()
                     ->preload(),

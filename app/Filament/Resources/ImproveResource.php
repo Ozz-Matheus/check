@@ -7,11 +7,8 @@ use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationMa
 use App\Filament\Resources\ImproveResource\Pages;
 use App\Models\Improve;
 use App\Models\SubProcess;
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -28,27 +25,6 @@ class ImproveResource extends Resource
 
     protected static ?string $navigationGroup = null;
 
-    protected static ?string $modelLabel = null;
-
-    protected static ?string $pluralModelLabel = null;
-
-    protected static ?string $navigationLabel = null;
-
-    public static function getModelLabel(): string
-    {
-        return __('Improve action');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Improve actions');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Improve actions');
-    }
-
     public static function getNavigationGroup(): string
     {
         return __('Actions');
@@ -56,26 +32,23 @@ class ImproveResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make(__('Action Data'))
+                Section::make('Action Data')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('title')
-                            ->label(__('Title'))
+                        Forms\Components\TextInput::make('title')
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make('description')
-                            ->label(__('Description'))
+                        Forms\Components\Textarea::make('description')
                             ->required()
                             ->columnSpanFull(),
-                        Select::make('process_id')
-                            ->label(__('Process'))
+                        Forms\Components\Select::make('process_id')
                             ->relationship('process', 'title')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('sub_process_id', null);
@@ -84,10 +57,10 @@ class ImproveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
-                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
+                            ->visible(fn ($livewire) => isset($livewire->originType) ? false : true)
                             ->required(),
-                        Select::make('sub_process_id')
-                            ->label(__('Sub process'))
+                        Forms\Components\Select::make('sub_process_id')
+                            ->label('Sub Process')
                             ->options(
                                 fn (Get $get): Collection => SubProcess::query()
                                     ->where('process_id', $get('process_id'))
@@ -97,24 +70,27 @@ class ImproveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
-                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
+                            ->visible(fn ($livewire) => isset($livewire->originType) ? false : true)
                             ->required(),
-                        Select::make('action_origin_id')
-                            ->label(__('Origin'))
-                            ->relationship('origin', 'title')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-                        Select::make('responsible_by_id')
-                            ->label(__('Responsible'))
+                        Forms\Components\Select::make('responsible_by_id')
+                            /* ->relationship(
+                                'responsibleBy',
+                                'name',
+                                modifyQueryUsing: function ($query, Get $get, $livewire) {
+                                    return $query->whereHas('subProcesses', function ($q) use ($get, $livewire) {
+                                        $subProcessId = $livewire->subProcessId ?? $get('sub_process_id');
+                                        return $q->where('sub_process_id', $subProcessId);
+                                    });
+                                }
+                            ) */
                             ->relationship(
                                 'responsibleBy',
                                 'name',
                                 modifyQueryUsing: function ($query, Get $get, $livewire) {
-                                    if (isset($livewire->finding_id)) {
+                                    if (isset($livewire->originType)) {
                                         return $query->whereHas(
                                             'subProcesses',
-                                            fn ($q) => $q->where('sub_process_id', $livewire->findingModel->audited_sub_process_id)
+                                            fn ($q) => $q->where('sub_process_id', $livewire->subProcessId)
                                         );
                                     }
 
@@ -124,27 +100,25 @@ class ImproveResource extends Resource
                                     );
                                 }
                             )
+                            ->label('Responsible')
                             ->searchable()
                             ->preload()
                             ->reactive()
                             ->required(),
-                        Textarea::make('expected_impact')
-                            ->label(__('Expected impact'))
+                        Forms\Components\Textarea::make('expected_impact')
                             ->required()
                             ->columnSpanFull(),
-                        DatePicker::make('deadline')
-                            ->label(__('Deadline'))
+                        Forms\Components\DatePicker::make('deadline')
                             ->minDate(now()->format('Y-m-d'))
-                            ->required()
-                            ->native(false),
-                        TextInput::make('status_label')
+                            ->native(false)
+                            ->required(),
+                        Forms\Components\TextInput::make('status_label')
                             ->label(__('Status'))
-                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? __('Stateless'))
+                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
                     ]),
-
             ]);
     }
 
@@ -153,53 +127,40 @@ class ImproveResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('type.label')
-                    ->label(__('Type'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('origin_label')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->label(__('Title'))
                     ->searchable()
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->label(__('Process'))
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('subProcess.title')
-                    ->label(__('Sub process'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('origin.title')
-                    ->label(__('Origin'))
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('registeredBy.name')
-                    ->label(__('Registered by'))
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->label(__('Responsible'))
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('status.label')
-                    ->label(__('Status'))
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
                 Tables\Columns\TextColumn::make('deadline')
-                    ->label(__('Deadline'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actual_closing_date')
-                    ->label(__('Actual closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Created at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Updated at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
             ->defaultSort('id', 'desc')
             ->filters([

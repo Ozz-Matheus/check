@@ -23,18 +23,16 @@ class ActionTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 17;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('label')
-                    ->label(__('Label'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -45,22 +43,17 @@ class ActionTypeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('label')
-                    ->label(__('Label'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Created at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Updated at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
             ->filters([
                 //

@@ -7,12 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class DocStatusesChart extends ChartWidget
 {
-    protected static ?string $heading = null;
-
-    public function __construct()
-    {
-        self::$heading = __('doc_statuses_chart');
-    }
+    protected static ?string $heading = 'Doc Statuses Chart';
 
     protected function getData(): array
     {

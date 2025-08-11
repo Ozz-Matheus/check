@@ -41,7 +41,6 @@ class ActionExport implements FromCollection, WithHeadings, WithMapping
             $action->process?->title,
             $action->subProcess?->title,
             $action->origin?->title,
-            $action->registration_date,
             $action->registeredBy?->name,
             $action->responsibleBy?->name,
             $action->status?->label,

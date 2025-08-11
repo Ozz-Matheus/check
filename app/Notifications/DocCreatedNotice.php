@@ -39,7 +39,7 @@ class DocCreatedNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('New document created!'))
+            ->subject(__('Create a new record'))
             ->view('emails.doc-created', [
                 'user' => $notifiable,
                 'doc' => $this->doc,
@@ -56,7 +56,7 @@ class DocCreatedNotice extends Notification
     {
         return FilamentNotification::make()
             ->title($this->doc->title)
-            ->body(__('New document created!'))
+            ->body(__('Created a new record!'))
             ->icon('heroicon-o-archive-box')
             ->color('primary')
             ->status('primary')

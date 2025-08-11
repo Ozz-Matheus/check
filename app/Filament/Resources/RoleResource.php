@@ -23,14 +23,9 @@ class RoleResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
 
-    // protected static ?string $navigationGroup = null;
+    protected static ?string $navigationGroup = 'Roles Management';
 
-    public static function getNavigationGroup(): string
-    {
-        return __('Roles Management');
-    }
-
-    protected static ?int $navigationSort = 17;
+    protected static ?int $navigationSort = 21;
 
     public static function getPermissionPrefixes(): array
     {
@@ -119,7 +114,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->colors(['success']),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('filament-shield::filament-shield.column.updated_at'))
-                    ->dateTime(),
+                    ->date(),
             ])
             ->filters([
                 //

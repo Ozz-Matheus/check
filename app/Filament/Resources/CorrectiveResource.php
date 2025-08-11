@@ -7,12 +7,8 @@ use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationMa
 use App\Filament\Resources\CorrectiveResource\Pages;
 use App\Models\Corrective;
 use App\Models\SubProcess;
-use App\Models\User;
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -29,27 +25,6 @@ class CorrectiveResource extends Resource
 
     protected static ?string $navigationGroup = null;
 
-    protected static ?string $modelLabel = null;
-
-    protected static ?string $pluralModelLabel = null;
-
-    protected static ?string $navigationLabel = null;
-
-    public static function getModelLabel(): string
-    {
-        return __('Corrective action');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Corrective actions');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Corrective actions');
-    }
-
     public static function getNavigationGroup(): string
     {
         return __('Actions');
@@ -57,26 +32,23 @@ class CorrectiveResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make(__('Action Data'))
+                Section::make('Action Data')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('title')
-                            ->label(__('Title'))
+                        Forms\Components\TextInput::make('title')
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make('description')
-                            ->label(__('Description'))
+                        Forms\Components\Textarea::make('description')
                             ->required()
                             ->columnSpanFull(),
-                        Select::make('process_id')
-                            ->label(__('Process'))
+                        Forms\Components\Select::make('process_id')
                             ->relationship('process', 'title')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('sub_process_id', null);
@@ -85,10 +57,9 @@ class CorrectiveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
-                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
-                        Select::make('sub_process_id')
-                            ->label(__('Sub Process'))
+                        Forms\Components\Select::make('sub_process_id')
+                            ->label('Sub Process')
                             ->options(
                                 fn (Get $get): Collection => SubProcess::query()
                                     ->where('process_id', $get('process_id'))
@@ -98,87 +69,35 @@ class CorrectiveResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
-                            ->visible(fn ($livewire) => isset($livewire->finding_id) ? false : true)
                             ->required(),
-                        Select::make('action_origin_id')
-                            ->label(__('Origin'))
-                            ->relationship('origin', 'title')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-                        Select::make('responsible_by_id')
-                            ->label(__('Responsible'))
+                        Forms\Components\Select::make('responsible_by_id')
+                            ->label('Responsible')
                             ->relationship(
                                 'responsibleBy',
                                 'name',
-                                modifyQueryUsing: function ($query, Get $get, $livewire) {
-                                    if (isset($livewire->finding_id)) {
-                                        return $query->whereHas(
-                                            'subProcesses',
-                                            fn ($q) => $q->where('sub_process_id', $livewire->findingModel->audited_sub_process_id)
-                                        );
-                                    }
-
-                                    return $query->whereHas(
-                                        'subProcesses',
-                                        fn ($q) => $q->where('sub_process_id', $get('sub_process_id'))
-                                    );
-                                }
+                                modifyQueryUsing: fn ($query, Get $get) => $query->whereHas(
+                                    'subProcesses',
+                                    fn ($q) => $q->where('sub_process_id', $get('sub_process_id'))
+                                )
                             )
-                            /* ->options(
-                                fn(Get $get, $livewire) => isset($livewire->finding_id)
-                                    ? User::whereHas('subProcesses', fn($query) => $query->where('sub_process_id', $livewire->findingModel->audited_sub_process_id))
-                                    ->pluck('name', 'id')
-                                    ->toArray()
-                                    : User::whereHas('subProcesses', fn($query) => $query->where('sub_process_id', $get('sub_process_id')))
-                                    ->pluck('name', 'id')
-                                    ->toArray()
-                            ) */ // Otra opción
                             ->searchable()
                             ->preload()
                             ->reactive()
                             ->required(),
-                        DatePicker::make('detection_date')
-                            ->label(__('Detection date'))
-                            ->format('Y-m-d')
+                        Forms\Components\Textarea::make('expected_impact')
                             ->required()
-                            ->native(false),
-                        Textarea::make('containment_action')
-                            ->label(__('Containment action'))
-                            ->columnSpanFull()
-                            ->required(),
-                        Select::make('action_analysis_cause_id')
-                            ->label(__('Analysis cause'))
-                            ->relationship('analysisCause', 'title')
-                            ->required()
-                            ->native(false),
-                        Textarea::make('corrective_action')
-                            ->label(__('Corrective action'))
-                            ->columnSpanFull()
-                            ->required(),
-                        Select::make('action_verification_method_id')
-                            ->label(__('Verification method'))
-                            ->relationship('verificationMethod', 'title')
-                            ->required()
-                            ->native(false),
-                        Select::make('verification_responsible_by_id')
-                            ->label(__('Verification responsible'))
-                            ->relationship('verificationResponsible', 'name')
-                            ->required()
-                            ->native(false),
-                        DatePicker::make('deadline')
-                            ->label(__('Deadline'))
+                            ->columnSpanFull(),
+                        Forms\Components\DatePicker::make('deadline')
                             ->minDate(now()->format('Y-m-d'))
-                            ->required()
-                            ->native(false),
-                        TextInput::make('status_label')
+                            ->native(false)
+                            ->required(),
+                        Forms\Components\TextInput::make('status_label')
                             ->label(__('Status'))
-                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? __('Stateless'))
+                            ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
                     ]),
-
             ]);
     }
 
@@ -187,70 +106,41 @@ class CorrectiveResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('type.label')
-                    ->label(__('Type'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->label(__('Title'))
                     ->searchable()
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->label(__('Process'))
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('subProcess.title')
-                    ->label(__('Sub process'))
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('origin.title')
-                    ->label(__('Origin'))
-                    ->sortable(),
+                    ->label('Origin')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('registeredBy.name')
-                    ->label(__('Registered by'))
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->label(__('Responsible by'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('detection_date')
-                    ->label(__('Detection date'))
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('analysisCause.title')
-                    ->label(__('Analysis cause'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('verificationMethod.title')
-                    ->label(__('Verification method'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('verificationResponsible.name')
-                    ->label(__('Verification responsible'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status.label')
-                    ->label(__('Status'))
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
                 Tables\Columns\TextColumn::make('deadline')
-                    ->label(__('Deadline'))
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('verification_date')
-                    ->label(__('Verification date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actual_closing_date')
-                    ->label(__('Actual closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Created at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Updated at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
             ->defaultSort('id', 'desc')
             ->filters([
@@ -272,6 +162,7 @@ class CorrectiveResource extends Resource
                         )),
                 ]),
             ]);
+
     }
 
     public static function getRelations(): array

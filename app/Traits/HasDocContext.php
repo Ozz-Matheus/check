@@ -21,7 +21,7 @@ trait HasDocContext
         $user = auth()->user();
 
         if (! $user->canAccessSubProcess($doc->sub_process_id)) {
-            abort(403);
+            abort(403, 'No autorizado para acceder a este subproceso');
         }
 
         $this->docModel = $doc;

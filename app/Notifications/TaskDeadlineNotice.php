@@ -37,7 +37,7 @@ class TaskDeadlineNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Task close to expiration!'))
+            ->subject(__('Task close to expiration'))
             ->view('emails.task-expiration', [
                 'user' => $notifiable,
                 'task' => $this->task,

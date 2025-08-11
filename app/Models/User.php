@@ -13,12 +13,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
-use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use BelongsToTenant, HasFactory, HasPanelShield, HasRoles, HasUserLogic, Notifiable;
+    use HasFactory, HasPanelShield, HasRoles, HasUserLogic, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -97,16 +96,6 @@ class User extends Authenticatable implements FilamentUser
     //     return $this->hasMany(SubProcess::class, 'user_id');
     // }
 
-    public function audits()
-    {
-        return $this->belongsToMany(Audit::class, 'audit_has_users');
-    }
-
-    public function findings()
-    {
-        return $this->hasMany(Finding::class);
-    }
-
     /*
     |--------------------------------------------------------------------------
     | Accesores / Métodos útiles
@@ -130,8 +119,8 @@ class User extends Authenticatable implements FilamentUser
             Auth::logout();
 
             Notification::make()
-                ->title(__('Account deactivated'))
-                ->body(__('Your account has been deactivated. Contact the administrator.'))
+                ->title('Account deactivated')
+                ->body('Your account has been deactivated. Contact the administrator.')
                 ->danger()
                 ->persistent()
                 ->send();

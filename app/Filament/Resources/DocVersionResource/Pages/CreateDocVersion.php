@@ -81,9 +81,9 @@ class CreateDocVersion extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            DocResource::getUrl('index') => __('Documents'),
-            DocResource::getUrl('versions.index', ['doc' => $this->doc_id]) => __('Versions'),
-            false => __('Create'),
+            DocResource::getUrl('index') => 'Documents',
+            DocResource::getUrl('versions.index', ['doc' => $this->doc_id]) => 'Versions',
+            false => 'Create',
         ];
     }
 }

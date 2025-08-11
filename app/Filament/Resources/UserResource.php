@@ -15,7 +15,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    // protected static ?string $navigationGroup = null;
+    protected static ?string $navigationGroup = null;
 
     public static function getNavigationGroup(): string
     {
@@ -24,7 +24,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?int $navigationSort = 18;
+    protected static ?int $navigationSort = 22;
 
     public static function form(Form $form): Form
     {
@@ -51,7 +51,7 @@ class UserResource extends Resource
                             ->required(fn (string $context) => $context === 'create')
                             ->helperText(
                                 fn (string $context) => $context === 'edit'
-                                    ? __("Leave it blank if you don't want to change your password.")
+                                    ? "Leave it blank if you don't want to change your password."
                                     : null
                             ),
                         Forms\Components\Toggle::make('active')
@@ -76,7 +76,7 @@ class UserResource extends Resource
                             }),
                         Forms\Components\CheckboxList::make('subProcesses')
                             ->relationship('subProcesses', 'title')
-                            ->label(__('Assigned Sub Processes :'))
+                            ->label(__('Assigned Sub Processes'))
                             ->disableOptionWhen(function ($value, $record) {
                                 return $record?->isLeaderOfSubProcess($value);
                             })
@@ -107,17 +107,17 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->label(__('Email verified at'))
-                    ->dateTime()
+                    ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
-                    ->dateTime()
+                    ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
-                    ->dateTime()
+                    ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

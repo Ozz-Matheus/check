@@ -47,7 +47,7 @@ class VersionStatusNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('New version status!'))
+            ->subject(__('New version status'))
             ->view('emails.version-status', [
                 'user' => $notifiable,
                 'version' => $this->version,

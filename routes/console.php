@@ -10,6 +10,3 @@ Artisan::command('inspire', function () {
 
 Schedule::command('notify:action-deadlines')->dailyAt('08:00');
 Schedule::command('notify:task-deadlines')->dailyAt('08:10');
-
-Schedule::command('backup:clean')->dailyAt('05:59')->appendOutputTo(storage_path('logs/backup.log'));
-Schedule::command('backup:run')->dailyAt('06:00')->appendOutputTo(storage_path('logs/backup.log'));

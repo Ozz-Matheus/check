@@ -8,7 +8,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateCorrective extends CreateRecord
 {
-    use HandlesActionCreation;
-
     protected static string $resource = CorrectiveResource::class;
+
+    use HandlesActionCreation;
 }

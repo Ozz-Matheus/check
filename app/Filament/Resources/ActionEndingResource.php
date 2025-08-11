@@ -17,13 +17,6 @@ class ActionEndingResource extends Resource
 
     protected static ?string $model = ActionEnding::class;
 
-    protected static ?string $modelLabel = null;
-
-    public static function getModelLabel(): string
-    {
-        return __('Action ending');
-    }
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -45,7 +38,7 @@ class ActionEndingResource extends Resource
                             ->label(__('Support files'))
                             ->directory('actions/support/files')
                             ->multiple()
-                            ->maxParallelUploads(1)
+                            // ->maxParallelUploads(1)
                             ->columnSpanFull()
                             ->visible(fn (string $context) => $context === 'create'),
                     ])

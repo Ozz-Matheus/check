@@ -20,17 +20,26 @@ class DatabaseSeeder extends Seeder
             ProcessSeeder::class,
             SubProcessSeeder::class,
             UserHasSubProcessesSeeder::class,
+            StatusSeeder::class,
+            // Documentos
             DocTypeSeeder::class,
             DocExpirationSeeder::class,
             DocEndingSeeder::class,
-            StatusSeeder::class,
-            ActionOriginSeeder::class,
+            // Acciones
             ActionTypeSeeder::class,
             ActionAnalysisCauseSeeder::class,
             ActionVerificationMethodSeeder::class,
-            AuditCriteriaSeeder::class,
-            ProcessRiskSeeder::class,
-            ControlTypeSeeder::class,
+            // Riesgos
+            RiskStrategicContextTypeSeeder::class,
+            RiskStrategicContextSeeder::class,
+            RiskCategorySeeder::class,
+            RiskImpactSeeder::class,
+            RiskProbabilitySeeder::class,
+            RiskLevelSeeder::class,
+
+            RiskControlPeriodicitySeeder::class,
+            RiskControlTypeSeeder::class,
+            RiskControlQualificationSeeder::class,
             // RolePermissionSeeder::class,
         ]);
     }

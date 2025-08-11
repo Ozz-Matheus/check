@@ -15,11 +15,11 @@ class DocStatsOverview extends BaseWidget
 
         $docsWithDisposition = Doc::whereNotNull('doc_ending_id')->count();
 
+        $docsExpired = Doc::whereDate('central_expiration_date', '<', now())->count();
+
         $aboutToExpire = Doc::whereDate('central_expiration_date', '>=', now())
             ->whereDate('central_expiration_date', '<=', now()->addDays(30))
             ->count();
-
-        $docsExpired = Doc::whereDate('central_expiration_date', '<', now())->count();
 
         return [
             Stat::make(__('Total Docs'), $totalDocs)
@@ -32,14 +32,12 @@ class DocStatsOverview extends BaseWidget
                     IconPosition::Before
                 )
                 ->color($docsWithDisposition >= $totalDocs ? 'success' : 'danger'),
+            Stat::make(__('Expired registrations'), $docsExpired)
+                ->description(__('These Registrations have expired')),
             Stat::make(__('To overdue'), $aboutToExpire)
                 ->description(__('30 days left until expiration'))
                 ->descriptionIcon('heroicon-o-clock', IconPosition::Before)
                 ->color('warning'),
-            Stat::make(__('Expired records'), $docsExpired)
-                ->description(__('These Registrations have expired'))
-                ->descriptionIcon('heroicon-o-exclamation-triangle', IconPosition::Before)
-                ->color('danger'),
         ];
     }
 }

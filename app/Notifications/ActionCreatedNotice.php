@@ -39,7 +39,7 @@ class ActionCreatedNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('New action created!'))
+            ->subject(__('Create a new Action'))
             ->view('emails.action-created', [
                 'user' => $notifiable,
                 'action' => $this->action,
@@ -56,7 +56,7 @@ class ActionCreatedNotice extends Notification
     {
         return FilamentNotification::make()
             ->title($this->action->title)
-            ->body(__('New action created !'))
+            ->body(__('Created a new Action!'))
             ->icon('heroicon-o-archive-box')
             ->color('primary')
             ->status('primary')

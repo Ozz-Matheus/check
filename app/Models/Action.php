@@ -31,9 +31,9 @@ class Action extends Model
         return $this->belongsTo(ActionType::class, 'action_type_id');
     }
 
-    public function finding()
+    public function origin()
     {
-        return $this->belongsTo(Finding::class, 'finding_id');
+        return $this->morphTo();
     }
 
     public function process()
@@ -46,11 +46,6 @@ class Action extends Model
         return $this->belongsTo(SubProcess::class);
     }
 
-    public function origin()
-    {
-        return $this->belongsTo(ActionOrigin::class, 'action_origin_id');
-    }
-
     public function registeredBy()
     {
         return $this->belongsTo(User::class, 'registered_by_id');
@@ -59,6 +54,21 @@ class Action extends Model
     public function responsibleBy()
     {
         return $this->belongsTo(User::class, 'responsible_by_id');
+    }
+
+    public function analysisCause()
+    {
+        return $this->belongsTo(ActionAnalysisCause::class, 'action_analysis_cause_id');
+    }
+
+    public function verificationMethod()
+    {
+        return $this->belongsTo(ActionVerificationMethod::class, 'action_verification_method_id');
+    }
+
+    public function verificationResponsible()
+    {
+        return $this->belongsTo(User::class, 'verification_responsible_by_id');
     }
 
     public function status()

@@ -2,47 +2,62 @@
 
 namespace App\Traits;
 
-use App\Models\Finding;
+use App\Contracts\ActionOriginInterface;
+use App\Factories\ActionOriginFactory;
+use App\Models\RiskTreatment;
 use App\Models\Status;
 use App\Notifications\ActionCreatedNotice;
 
 trait HandlesActionCreation
 {
-    public ?int $audit_id = null;
+    public ?string $originType = null;
 
-    public ?int $control_id = null;
+    public ?int $originId = null;
 
-    public ?int $finding_id = null;
+    public ?string $originLabel = null;
 
-    public ?Finding $findingModel = null;
+    public ?int $processId = null;
+
+    public ?int $subProcessId = null;
+
+    protected ?ActionOriginInterface $originAdapter = null;
 
     public function mount(): void
     {
         parent::mount();
 
-        $this->audit_id = request()->route('audit');
-        $this->control_id = request()->route('control');
-        $this->finding_id = request()->route('finding');
-
-        if ($this->finding_id) {
-
-            $this->findingModel = Finding::findOrFail($this->finding_id);
+        if ($riskTreatmentId = request()->route('treatment')) {
+            $model = RiskTreatment::findOrFail($riskTreatmentId);
+            $this->originType = RiskTreatment::class;
+            $this->originId = $riskTreatmentId;
+            $this->originAdapter = ActionOriginFactory::make(RiskTreatment::class, $model);
+            // Esto de aca abajo me toco asignarlos aca de esta manera para
+            $this->originLabel = $this->originAdapter->getLabel();
+            $this->processId = $this->originAdapter->getProcessId();
+            $this->subProcessId = $this->originAdapter->getSubProcessId();
         }
 
+        /* if ($auditId = request()->route('audit')) {
+            $this->originType = Audit::class;
+            $this->originId = $auditId;
+        } */
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // dd($data);
-        $data['finding_id'] = $this->finding_id ?? null;
-        if ($this->finding_id) {
-            $data['process_id'] = $this->findingModel->control->audit->involved_process_id;
-            $data['sub_process_id'] = $this->findingModel->audited_sub_process_id;
+        if ($this->originAdapter) {
+            $data['origin_type'] = $this->originType;
+            $data['origin_id'] = $this->originId;
+            $data['origin_label'] = $this->originLabel;
+            $data['process_id'] = $this->processId;
+            $data['sub_process_id'] = $this->subProcessId;
+        } else {
+            $data['origin_label'] = __('Independent');
         }
+
         $data['registered_by_id'] = auth()->id();
         $data['status_id'] = Status::byContextAndTitle('action', 'proposal')?->id;
-
-        // dd($data);
+        // dd($data, $this->processId, $this->subProcessId);
 
         return $data;
     }
@@ -56,38 +71,15 @@ trait HandlesActionCreation
 
     public function getBreadcrumbs(): array
     {
-        $breadcrumbs = [];
-
-        if ($this->audit_id && $this->control_id && $this->finding_id) {
-            $breadcrumbs[route(
-                'filament.dashboard.resources.audits.audit_finding.view',
-                [
-                    'record' => $this->finding_id,
-                    'control' => $this->control_id,
-                    'audit' => $this->audit_id,
-                ]
-            )] = __('Finding');
-        }
-
-        $breadcrumbs[false] = __('Create action');
-
-        return $breadcrumbs;
+        return [
+            ...($this->originAdapter?->getBreadcrumbs() ?? []),
+            false => __('Create action'),
+        ];
     }
 
     protected function getRedirectUrl(): string
     {
-        if ($this->audit_id && $this->control_id && $this->finding_id) {
-            return route(
-                'filament.dashboard.resources.audits.audit_finding.view',
-                [
-                    'record' => $this->finding_id,
-                    'control' => $this->control_id,
-                    'audit' => $this->audit_id,
-                ]
-            );
-        }
-
-        return $this->getResource()::getUrl('view', ['record' => $this->record]);
+        return $this->originAdapter?->getRedirectUrl() ?? $this->getResource()::getUrl('view', ['record' => $this->record]);
     }
 
     public static function canCreateAnother(): bool

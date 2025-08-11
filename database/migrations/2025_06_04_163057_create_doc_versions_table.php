@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('comment')->nullable();
             $table->string('change_reason')->nullable();
             $table->string('sha256_hash')->unique();
-            $table->timestamp('decided_at')->nullable();
+            $table->timestamp('decision_at')->nullable();
 
             $table->foreignId('status_id')->constrained('statuses');
 

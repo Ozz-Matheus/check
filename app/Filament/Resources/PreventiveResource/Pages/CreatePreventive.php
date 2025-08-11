@@ -8,7 +8,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreatePreventive extends CreateRecord
 {
-    use HandlesActionCreation;
-
     protected static string $resource = PreventiveResource::class;
+
+    use HandlesActionCreation;
 }

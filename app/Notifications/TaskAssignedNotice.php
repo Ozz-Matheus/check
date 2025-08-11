@@ -39,7 +39,7 @@ class TaskAssignedNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('A task has been assigned!'))
+            ->subject(__('A task has been assigned'))
             ->view('emails.task-assigned', [
                 'user' => $notifiable,
                 'task' => $this->task,

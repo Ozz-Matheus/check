@@ -32,7 +32,7 @@ class DocExpirationResource extends Resource
 
                 Forms\Components\Select::make('doc_type_id')
                     ->relationship('docType', 'title')
-                    ->label(__('Doc type'))
+                    ->label(__('Doc types'))
                     ->required()
                     ->searchable()
                     ->preload(),
@@ -52,28 +52,22 @@ class DocExpirationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('docType.title')
-                    ->label(__('Doc type'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('management_review_years')
-                    ->label(__('Management review year'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('central_expiration_years')
-                    ->label(__('Central expiration year'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Created at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Updated at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
             ->filters([
                 //

@@ -7,18 +7,10 @@ use App\Services\TaskService;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class ActionTasksRelationManager extends RelationManager
 {
     protected static string $relationship = 'tasks';
-
-    protected static ?string $title = null;
-
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
-    {
-        return __('Tasks');
-    }
 
     public function table(Table $table): Table
     {
@@ -26,51 +18,41 @@ class ActionTasksRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label(__('Title'))
                     ->searchable()
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->label(__('Responsible'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
-                    ->label(__('Status'))
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
                 Tables\Columns\TextColumn::make('start_date')
-                    ->label(__('Start date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deadline')
-                    ->label(__('Deadline'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actual_start_date')
-                    ->label(__('Actual start date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('actual_closing_date')
-                    ->label(__('Actual closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Created at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Updated at'))
+                    ->date()
                     ->sortable()
-                    ->date('l, d \d\e F \d\e Y')
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label(__('New task'))
+                    ->label('New action task')
                     ->button()
                     ->color('primary')
                     ->authorize(
@@ -82,7 +64,7 @@ class ActionTasksRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\Action::make('follow-up')
-                    ->label(__('Follow-up'))
+                    ->label('Follow-up')
                     ->color('primary')
                     ->icon('heroicon-o-eye')
                     ->url(fn ($record) => ActionResource::getUrl('action_tasks.view', [

@@ -19,46 +19,26 @@ class Corrective extends Action
 
     public const CORRECTIVE_TYPE = 2; // ID correcto de tu seeder
 
-    protected $fillable = [
-        'action_type_id',
-        'finding_id',
-        'title',
-        'description',
+    // protected $fillable = [
+    //     // 'support_file_id',
+    //     // 'verifier_user_id',
+    //     // 'analysis_cause_id',
+    //     // 'cause_description',
+    // ];
 
-        'process_id',
-        'sub_process_id',
-        'action_origin_id',
-
-        'registered_by_id',
-        'responsible_by_id',
-
-        'detection_date',
-
-        'containment_action',
-        'action_analysis_cause_id',
-        'corrective_action',
-        'action_verification_method_id',
-        'verification_responsible_by_id',
-        'verification_date',
-
-        'status_id',
-        'deadline',
-        'actual_closing_date',
-        'reason_for_cancellation',
-    ];
-
-    public function analysisCause()
+    public function file()
     {
-        return $this->belongsTo(ActionAnalysisCause::class, 'action_analysis_cause_id');
+        return $this->morphOne(File::class, 'fileable');
     }
 
-    public function verificationMethod()
-    {
-        return $this->belongsTo(ActionVerificationMethod::class, 'action_verification_method_id');
-    }
+    // public function verifier()
+    // {
+    //     return $this->belongsTo(User::class, 'verifier_user_id');
+    // }
 
-    public function verificationResponsible()
-    {
-        return $this->belongsTo(User::class, 'verification_responsible_by_id');
-    }
+    // public function analysisCause()
+    // {
+    //     return $this->belongsTo(Status::class, 'analysis_cause_id');
+    // }
+
 }

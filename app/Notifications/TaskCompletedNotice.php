@@ -39,7 +39,7 @@ class TaskCompletedNotice extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('The task has completed!'))
+            ->subject(__('The task has completed'))
             ->view('emails.task-completed', [
                 'user' => $notifiable,
                 'task' => $this->task,
