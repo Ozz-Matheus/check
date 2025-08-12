@@ -103,7 +103,7 @@ class RiskPlanResource extends Resource
             'treatment.view' => \App\Filament\Resources\RiskTreatmentResource\Pages\ViewRiskTreatment::route('/{riskPlan}/risk/{risk}/treatment/{record}'),
             'treatment.edit' => \App\Filament\Resources\RiskTreatmentResource\Pages\EditRiskTreatment::route('/{riskPlan}/risk/{risk}/treatment/{record}/edit'),
             // Acciones del riesgo
-            'improve.create' => \App\Filament\Resources\ImproveResource\Pages\CreateImprove::route('/{riskPlan}/risk/{risk}/treatment/{treatment}/action/create'),
+            'improve.create' => \App\Filament\Resources\ImproveResource\Pages\CreateImprove::route('/{riskPlan}/risk/{risk}/{model}/{model_id}/improve/create'),
         ];
     }
 }

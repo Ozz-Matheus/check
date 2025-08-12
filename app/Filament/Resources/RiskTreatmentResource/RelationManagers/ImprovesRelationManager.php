@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\RiskTreatmentResource\RelationManagers;
 
 use App\Filament\Resources\RiskPlanResource;
+use App\Model\RiskTreatment;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -61,13 +62,16 @@ class ImprovesRelationManager extends RelationManager
                         return str($this->getPageClass())->contains('View');
                     })
                     ->url(function () {
-                        $record = $this->getOwnerRecord()->load('risk');
 
-                        // dd($record);
+                        $record = $this->getOwnerRecord()->load('risk');
+                        $model = class_basename(RiskTreatment::class);
+
                         return RiskPlanResource::getUrl('improve.create', [
                             'riskPlan' => $record->risk->risk_plan_id,
                             'risk' => $record->risk->id,
-                            'treatment' => $record->id,
+                            'model' => $model,
+                            'model_id' => $record->id,
+
                         ]);
                     })/* ->openUrlInNewTab() */,
             ]) // ->recordUrl(true)

@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Adapters;
+namespace App\Services;
 
 use App\Contracts\ActionOriginInterface;
 use App\Models\RiskTreatment;
 
-class RiskTreatmentOriginAdapter implements ActionOriginInterface
+/**
+ * Servicio para RiskTreatment
+ */
+class RiskTreatmentService implements ActionOriginInterface
 {
     public function __construct(protected RiskTreatment $model) {}
 
