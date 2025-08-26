@@ -8,6 +8,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\ListRecords;
+use App\Exports\RiskExecutiveReportExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Notifications\Notification;
 
 class ListRisks extends ListRecords
 {
@@ -42,7 +45,24 @@ class ListRisks extends ListRecords
                         ->preload(),
                 ])
                 ->slideOver()
-                ->action(function (array $data) {})->modalSubmitActionLabel('Descargar'),
+                ->action(function (array $data) {
+
+                    $reportData = RiskExecutiveReportExport::make($data);
+
+                    if ($reportData['risks']->isEmpty()) {
+                        Notification::make()
+                            ->title('Sin datos')
+                            ->body('No se encontraron riesgos para esta combinación de proceso y subproceso.')
+                            ->warning()
+                            ->send();
+                        return;
+                    }
+
+                    return response()->streamDownload(function () use ($reportData) {
+                        echo Pdf::loadView('reports.risk-executive', $reportData)->output();
+                    }, 'informe-ejecutivo-riesgos.pdf');
+
+                })->modalSubmitActionLabel('Descargar'),
             Actions\CreateAction::make(),
         ];
     }
