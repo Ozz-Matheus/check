@@ -2,26 +2,28 @@
 
 namespace App\Filament\Resources\ActionTaskResource\Pages;
 
+use App\Filament\Resources\ActionResource;
 use App\Filament\Resources\ActionTaskResource;
 use App\Models\Action;
 use App\Models\ActionTask;
 use App\Models\Status;
-use App\Models\User;
 use App\Notifications\TaskAssignedNotice;
 use App\Services\ActionStatusService;
-use App\Traits\HasActionContext;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateActionTask extends CreateRecord
 {
-    use HasActionContext;
-
     protected static string $resource = ActionTaskResource::class;
+
+    public ?int $action_id = null;
+
+    public ?Action $actionModel = null;
 
     public function mount(): void
     {
         parent::mount();
-        $this->loadActionContext();
+        $this->action_id = request()->route('action');
+        $this->actionModel = Action::findOrFail($this->action_id);
     }
 
     protected function handleRecordCreation(array $data): ActionTask
@@ -46,7 +48,10 @@ class CreateActionTask extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->actionModel->getFilamentUrl();
+        return ActionResource::getUrl('task.view', [
+            'action' => $this->action_id,
+            'record' => $this->record->id,
+        ]);
     }
 
     public static function canCreateAnother(): bool
@@ -62,26 +67,9 @@ class CreateActionTask extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            $this->actionModel->getFilamentUrl() => ucfirst($this->actionModel->type->name),
-            false => 'Task',
+            ActionResource::getUrl('view', ['record' => $this->action_id]) => 'Action',
+            ActionResource::getUrl('task.create', ['action' => $this->action_id]) => 'Task',
+            false => 'Create',
         ];
     }
-
-    /* public function getResponsibleUserOptions(): array
-    {
-        $action = Action::find($this->action_id);
-
-        if (! $action) {
-            return [];
-        }
-
-        return User::whereHas('subProcesses', function ($query) use ($action) {
-            $query->where('sub_process_id', $action->sub_process_id);
-        })->pluck('name', 'id')->toArray();
-    } */
-
-    /* public function getMaxStartDate(): ?string
-    {
-        return $this->actionModel?->deadline?->toDateString();
-    } */
 }

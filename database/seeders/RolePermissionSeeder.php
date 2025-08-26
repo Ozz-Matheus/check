@@ -63,17 +63,9 @@ class RolePermissionSeeder extends Seeder
         $permissionViewActionEnding = Permission::findByName('view_action::ending');
 
         // Improve
-        $permissionViewAnyImprove = Permission::findByName('view_any_improve');
-        $permissionCreateImprove = Permission::findByName('create_improve');
-        $permissionViewImprove = Permission::findByName('view_improve');
-        // Preventive
-        $permissionViewAnyPreventive = Permission::findByName('view_any_preventive');
-        $permissionCreatePreventive = Permission::findByName('create_preventive');
-        $permissionViewPreventive = Permission::findByName('view_preventive');
-        // Corrective
-        $permissionViewAnyCorrective = Permission::findByName('view_any_corrective');
-        $permissionCreateCorrective = Permission::findByName('create_corrective');
-        $permissionViewCorrective = Permission::findByName('view_corrective');
+        $permissionViewAnyAction = Permission::findByName('view_any_action');
+        $permissionCreateAction = Permission::findByName('create_action');
+        $permissionViewAction = Permission::findByName('view_action');
 
         $permissionViewAnyActionType = Permission::findByName('view_any_action::type');
         // $permissionCreateActionType = Permission::findByName('create_action::type');
@@ -148,17 +140,9 @@ class RolePermissionSeeder extends Seeder
         $roleAdmin->givePermissionTo($permissionCreateActionEnding);
         $roleAdmin->givePermissionTo($permissionViewActionEnding);
 
-        $roleAdmin->givePermissionTo($permissionViewAnyImprove);
-        $roleAdmin->givePermissionTo($permissionCreateImprove);
-        $roleAdmin->givePermissionTo($permissionViewImprove);
-
-        $roleAdmin->givePermissionTo($permissionViewAnyPreventive);
-        $roleAdmin->givePermissionTo($permissionCreatePreventive);
-        $roleAdmin->givePermissionTo($permissionViewPreventive);
-
-        $roleAdmin->givePermissionTo($permissionViewAnyCorrective);
-        $roleAdmin->givePermissionTo($permissionCreateCorrective);
-        $roleAdmin->givePermissionTo($permissionViewCorrective);
+        $roleAdmin->givePermissionTo($permissionViewAnyAction);
+        $roleAdmin->givePermissionTo($permissionCreateAction);
+        $roleAdmin->givePermissionTo($permissionViewAction);
         //
         $roleAdmin->givePermissionTo($permissionViewAnyActionType);
         // $roleAdmin->givePermissionTo($permissionCreateActionType);
@@ -176,17 +160,9 @@ class RolePermissionSeeder extends Seeder
         $roleStandard->givePermissionTo($permissionCreateActionEnding);
         $roleStandard->givePermissionTo($permissionViewActionEnding);
 
-        $roleStandard->givePermissionTo($permissionViewAnyImprove);
-        $roleStandard->givePermissionTo($permissionCreateImprove);
-        $roleStandard->givePermissionTo($permissionViewImprove);
-
-        $roleStandard->givePermissionTo($permissionViewAnyPreventive);
-        $roleStandard->givePermissionTo($permissionCreatePreventive);
-        $roleStandard->givePermissionTo($permissionViewPreventive);
-
-        $roleStandard->givePermissionTo($permissionViewAnyCorrective);
-        $roleStandard->givePermissionTo($permissionCreateCorrective);
-        $roleStandard->givePermissionTo($permissionViewCorrective);
+        $roleStandard->givePermissionTo($permissionViewAnyAction);
+        $roleStandard->givePermissionTo($permissionCreateAction);
+        $roleStandard->givePermissionTo($permissionViewAction);
 
         // Permisos tareas
         // Admin

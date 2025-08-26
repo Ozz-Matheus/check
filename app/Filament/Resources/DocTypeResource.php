@@ -14,7 +14,28 @@ class DocTypeResource extends Resource
 {
     protected static ?string $model = DocType::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Doc Type');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Doc Types');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Doc Types');
+    }
 
     public static function getNavigationGroup(): string
     {
@@ -23,7 +44,7 @@ class DocTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {

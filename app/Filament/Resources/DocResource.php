@@ -23,15 +23,28 @@ class DocResource extends Resource
 {
     protected static ?string $model = Doc::class;
 
-    protected static ?string $modelLabel = 'Document';
+    protected static ?string $modelLabel = null;
 
-    protected static ?string $pluralModelLabel = 'Documents';
+    protected static ?string $pluralModelLabel = null;
 
-    protected static ?string $navigationLabel = 'Documents';
+    protected static ?string $navigationLabel = null;
 
-    // protected static ?string $navigationGroup = 'Documents';
+    public static function getModelLabel(): string
+    {
+        return __('Document');
+    }
 
-    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    public static function getPluralModelLabel(): string
+    {
+        return __('Documents');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Documents');
+    }
+
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 1;
 
@@ -161,7 +174,7 @@ class DocResource extends Resource
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('sub_process_id')
-                    ->relationship('subprocess', 'title')
+                    ->relationship('subProcess', 'title')
                     ->label(__('Sub Process'))
                     ->multiple()
                     ->searchable()

@@ -8,7 +8,8 @@ class Risk extends Model
 {
     //
     protected $fillable = [
-        'risk_plan_id',
+        'process_id',
+        'sub_process_id',
         'strategic_context_type_id',
         'strategic_context_id',
         'risk_description',
@@ -18,12 +19,19 @@ class Risk extends Model
         'inherent_impact_id',
         'inherent_probability_id',
         'inherent_risk_level_id',
-        // risk_treatment - uno a uno
+        'risk_control_general_qualification_id',
+        'residual_risk_level_id',
+        // risk_controls - uno a muchos - RelationManager
     ];
 
-    public function riskPlan()
+    public function process()
     {
-        return $this->belongsTo(RiskPlan::class, 'risk_plan_id');
+        return $this->belongsTo(Process::class, 'process_id');
+    }
+
+    public function subProcess()
+    {
+        return $this->belongsTo(SubProcess::class, 'sub_process_id');
     }
 
     public function strategicContextType()
@@ -61,8 +69,18 @@ class Risk extends Model
         return $this->belongsTo(RiskLevel::class, 'inherent_risk_level_id');
     }
 
-    public function treatment()
+    public function controlGeneralQualificationCalculated()
     {
-        return $this->hasOne(RiskTreatment::class, 'risk_id');
+        return $this->belongsTo(RiskControlQualification::class, 'risk_control_general_qualification_id');
+    }
+
+    public function residualLevelCalculated()
+    {
+        return $this->belongsTo(RiskLevel::class, 'residual_risk_level_id');
+    }
+
+    public function controls()
+    {
+        return $this->hasMany(RiskControl::class);
     }
 }

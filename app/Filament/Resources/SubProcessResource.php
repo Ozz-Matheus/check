@@ -14,7 +14,28 @@ class SubProcessResource extends Resource
 {
     protected static ?string $model = SubProcess::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Sub Process');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Sub Processes');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Sub Processes');
+    }
 
     public static function getNavigationGroup(): string
     {
@@ -23,7 +44,7 @@ class SubProcessResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {

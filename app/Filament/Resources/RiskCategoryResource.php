@@ -14,7 +14,28 @@ class RiskCategoryResource extends Resource
 {
     protected static ?string $model = RiskCategory::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Risk Category');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Risk Categories');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Risk Categories');
+    }
 
     public static function getNavigationGroup(): string
     {
@@ -23,7 +44,7 @@ class RiskCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 11;
 
     public static function form(Form $form): Form
     {

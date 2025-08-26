@@ -22,8 +22,9 @@ return new class extends Migration
             $table->date('actual_start_date')->nullable();   // cuándo realmente empezó
             $table->date('actual_closing_date')->nullable(); // cuándo cerró
 
-            // NUEVO: status general
             $table->foreignId('status_id')->constrained('statuses');
+            $table->boolean('finished')->default(false);
+            $table->text('extemporaneous_reason')->nullable();
 
             $table->timestamps();
         });

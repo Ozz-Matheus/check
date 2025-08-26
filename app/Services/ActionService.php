@@ -24,7 +24,7 @@ class ActionService
         return auth()->id() === $action->registered_by_id;
     }
 
-    public function canFinishAction(Action $action): bool
+    public function canViewFinishAction(Action $action): bool
     {
 
         $expectedActionStatusId = Status::byContextAndTitle('action', 'in_execution')?->id;
@@ -34,17 +34,14 @@ class ActionService
             return false;
         }
 
-        if (auth()->id() !== $action->responsible_by_id) {
-            return false;
-        }
-
         $completedTaskStatusId = Status::byContextAndTitle('task', 'completed')?->id;
+        $extemporaneouTaskStatusId = Status::byContextAndTitle('task', 'extemporaneous')?->id;
 
-        $hasUncompletedTasks = $action->tasks()
-            ->where('status_id', '!=', $completedTaskStatusId)
+        $hasInvalidTasks = $action->tasks()
+            ->whereNotIn('status_id', [$completedTaskStatusId, $extemporaneouTaskStatusId]) // Verifica si hay tareas fuera de estos dos estados
             ->exists();
 
-        return ! $hasUncompletedTasks;
+        return ! $hasInvalidTasks;
     }
 
     public function canViewActionEnding(int $statusId)

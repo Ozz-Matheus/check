@@ -23,21 +23,23 @@ class DocStatsOverview extends BaseWidget
 
         return [
             Stat::make(__('Total Docs'), $totalDocs)
-                ->description(__('Registers in the system'))
-                ->descriptionIcon('heroicon-m-numbered-list', IconPosition::Before),
+                ->description(__('Records in the system'))
+                ->descriptionIcon('heroicon-o-numbered-list', IconPosition::Before),
             Stat::make(__('With final disposition'), $docsWithDisposition)
                 ->description($docsWithDisposition >= $totalDocs ? __('Complete') : __('Incomplete'))
                 ->descriptionIcon(
-                    $docsWithDisposition >= $totalDocs ? 'heroicon-m-check' : 'heroicon-m-exclamation-circle',
+                    $docsWithDisposition >= $totalDocs ? 'heroicon-o-check' : 'heroicon-o-exclamation-circle',
                     IconPosition::Before
                 )
                 ->color($docsWithDisposition >= $totalDocs ? 'success' : 'danger'),
-            Stat::make(__('Expired registrations'), $docsExpired)
-                ->description(__('These Registrations have expired')),
             Stat::make(__('To overdue'), $aboutToExpire)
                 ->description(__('30 days left until expiration'))
                 ->descriptionIcon('heroicon-o-clock', IconPosition::Before)
                 ->color('warning'),
+            Stat::make(__('Expired registrations'), $docsExpired)
+                ->description(__('Expired records'))
+                ->descriptionIcon('heroicon-o-exclamation-triangle', IconPosition::Before)
+                ->color('danger'),
         ];
     }
 }

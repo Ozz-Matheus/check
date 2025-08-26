@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\HasFilamentResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends Model
 {
     /** @use HasFactory<\Database\Factories\ActionFactory> */
-    use HasFactory, HasFilamentResource;
+    use HasFactory;
 
     protected $guarded = [];
 
@@ -29,11 +28,6 @@ class Action extends Model
     public function type()
     {
         return $this->belongsTo(ActionType::class, 'action_type_id');
-    }
-
-    public function origin()
-    {
-        return $this->morphTo();
     }
 
     public function process()
@@ -56,6 +50,7 @@ class Action extends Model
         return $this->belongsTo(User::class, 'responsible_by_id');
     }
 
+    /* Correctiva */
     public function analysisCause()
     {
         return $this->belongsTo(ActionAnalysisCause::class, 'action_analysis_cause_id');
@@ -70,6 +65,7 @@ class Action extends Model
     {
         return $this->belongsTo(User::class, 'verification_responsible_by_id');
     }
+    /* ** */
 
     public function status()
     {
@@ -91,9 +87,4 @@ class Action extends Model
     | Accesores / Métodos útiles
     |--------------------------------------------------------------------------
     */
-
-    public function getUrlAttribute(): ?string
-    {
-        return $this->getFilamentUrl();
-    }
 }

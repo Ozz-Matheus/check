@@ -16,6 +16,8 @@ class ActionTask extends Model
         'actual_start_date',
         'actual_closing_date',
         'status_id',
+        'finished',
+        'extemporaneous_reason',
     ];
 
     protected $casts = [
@@ -23,6 +25,7 @@ class ActionTask extends Model
         'deadline' => 'date',
         'actual_start_date' => 'date',
         'actual_closing_date' => 'date',
+        'finished' => 'boolean',
     ];
 
     /*
@@ -46,18 +49,8 @@ class ActionTask extends Model
         return $this->belongsTo(Status::class);
     }
 
-    public function comments()
+    public function followUps()
     {
-        return $this->hasMany(ActionTaskComment::class, 'action_task_id');
-    }
-
-    public function taskFiles()
-    {
-        return $this->hasMany(ActionTaskFile::class, 'fileable_id');
-    }
-
-    public function files()
-    {
-        return $this->morphMany(File::class, 'fileable');
+        return $this->hasMany(ActionTaskFollowUp::class, 'action_task_id');
     }
 }

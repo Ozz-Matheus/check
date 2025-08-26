@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('action_id')->constrained();
             $table->text('real_impact');
             $table->text('result');
+            $table->enum('effectiveness', ['yes', 'no', 'partial'])->nullable();
+            $table->text('evaluation_comment')->nullable();
             $table->timestamps();
         });
     }

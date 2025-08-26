@@ -14,7 +14,28 @@ class DocEndingResource extends Resource
 {
     protected static ?string $model = DocEnding::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Doc Ending');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Doc Endings');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Doc Endings');
+    }
 
     public static function getNavigationGroup(): string
     {
@@ -23,7 +44,7 @@ class DocEndingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 9;
 
     public static function form(Form $form): Form
     {

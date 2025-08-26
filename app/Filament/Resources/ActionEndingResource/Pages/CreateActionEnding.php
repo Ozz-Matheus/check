@@ -3,22 +3,26 @@
 namespace App\Filament\Resources\ActionEndingResource\Pages;
 
 use App\Filament\Resources\ActionEndingResource;
+use App\Filament\Resources\ActionResource;
+use App\Models\Action;
 use App\Models\ActionEnding;
 use App\Services\ActionStatusService;
-use App\Traits\HasActionContext;
+use App\Services\FileService;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Storage;
 
 class CreateActionEnding extends CreateRecord
 {
-    use HasActionContext;
-
     protected static string $resource = ActionEndingResource::class;
+
+    public ?int $action_id = null;
+
+    public ?Action $actionModel = null;
 
     public function mount(): void
     {
         parent::mount();
-        $this->loadActionContext();
+        $this->action_id = request()->route('action');
+        $this->actionModel = Action::findOrFail($this->action_id);
     }
 
     protected function handleRecordCreation(array $data): ActionEnding
@@ -30,16 +34,7 @@ class CreateActionEnding extends CreateRecord
         ]);
 
         if (! empty($data['path']) && is_array($data['path'])) {
-
-            foreach ($data['path'] as $path) {
-                $ending->files()->create([
-                    'name' => $data['name'][$path] ?? basename($path),
-                    'path' => $path,
-                    'mime_type' => Storage::disk('public')->mimeType($path),
-                    'size' => Storage::disk('public')->size($path),
-                ]);
-            }
-
+            app(FileService::class)->createFiles($ending, $data);
         }
 
         app(ActionStatusService::class)->statusChangesInActions($this->actionModel, 'finished');
@@ -50,7 +45,10 @@ class CreateActionEnding extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->actionModel->getFilamentUrl();
+        return ActionResource::getUrl('ending.view', [
+            'action' => $this->action_id,
+            'record' => $this->record->id,
+        ]);
     }
 
     public static function canCreateAnother(): bool
@@ -66,8 +64,9 @@ class CreateActionEnding extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            $this->actionModel->getFilamentUrl() => ucfirst($this->actionModel->type->name),
-            false => 'Completion',
+            ActionResource::getUrl('view', ['record' => $this->action_id]) => 'Action',
+            ActionResource::getUrl('ending.create', ['action' => $this->action_id]) => 'Ending',
+            false => 'Create',
         ];
     }
 }

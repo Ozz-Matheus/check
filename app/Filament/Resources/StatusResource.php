@@ -14,7 +14,28 @@ class StatusResource extends Resource
 {
     protected static ?string $model = Status::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Status');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Statuses');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Statuses');
+    }
 
     public static function getNavigationGroup(): string
     {
@@ -23,7 +44,7 @@ class StatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
@@ -108,7 +129,6 @@ class StatusResource extends Resource
                     //
                 ]),
             ]);
-
     }
 
     public static function getPages(): array

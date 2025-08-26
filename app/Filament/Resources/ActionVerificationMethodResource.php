@@ -14,7 +14,28 @@ class ActionVerificationMethodResource extends Resource
 {
     protected static ?string $model = ActionVerificationMethod::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Action Verification Method');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Action Verification Methods');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Action Verification Methods');
+    }
 
     public static function getNavigationGroup(): string
     {

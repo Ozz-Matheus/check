@@ -15,11 +15,32 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('User');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Users');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Users');
+    }
 
     public static function getNavigationGroup(): string
     {
-        return __('Users Management');
+        return __('User Management');
     }
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
@@ -80,6 +101,7 @@ class UserResource extends Resource
                             ->disableOptionWhen(function ($value, $record) {
                                 return $record?->isLeaderOfSubProcess($value);
                             })
+                            ->searchable()
                             ->helperText(
                                 fn (string $context) => $context === 'edit'
                                     ? __('The user cannot be unlinked from the subprocess if he is linked to it as a leader.')

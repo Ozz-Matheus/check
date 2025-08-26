@@ -8,16 +8,16 @@ class RiskControl extends Model
 {
     //
     protected $fillable = [
-        'risk_treatment_id',
+        'risk_id',
         'title',
         'control_periodicity_id',
         'control_type_id',
         'control_qualification_id',
     ];
 
-    public function treatment()
+    public function risk()
     {
-        return $this->belongsTo(RiskTreatment::class, 'risk_treatment_id');
+        return $this->belongsTo(Risk::class, 'risk_id');
     }
 
     public function potentialCauses()
@@ -38,5 +38,10 @@ class RiskControl extends Model
     public function controlQualification()
     {
         return $this->belongsTo(RiskControlQualification::class, 'control_qualification_id');
+    }
+
+    public function followUps()
+    {
+        return $this->hasMany(RiskControlFollowUp::class);
     }
 }

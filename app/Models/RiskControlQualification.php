@@ -11,12 +11,18 @@ class RiskControlQualification extends Model
     use HasFactory;
 
     protected $fillable = [
+        'context',
         'title',
         'score',
     ];
 
-    public function treatments()
+    public function risks()
     {
-        return $this->hasMany(RiskTreatment::class);
+        return $this->hasMany(Risk::class);
+    }
+
+    public function controls()
+    {
+        return $this->hasMany(RiskControl::class);
     }
 }

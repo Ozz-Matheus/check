@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Risk;
 use App\Models\RiskControlQualification;
 use App\Models\RiskImpact;
 use App\Models\RiskLevel;
@@ -14,14 +15,12 @@ class RiskService
 {
     public function riskLevel(int $riskImpact, int $riskProbability, ?int $controlQualification = null)
     {
-        // $riskLevelCalculated = $this->riskInherentCalculated($riskImpact, $riskProbability); // parcialmente
         $riskLevelCalculated = (is_null($controlQualification))
             ? $this->riskInherentCalculated($riskImpact, $riskProbability)
             : $this->riskResidualCalculated($riskImpact, $riskProbability, $controlQualification);
 
-        // dd($riskLevelCalculated);
         $riskLevel = RiskLevel::where('min', '<=', $riskLevelCalculated)->where('max', '>', $riskLevelCalculated)->first();
-        // dd($riskLevel->title);
+
         if (! $riskLevel) {
             $riskLevel = RiskLevel::where('min', '<=', $riskLevelCalculated)
                 ->where('max', '>=', $riskLevelCalculated)
@@ -33,7 +32,7 @@ class RiskService
 
     /* ********************************************************* */
 
-    public function riskInherentCalculated(int $riskImpact, int $riskProbability)
+    private function riskInherentCalculated(int $riskImpact, int $riskProbability)
     {
         $riskImpactScore = RiskImpact::findOrFail($riskImpact);
         $riskImpactScore = $riskImpactScore->score;
@@ -46,7 +45,7 @@ class RiskService
         return $riskInherentValueCalculated;
     }
 
-    public function riskResidualCalculated(int $riskImpact, int $riskProbability, int $controlQualification)
+    private function riskResidualCalculated(int $riskImpact, int $riskProbability, int $controlQualification)
     {
         /* $riskControlQualificationScore = RiskControlQualification::findOrFail($controlQualification);
         $riskControlQualificationScore = $riskControlQualificationScore->score; */ // Se hace con el valor predeterminado de la calificación del control con mas cercanía
@@ -61,7 +60,43 @@ class RiskService
 
     /* ********************************************************* */
 
-    public function averageControlQualification($qualificationIds)
+    public function recalculateRiskControlQualifications(Risk $risk): void
+    {
+        // Obtener todos los IDs de calificaciones de controles del riesgo
+        $qualificationIds = $risk->controls()
+            ->pluck('control_qualification_id')
+            ->filter(); // Elimina nulos
+
+        if ($qualificationIds->isEmpty()) {
+            $risk->update([
+                'risk_control_general_qualification_id' => null,
+                'residual_risk_level_id' => null,
+            ]);
+
+            return;
+        }
+
+        // Calcular promedio de scores
+        $average = $this->averageControlQualification($qualificationIds);
+
+        // Buscar la calificación más cercana al promedio
+        $closest = $this->valueClosestAverage($average);
+
+        // Calcular nivel de riesgo residual
+        $residualLevelId = $this->riskLevel(
+            $risk->inherent_impact_id,
+            $risk->inherent_probability_id,
+            $average
+        );
+
+        // Actualizar campos en el riesgo
+        $risk->update([
+            'risk_control_general_qualification_id' => $closest?->id,
+            'residual_risk_level_id' => $residualLevelId,
+        ]);
+    }
+
+    private function averageControlQualification($qualificationIds)
     {
         // Obtenemos los scores únicos desde la base de datos (una sola vez por ID)
         $scoresMap = RiskControlQualification::whereIn('id', $qualificationIds->unique())
@@ -76,7 +111,7 @@ class RiskService
         return round($average);
     }
 
-    public function valueClosestAverage($average)
+    private function valueClosestAverage($average)
     {
         // Obtenemos todas las clasificaciones con su puntaje
         $allQualifications = RiskControlQualification::all(['id', 'score']);

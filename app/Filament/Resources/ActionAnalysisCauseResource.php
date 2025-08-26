@@ -14,7 +14,28 @@ class ActionAnalysisCauseResource extends Resource
 {
     protected static ?string $model = ActionAnalysisCause::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Action Analysis Cause');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Action Analysis Causes');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Action Analysis Causes');
+    }
 
     public static function getNavigationGroup(): string
     {

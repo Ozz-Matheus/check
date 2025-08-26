@@ -27,6 +27,8 @@ class ActionTasksRelationManager extends RelationManager
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
+                Tables\Columns\IconColumn::make('finished')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->date()
                     ->sortable(),
@@ -50,15 +52,21 @@ class ActionTasksRelationManager extends RelationManager
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('id', 'desc')
+            ->recordUrl(function ($record) {
+                return ActionResource::getUrl('task.view', [
+                    'action' => $this->getOwnerRecord()->id,
+                    'record' => $record->id,
+                ]);
+            })
             ->headerActions([
                 Tables\Actions\Action::make('create')
                     ->label('New action task')
                     ->button()
                     ->color('primary')
-                    ->authorize(
-                        fn () => app(TaskService::class)->canCreateTask($this->getOwnerRecord()->responsible_by_id, $this->getOwnerRecord()->status_id)
-                    )
-                    ->url(fn () => ActionResource::getUrl('action_tasks.create', [
+                    ->authorize($this->getOwnerRecord()->responsible_by_id === auth()->id() && auth()->user()->can('create_action::task'))
+                    ->visible(fn () => app(TaskService::class)->canViewCreateTask($this->getOwnerRecord()->status_id))
+                    ->url(fn () => ActionResource::getUrl('task.create', [
                         'action' => $this->getOwnerRecord()->id,
                     ])),
             ])
@@ -67,7 +75,7 @@ class ActionTasksRelationManager extends RelationManager
                     ->label('Follow-up')
                     ->color('primary')
                     ->icon('heroicon-o-eye')
-                    ->url(fn ($record) => ActionResource::getUrl('action_tasks.view', [
+                    ->url(fn ($record) => ActionResource::getUrl('task.view', [
                         'action' => $this->getOwnerRecord()->id,
                         'record' => $record->id,
                     ])),

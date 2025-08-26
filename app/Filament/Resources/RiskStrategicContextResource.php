@@ -14,7 +14,28 @@ class RiskStrategicContextResource extends Resource
 {
     protected static ?string $model = RiskStrategicContext::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
     protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Risk Strategic Context');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Risk Strategic Contexts');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Risk Strategic Contexts');
+    }
 
     public static function getNavigationGroup(): string
     {
@@ -23,16 +44,15 @@ class RiskStrategicContextResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 10;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('strategic_context_type_id')
-                    ->relationship('strategicContextType', 'title')
-                    ->native(false)
-                    ->required(),
+                Forms\Components\TextInput::make('strategic_context_type_id')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
@@ -43,16 +63,17 @@ class RiskStrategicContextResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('strategicContextType.title')
+                Tables\Columns\TextColumn::make('strategic_context_type_id')
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->date()
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->date()
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

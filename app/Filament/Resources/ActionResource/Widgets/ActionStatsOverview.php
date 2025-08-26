@@ -19,16 +19,16 @@ class ActionStatsOverview extends BaseWidget
         return [
             /* Stat::make(__('Total Actions'), $totalActions)
                 ->description(__('Actions in the system'))
-                ->descriptionIcon('heroicon-m-numbered-list', IconPosition::Before), */
+                ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before), */
             Stat::make(__('Total Improve Actions'), $totalImprove)
                 ->description(__('Improve actions in the system'))
-                ->descriptionIcon('heroicon-m-numbered-list', IconPosition::Before),
+                ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before),
             Stat::make(__('Total Preventive Actions'), $totalPreventive)
                 ->description(__('Preventive actions in the system'))
-                ->descriptionIcon('heroicon-m-numbered-list', IconPosition::Before),
+                ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before),
             Stat::make(__('Total Corrective Actions'), $totalCorrective)
                 ->description(__('Corrective actions in the system'))
-                ->descriptionIcon('heroicon-m-numbered-list', IconPosition::Before),
+                ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before),
         ];
     }
 }

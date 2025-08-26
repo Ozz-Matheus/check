@@ -8,9 +8,9 @@ use Filament\Tables\Table;
 
 class ActionEndingFilesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'actionEndingFiles';
+    protected static string $relationship = 'files';
 
-    protected static ?string $title = 'Action Ending Files';
+    protected static ?string $title = 'Action ending files';
 
     public function table(Table $table): Table
     {

@@ -3,8 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActionTaskResource\Pages;
-use App\Filament\Resources\ActionTaskResource\RelationManagers\ActionTaskCommentsRelationManager;
-use App\Filament\Resources\ActionTaskResource\RelationManagers\ActionTaskFilesRelationManager;
+use App\Filament\Resources\ActionTaskResource\RelationManagers\ActionTaskFollowUpsRelationManager;
 use App\Models\ActionTask;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -51,7 +50,7 @@ class ActionTaskResource extends Resource
                         Forms\Components\DatePicker::make('start_date')
                             ->minDate(now()->format('Y-m-d'))
                             ->maxDate(fn ($livewire) => $livewire->actionModel?->deadline?->toDateString())
-                            // ->maxDate(fn($livewire) => method_exists($livewire, 'getMaxStartDate') ? $livewire->getMaxStartDate() : null)
+                            ->closeOnDateSelection()
                             ->afterStateUpdated(function (Forms\Set $set) {
                                 $set('deadline', null);
                             })
@@ -61,7 +60,7 @@ class ActionTaskResource extends Resource
                         Forms\Components\DatePicker::make('deadline')
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))
                             ->maxDate(fn ($livewire) => $livewire->actionModel?->deadline?->toDateString())
-                            // ->maxDate(fn($livewire) => method_exists($livewire, 'getMaxStartDate') ? $livewire->getMaxStartDate() : null)
+                            ->closeOnDateSelection()
                             ->required()
                             ->disabled(fn (Forms\Get $get) => empty($get('start_date')))
                             ->native(false)
@@ -72,6 +71,10 @@ class ActionTaskResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
+                        Forms\Components\Textarea::make('extemporaneous_reason')
+                            ->visible(fn ($record) => filled($record?->extemporaneous_reason))
+                            ->readOnly()
+                            ->columnSpanFull(),
                     ]),
             ]);
     }
@@ -80,8 +83,7 @@ class ActionTaskResource extends Resource
     {
         return [
             //
-            ActionTaskCommentsRelationManager::class,
-            ActionTaskFilesRelationManager::class,
+            ActionTaskFollowUpsRelationManager::class,
         ];
     }
 

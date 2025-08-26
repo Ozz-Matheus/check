@@ -10,6 +10,8 @@ class ActionEnding extends Model
         'action_id',
         'real_impact',
         'result',
+        'effectiveness',
+        'evaluation_comment',
     ];
 
     /*
@@ -21,11 +23,6 @@ class ActionEnding extends Model
     public function action()
     {
         return $this->belongsTo(Action::class);
-    }
-
-    public function actionEndingFiles()
-    {
-        return $this->hasMany(ActionEndingFile::class, 'fileable_id');
     }
 
     public function files()

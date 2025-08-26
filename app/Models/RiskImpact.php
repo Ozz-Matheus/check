@@ -19,9 +19,4 @@ class RiskImpact extends Model
     {
         return $this->hasMany(Risk::class);
     }
-
-    /* public function treatments()
-    {
-        return $this->hasMany(RiskTreatment::class);
-    } */ // 📌Se implementará en la segunda fase
 }

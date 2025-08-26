@@ -16,7 +16,6 @@ class ActionStatusChart extends ChartWidget
     {
         return [
             'improve' => 'Improve',
-            'preventive' => 'Preventive',
             'corrective' => 'Corrective',
         ];
     }

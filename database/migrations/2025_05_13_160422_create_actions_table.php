@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
-            $table->nullableMorphs('origin'); // Genera origin_type y origin_id
-            $table->string('origin_label')->nullable(); // Para colocar de manera amigable el modulo morph al que se relacionó
             $table->foreignId('action_type_id')->constrained();   // nuevo: tipo de acción
             $table->string('title');
             $table->text('description');
@@ -25,26 +23,16 @@ return new class extends Migration
             $table->foreignId('registered_by_id')->constrained('users');
             $table->foreignId('responsible_by_id')->constrained('users');
 
-            // Correctiva / Preventiva
+            // Correctiva
             $table->date('detection_date')->nullable();
-
-            // Solo para Correctiva
             $table->text('containment_action')->nullable();
             $table->foreignId('action_analysis_cause_id')->nullable()->constrained('action_analysis_causes');
             $table->text('corrective_action')->nullable();
             $table->foreignId('action_verification_method_id')->nullable()->constrained('action_verification_methods');
             $table->foreignId('verification_responsible_by_id')->nullable()->constrained('users');
-            $table->date('verification_date')->nullable();
+            $table->date('verification_date')->nullable(); // 📌Se debe colocar automaticamente cuando se guarde el action ending con su nuevo campo de evaluación de eficacia
 
-            // Solo para Preventiva
-            /* $table->unsignedTinyInteger('risk_probability')->nullable();
-            $table->unsignedTinyInteger('risk_impact')->nullable();
-            $table->unsignedTinyInteger('risk_evaluation')->nullable(); */
-
-            $table->text('prevention_action')->nullable();
-            $table->text('effectiveness_indicator')->nullable(); // Posibilidad dejarlo como un select, indicadores comunes por proceso (ej. "Tasa de fallas", "N° de reportes", etc.), pero también permitir definir nuevos.
-
-            // Mejora / Preventiva
+            // Mejora
             $table->text('expected_impact')->nullable();
 
             $table->foreignId('status_id')->constrained('statuses');

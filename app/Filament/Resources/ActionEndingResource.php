@@ -28,21 +28,23 @@ class ActionEndingResource extends Resource
                     ->schema([
                         Forms\Components\Textarea::make('real_impact')
                             ->label(__('Real impact'))
-                            ->required()
-                            ->columnSpanFull(),
+                            ->required(),
                         Forms\Components\Textarea::make('result')
                             ->label(__('Result'))
-                            ->required()
-                            ->columnSpanFull(),
+                            ->required(),
                         static::baseFileUpload('path')
-                            ->label(__('Support files'))
-                            ->directory('actions/support/files')
+                            ->label(__('Support ending files'))
+                            ->directory('actions/endings/files')
                             ->multiple()
                             // ->maxParallelUploads(1)
-                            ->columnSpanFull()
                             ->visible(fn (string $context) => $context === 'create'),
-                    ])
-                    ->columns(2),
+                        Forms\Components\TextInput::make('effectiveness')
+                            ->visible(fn ($record) => filled($record?->effectiveness))
+                            ->readOnly(),
+                        Forms\Components\Textarea::make('evaluation_comment')
+                            ->visible(fn ($record) => filled($record?->evaluation_comment))
+                            ->readOnly(),
+                    ]),
             ]);
     }
 

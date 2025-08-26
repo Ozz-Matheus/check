@@ -21,9 +21,5 @@ class ActionTypeSeeder extends Seeder
             'name' => 'corrective',
             'label' => 'Correctiva',
         ]);
-        ActionType::factory()->create([
-            'name' => 'preventive',
-            'label' => 'Preventiva',
-        ]);
     }
 }
