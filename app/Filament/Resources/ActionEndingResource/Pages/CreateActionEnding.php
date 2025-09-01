@@ -6,7 +6,7 @@ use App\Filament\Resources\ActionEndingResource;
 use App\Filament\Resources\ActionResource;
 use App\Models\Action;
 use App\Models\ActionEnding;
-use App\Services\ActionStatusService;
+use App\Services\ActionEndingService;
 use App\Services\FileService;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -28,17 +28,20 @@ class CreateActionEnding extends CreateRecord
     protected function handleRecordCreation(array $data): ActionEnding
     {
         $ending = ActionEnding::create([
+            'action_id' => $this->action_id,
             'real_impact' => $data['real_impact'],
             'result' => $data['result'],
-            'action_id' => $this->action_id,
+            'extemporaneous_reason' => $data['extemporaneous_reason'] ?? null,
+            'real_closing_date' => now()->format('Y-m-d'),
+            'finished' => true,
+            'estimated_evaluation_date' => $data['estimated_evaluation_date'] ?? null,
         ]);
 
         if (! empty($data['path']) && is_array($data['path'])) {
             app(FileService::class)->createFiles($ending, $data);
         }
 
-        app(ActionStatusService::class)->statusChangesInActions($this->actionModel, 'finished');
-        app(ActionStatusService::class)->closingDateInActions($this->actionModel);
+        app(ActionEndingService::class)->changeActionStatusToFinish($ending);
 
         return $ending;
     }

@@ -54,50 +54,9 @@ class StatusSeeder extends Seeder
             'icon' => 'heroicon-o-arrow-uturn-left',
             'protected' => true,
         ]);
-        // --------- Context: action ---------
+        // --------- Context: action_and_task ---------
         Status::factory()->create([
-            'context' => 'action',
-            'title' => 'proposal',
-            'label' => 'Propuesto',
-            'color' => 'gray',
-            'icon' => 'heroicon-o-pencil-square',
-            'protected' => true,
-        ]);
-        Status::factory()->create([
-            'context' => 'action',
-            'title' => 'open',
-            'label' => 'Abierto',
-            'color' => 'gray',
-            'icon' => 'heroicon-o-folder-open',
-            'protected' => true,
-        ]);
-        Status::factory()->create([
-            'context' => 'action',
-            'title' => 'in_execution',
-            'label' => 'En ejecución',
-            'color' => 'indigo',
-            'icon' => 'heroicon-o-clock',
-            'protected' => true,
-        ]);
-        Status::factory()->create([
-            'context' => 'action',
-            'title' => 'finished',
-            'label' => 'Finalizado',
-            'color' => 'success',
-            'icon' => 'heroicon-o-check-circle',
-            'protected' => true,
-        ]);
-        Status::factory()->create([
-            'context' => 'action',
-            'title' => 'canceled',
-            'label' => 'Cancelado',
-            'color' => 'danger',
-            'icon' => 'heroicon-o-x-circle',
-            'protected' => true,
-        ]);
-        // --------- Context: task ---------
-        Status::factory()->create([
-            'context' => 'task',
+            'context' => 'action_and_task',
             'title' => 'pending',
             'label' => 'Pendiente',
             'color' => 'gray',
@@ -105,7 +64,7 @@ class StatusSeeder extends Seeder
             'protected' => true,
         ]);
         Status::factory()->create([
-            'context' => 'task',
+            'context' => 'action_and_task',
             'title' => 'in_execution',
             'label' => 'En ejecución',
             'color' => 'indigo',
@@ -113,7 +72,7 @@ class StatusSeeder extends Seeder
             'protected' => true,
         ]);
         Status::factory()->create([
-            'context' => 'task',
+            'context' => 'action_and_task',
             'title' => 'completed',
             'label' => 'Completado',
             'color' => 'success',
@@ -121,7 +80,7 @@ class StatusSeeder extends Seeder
             'protected' => true,
         ]);
         Status::factory()->create([
-            'context' => 'task',
+            'context' => 'action_and_task',
             'title' => 'overdue',
             'label' => 'Vencido',
             'color' => 'danger',
@@ -129,11 +88,19 @@ class StatusSeeder extends Seeder
             'protected' => true,
         ]);
         Status::factory()->create([
-            'context' => 'task',
+            'context' => 'action_and_task',
             'title' => 'extemporaneous',
             'label' => 'Extemporaneo',
             'color' => 'warning',
             'icon' => 'heroicon-o-exclamation-triangle',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'action_and_task',
+            'title' => 'canceled',
+            'label' => 'Cancelado',
+            'color' => 'danger',
+            'icon' => 'heroicon-o-x-circle',
             'protected' => true,
         ]);
     }

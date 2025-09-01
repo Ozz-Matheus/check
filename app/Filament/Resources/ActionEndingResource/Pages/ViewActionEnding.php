@@ -48,6 +48,7 @@ class ViewActionEnding extends ViewRecord
                 ])
                 ->requiresConfirmation()
                 ->action(function (array $data) {
+                    $data['real_evaluation_date'] = now()->format('Y-m-d');
                     $this->record->update($data);
                     $this->redirect(
                         ActionResource::getUrl('ending.view', [
@@ -56,8 +57,8 @@ class ViewActionEnding extends ViewRecord
                         ]),
                     );
                 })
-                ->authorize(fn (): bool => auth()->user()->can('update', $this->record) && auth()->id() === $this->record->action->verification_responsible_by_id)
-                ->visible(fn (): bool => app(ActionEndingService::class)->canViewQualifyAction($this->record)),
+                ->authorize(fn ($record): bool => auth()->user()->can('update', $this->record) && auth()->id() === $record->action->verification_responsible_by_id)
+                ->visible(fn ($record): bool => app(ActionEndingService::class)->canViewQualifyAction($record)),
             FilamentAction::make('back')
                 ->label(__('Return'))
                 ->url(fn ($record): string => ActionResource::getUrl('view', [

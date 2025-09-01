@@ -5,7 +5,7 @@ namespace App\Filament\Resources\ActionTaskResource\Pages;
 use App\Filament\Resources\ActionResource;
 use App\Filament\Resources\ActionTaskResource;
 use App\Models\Action;
-use App\Models\Status;
+use App\Services\StatusService;
 use App\Services\TaskService;
 use Filament\Actions\Action as FilamentAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -34,9 +34,12 @@ class ViewActionTask extends ViewRecord
                 ->button()
                 ->color('success')
                 ->authorize(fn ($record) => $record->responsible_by_id === auth()->id())
-                ->visible(fn ($record) => app(TaskService::class)->canViewCloseTask($record))
+                ->visible(fn ($record) => app(TaskService::class)->canViewFinishTask($record))
                 ->form(
-                    fn ($record) => $record->status?->id === Status::byContextAndTitle('task', 'extemporaneous')?->id
+                    fn ($record) => in_array($record->status_id, [
+                        app(StatusService::class)->getActionAndTaskStatuses()['overdue'],
+                        app(StatusService::class)->getActionAndTaskStatuses()['extemporaneous'],
+                    ])
                         ? [
                             \Filament\Forms\Components\Textarea::make('extemporaneous_reason')
                                 ->label('Reason for delay')
@@ -44,9 +47,28 @@ class ViewActionTask extends ViewRecord
                         ]
                         : []
                 )
+
                 ->action(function ($record, array $data) {
-                    app(TaskService::class)->closeTask($record, $data);
+                    app(TaskService::class)->finishTask($record, $data);
                     redirect(ActionResource::getUrl('view', [
+                        'record' => $record->action_id,
+                    ]));
+                }),
+            FilamentAction::make('cancel')
+                ->label('Cancel')
+                ->button()
+                ->color('danger')
+                ->authorize(fn ($record) => auth()->id() === $record->action?->responsible_by_id)
+                ->visible(fn ($record) => app(TaskService::class)->canViewCancelTask($record))
+                ->form([
+                    \Filament\Forms\Components\Textarea::make('reason_for_cancellation')
+                        ->label('Reason for cancellation')
+                        ->required()
+                        ->placeholder('Write the reason for cancellation'),
+                ])
+                ->action(function ($record, array $data) {
+                    app(TaskService::class)->cancelTask($record, $data);
+                    $this->redirect(ActionResource::getUrl('view', [
                         'record' => $record->action_id,
                     ]));
                 }),

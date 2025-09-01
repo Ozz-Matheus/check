@@ -13,8 +13,10 @@ class Action extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'deadline' => 'date',
-        'actual_closing_date' => 'date',
+        'detection_date' => 'date',
+        'limit_date' => 'date',
+        'finished' => 'boolean',
+        'cancellation_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -25,9 +27,19 @@ class Action extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function origin()
+    {
+        return $this->morphTo();
+    }
+
     public function type()
     {
         return $this->belongsTo(ActionType::class, 'action_type_id');
+    }
+
+    public function source()
+    {
+        return $this->belongsTo(ActionSource::class, 'source_id');
     }
 
     public function process()

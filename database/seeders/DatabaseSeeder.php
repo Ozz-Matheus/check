@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             DocEndingSeeder::class,
             // Acciones
             ActionTypeSeeder::class,
+            ActionSourceSeeder::class,
             ActionAnalysisCauseSeeder::class,
             ActionVerificationMethodSeeder::class,
             // Riesgos

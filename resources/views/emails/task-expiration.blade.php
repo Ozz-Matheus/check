@@ -14,7 +14,7 @@ Tarea próxima a vencer
     <li><strong>Título:</strong> {{ $task->title }}</li>
     <li><strong>Detalles:</strong> {{ $task->detail }}</li>
     <li><strong>Responsable :</strong> {{ $task->responsibleBy->name ?? 'Sistema' }}</li>
-    <li><strong>Vencimiento:</strong> {{ $task->deadline?->format('d/m/Y') }}</li>
+    <li><strong>Vencimiento:</strong> {{ $task->limit_date?->format('d/m/Y') }}</li>
 </ul>
 
 <p>

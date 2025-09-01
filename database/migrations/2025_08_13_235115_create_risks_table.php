@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('risks', function (Blueprint $table) {
             $table->id();
+            $table->string('classification_code')->unique();
             $table->foreignId('process_id')->constrained('processes');
             $table->foreignId('sub_process_id')->constrained('sub_processes');
             $table->foreignId('strategic_context_type_id')->constrained('risk_strategic_context_types');

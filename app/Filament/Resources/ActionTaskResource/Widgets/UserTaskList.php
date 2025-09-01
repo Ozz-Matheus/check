@@ -41,7 +41,7 @@ class UserTaskList extends BaseWidget implements HasTable
                 ->date()
                 ->sortable(),
 
-            Tables\Columns\TextColumn::make('deadline')
+            Tables\Columns\TextColumn::make('limit_date')
                 ->date()
                 ->sortable(),
         ];
@@ -70,7 +70,7 @@ class UserTaskList extends BaseWidget implements HasTable
                 ->relationship(
                     'status',
                     'label',
-                    fn (Builder $query) => $query->where('context', 'task')
+                    fn (Builder $query) => $query->where('context', 'action_and_task')->orderBy('id', 'asc')
                 )
                 ->multiple()
                 ->searchable()

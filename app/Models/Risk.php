@@ -8,6 +8,7 @@ class Risk extends Model
 {
     //
     protected $fillable = [
+        'classification_code',
         'process_id',
         'sub_process_id',
         'strategic_context_type_id',
@@ -82,5 +83,10 @@ class Risk extends Model
     public function controls()
     {
         return $this->hasMany(RiskControl::class);
+    }
+
+    public function actions()
+    {
+        return $this->morphMany(Action::class, 'origin');
     }
 }

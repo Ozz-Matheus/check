@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ActionEndingResource\Pages;
 use App\Filament\Resources\ActionEndingResource\RelationManagers\ActionEndingFilesRelationManager;
 use App\Models\ActionEnding;
+use App\Models\ActionType;
+use App\Models\Status;
 use App\Traits\HasStandardFileUpload;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -32,6 +34,22 @@ class ActionEndingResource extends Resource
                         Forms\Components\Textarea::make('result')
                             ->label(__('Result'))
                             ->required(),
+                        Forms\Components\Textarea::make('extemporaneous_reason')
+                            ->label(__('Reason for extemporaneous closing'))
+                            ->visible(fn ($livewire, $record) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id || filled($record?->extemporaneous_reason))
+                            ->required(fn ($livewire) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id),
+                        Forms\Components\DatePicker::make('real_closing_date')
+                            ->label(__('Real closing date'))
+                            ->native(false)
+                            ->readOnly()
+                            ->visible(fn ($record) => filled($record?->real_closing_date)),
+                        Forms\Components\DatePicker::make('estimated_evaluation_date')
+                            ->label(__('Estimated evaluation date'))
+                            ->minDate(now()->format('Y-m-d'))
+                            ->closeOnDateSelection()
+                            ->native(false)
+                            ->required(fn ($livewire) => $livewire->actionModel?->action_type_id === ActionType::where('name', 'corrective')->first()?->id)
+                            ->visible(fn ($livewire) => $livewire->actionModel?->action_type_id === ActionType::where('name', 'corrective')->first()?->id),
                         static::baseFileUpload('path')
                             ->label(__('Support ending files'))
                             ->directory('actions/endings/files')
@@ -43,6 +61,11 @@ class ActionEndingResource extends Resource
                             ->readOnly(),
                         Forms\Components\Textarea::make('evaluation_comment')
                             ->visible(fn ($record) => filled($record?->evaluation_comment))
+                            ->readOnly(),
+                        Forms\Components\DatePicker::make('real_evaluation_date')
+                            ->label(__('Real evaluation date'))
+                            ->native(false)
+                            ->visible(fn ($record) => filled($record?->real_evaluation_date))
                             ->readOnly(),
                     ]),
             ]);

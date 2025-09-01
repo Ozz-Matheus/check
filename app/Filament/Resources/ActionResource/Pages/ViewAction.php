@@ -4,8 +4,6 @@ namespace App\Filament\Resources\ActionResource\Pages;
 
 use App\Filament\Resources\ActionResource;
 use App\Services\ActionService;
-use App\Services\ActionStatusService;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ViewRecord;
@@ -23,7 +21,7 @@ class ViewAction extends ViewRecord
                 ->button()
                 ->color('primary')
                 ->authorize(auth()->user()->can('view_action::ending'))
-                ->visible(fn ($record) => app(ActionService::class)->canViewActionEnding($record->status_id))
+                ->visible(fn ($record) => app(ActionService::class)->canViewActionEnding($record))
                 ->url(fn ($record) => ActionResource::getUrl('ending.view', [
                     'action' => $record->id,
                     'record' => $record->ending->id,
@@ -43,9 +41,8 @@ class ViewAction extends ViewRecord
                 ->label('Cancel')
                 ->button()
                 ->color('danger')
-                ->authorize(
-                    fn ($record) => app(ActionService::class)->canCancelAction($record)
-                )
+                ->authorize(fn ($record) => auth()->id() === $record->responsible_by_id)
+                ->visible(fn ($record) => app(ActionService::class)->canViewCancelAction($record))
                 ->form([
                     Textarea::make('reason_for_cancellation')
                         ->label('Reason for cancellation')
@@ -53,7 +50,7 @@ class ViewAction extends ViewRecord
                         ->placeholder('Write the reason for cancellation'),
                 ])
                 ->action(function ($record, array $data) {
-                    app(ActionStatusService::class)->statusAssignmentCanceled($record, $data);
+                    app(ActionService::class)->cancelAction($record, $data);
                     redirect(ActionResource::getUrl('index'));
                 }),
 
@@ -62,8 +59,6 @@ class ViewAction extends ViewRecord
                 ->url($this->getResource()::getUrl('index'))
                 ->button()
                 ->color('gray'),
-
-            // Actions\DeleteAction::make(),
         ];
     }
 }

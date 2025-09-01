@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('action_type_id')->constrained();   // nuevo: tipo de acción
+            $table->nullableMorphs('origin');
+            $table->string('origin_label')->nullable();
+
             $table->string('title');
             $table->text('description');
+
+            $table->foreignId('action_type_id')->constrained();
+            $table->foreignId('source_id')->nullable()->constrained('action_sources');
 
             $table->foreignId('process_id')->constrained();
             $table->foreignId('sub_process_id')->constrained();
@@ -25,20 +30,23 @@ return new class extends Migration
 
             // Correctiva
             $table->date('detection_date')->nullable();
-            $table->text('containment_action')->nullable();
             $table->foreignId('action_analysis_cause_id')->nullable()->constrained('action_analysis_causes');
-            $table->text('corrective_action')->nullable();
+            $table->text('root_cause')->nullable();
+            $table->text('containment_actions')->nullable();
+            $table->text('corrective_actions')->nullable();
             $table->foreignId('action_verification_method_id')->nullable()->constrained('action_verification_methods');
             $table->foreignId('verification_responsible_by_id')->nullable()->constrained('users');
-            $table->date('verification_date')->nullable(); // 📌Se debe colocar automaticamente cuando se guarde el action ending con su nuevo campo de evaluación de eficacia
 
             // Mejora
             $table->text('expected_impact')->nullable();
 
+            // $table->foreignId('priority_id')->constrained('priorities'); integrar
+            $table->date('limit_date');
             $table->foreignId('status_id')->constrained('statuses');
-            $table->date('deadline');
-            $table->date('actual_closing_date')->nullable();
+            $table->boolean('finished')->default(false);
+
             $table->text('reason_for_cancellation')->nullable();
+            $table->date('cancellation_date')->nullable();
 
             $table->timestamps();
         });

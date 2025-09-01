@@ -32,14 +32,14 @@ class ActionTasksRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('start_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('deadline')
+                Tables\Columns\TextColumn::make('limit_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('actual_start_date')
+                Tables\Columns\TextColumn::make('real_start_date')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('actual_closing_date')
+                Tables\Columns\TextColumn::make('real_closing_date')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

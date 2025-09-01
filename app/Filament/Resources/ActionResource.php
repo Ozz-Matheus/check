@@ -44,7 +44,7 @@ class ActionResource extends Resource
         return __('Actions');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?int $navigationSort = 3;
 
@@ -55,6 +55,13 @@ class ActionResource extends Resource
                 Forms\Components\Section::make('Action Data')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('description')
+                            ->required()
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('action_type_id')
                             ->relationship('type', 'label')
                             ->native(false)
@@ -63,20 +70,33 @@ class ActionResource extends Resource
                             ->afterStateUpdated(function ($state, Set $set) {
                                 if (! self::isCorrective($state)) {
                                     $set('detection_date', null);
-                                    $set('containment_action', null);
+                                    $set('containment_actions', null);
                                     $set('action_analysis_cause_id', null);
                                     $set('corrective_action', null);
                                     $set('action_verification_method_id', null);
                                     $set('verification_responsible_by_id', null);
                                 }
                             }),
-                        Forms\Components\TextInput::make('title')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        Forms\Components\Textarea::make('description')
-                            ->required()
-                            ->columnSpanFull(),
+                        Forms\Components\Select::make('source_id')
+                            ->label('Source')
+                            ->relationship('source', 'title')
+                            ->native(false)
+                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->visible(function (Get $get, $record, $livewire) {
+                                if (! self::isCorrective($get('action_type_id'))) {
+                                    return false;
+                                }
+
+                                if ($record) {
+                                    // En view: mostrar solo si origin_type está vacío
+                                    return ! filled($record->origin_type);
+                                }
+
+                                // En creación: mostrar solo si originType en Livewire está vacío
+                                return ! filled($livewire->originType);
+                            })
+                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->reactive(),
                         Forms\Components\Select::make('process_id')
                             ->relationship('process', 'title')
                             ->afterStateUpdated(function (Set $set) {
@@ -86,6 +106,7 @@ class ActionResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
+                            ->visible(fn ($livewire) => isset($livewire->originType) ? false : true)
                             ->required(),
                         Forms\Components\Select::make('sub_process_id')
                             ->label('Sub Process')
@@ -98,18 +119,13 @@ class ActionResource extends Resource
                             ->searchable()
                             ->preload()
                             ->reactive()
+                            ->visible(fn ($livewire) => isset($livewire->originType) ? false : true)
                             ->required(),
                         // Correctiva
                         Forms\Components\DatePicker::make('detection_date')
-                            ->format('Y-m-d')
+                            ->maxDate(now()->format('Y-m-d'))
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->reactive(),
-                        Forms\Components\Textarea::make('containment_action')
-                            ->columnSpanFull()
                             ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
                             ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
                             ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
@@ -121,7 +137,19 @@ class ActionResource extends Resource
                             ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
                             ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
                             ->reactive(),
-                        Forms\Components\Textarea::make('corrective_action')
+                        Forms\Components\Textarea::make('root_cause')
+                            ->columnSpanFull()
+                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->reactive(),
+                        Forms\Components\Textarea::make('containment_actions')
+                            ->columnSpanFull()
+                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->reactive(),
+                        Forms\Components\Textarea::make('corrective_actions')
                             ->columnSpanFull()
                             ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
                             ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
@@ -145,12 +173,21 @@ class ActionResource extends Resource
                         // Fin Correctiva
                         Forms\Components\Select::make('responsible_by_id')
                             ->relationship(
-                                'responsibleBy',
-                                'name',
-                                modifyQueryUsing: fn ($query, Get $get) => $query->whereHas(
-                                    'subProcesses',
-                                    fn ($q) => $q->where('sub_process_id', $get('sub_process_id'))
-                                )
+                                name: 'responsibleBy',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function ($query, Get $get, $livewire) {
+                                    if (isset($livewire->originType)) {
+                                        return $query->whereHas(
+                                            'subProcesses',
+                                            fn ($q) => $q->where('sub_process_id', $livewire->subProcessId)
+                                        );
+                                    }
+
+                                    return $query->whereHas(
+                                        'subProcesses',
+                                        fn ($q) => $q->where('sub_process_id', $get('sub_process_id'))
+                                    );
+                                }
                             )
                             ->label('Responsible')
                             ->searchable()
@@ -160,7 +197,7 @@ class ActionResource extends Resource
                         Forms\Components\Textarea::make('expected_impact')
                             ->required()
                             ->columnSpanFull(),
-                        Forms\Components\DatePicker::make('deadline')
+                        Forms\Components\DatePicker::make('limit_date')
                             ->minDate(now()->format('Y-m-d'))
                             ->native(false)
                             ->closeOnDateSelection()
@@ -171,6 +208,10 @@ class ActionResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
+                        Forms\Components\Textarea::make('reason_for_cancellation')
+                            ->label('Reason for cancellation')
+                            ->visible(fn ($record) => filled($record?->reason_for_cancellation))
+                            ->columnSpanFull(),
                     ]),
             ]);
     }
@@ -179,6 +220,9 @@ class ActionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('origin_label')
+                    ->label(__('Origin'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('type.label')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
@@ -197,10 +241,20 @@ class ActionResource extends Resource
                     ->searchable()
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName()),
-                Tables\Columns\TextColumn::make('deadline')
+                Tables\Columns\IconColumn::make('finished')
+                    ->label(__('Finished'))
+                    ->boolean()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('limit_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('actual_closing_date')
+                Tables\Columns\TextColumn::make('ending.real_closing_date')
+                    ->label(__('Real Closing Date'))
+                    ->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('cancellation_date')
+                    ->label(__('Cancellation Date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -216,6 +270,20 @@ class ActionResource extends Resource
             ->defaultSort('id', 'desc')
             ->filters([
                 //
+                Tables\Filters\SelectFilter::make('type_id')
+                    ->relationship('type', 'label')
+                    ->multiple()
+                    ->preload()
+                    ->label(__('Type')),
+                Tables\Filters\SelectFilter::make('status_id')
+                    ->relationship(
+                        name: 'status',
+                        titleAttribute: 'label',
+                        modifyQueryUsing: fn ($query) => $query->where('context', 'action_and_task')->orderBy('id', 'asc'),
+                    )
+                    ->multiple()
+                    ->preload()
+                    ->label(__('Status')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RiskResource\Pages;
 use App\Filament\Resources\RiskResource\RelationManagers\ControlsRelationManager;
+use App\Filament\Resources\RiskResource\RelationManagers\RiskActionsRelationManager;
 use App\Models\Risk;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -38,7 +39,7 @@ class RiskResource extends Resource
         return __('Risks');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
 
     protected static ?int $navigationSort = 2;
 
@@ -105,12 +106,20 @@ class RiskResource extends Resource
                         Forms\Components\Fieldset::make(__('Inherent risk level'))
                             ->schema([
                                 Forms\Components\Select::make('inherent_impact_id')
-                                    ->relationship('inherentImpact', 'title')
+                                    ->relationship(
+                                        name: 'inherentImpact',
+                                        titleAttribute: 'title',
+                                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                                    )
                                     ->native(false)
                                     ->reactive()
                                     ->required(),
                                 Forms\Components\Select::make('inherent_probability_id')
-                                    ->relationship('inherentProbability', 'title')
+                                    ->relationship(
+                                        name: 'inherentProbability',
+                                        titleAttribute: 'title',
+                                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                                    )
                                     ->native(false)
                                     ->reactive()
                                     ->required(),
@@ -119,21 +128,10 @@ class RiskResource extends Resource
                                     ->disabled()
                                     ->dehydrated(true)
                                     ->required(),
-                                // Parcial para ver el calculo
-                                /* Forms\Components\TextInput::make('inherent_risk_level_calculated')
-                                    ->dehydrated(false)
-                                    ->readOnly()
-                                    ->visible(fn (string $context) => $context === 'create'), */
                             ]),
                         Forms\Components\Fieldset::make(__('Residual risk level'))
                             ->schema([
-                                // Parcial para ver el calculo del promedio de las calificaciones de controles
-                                /* Forms\Components\TextInput::make('control_general_qualification_calculated')
-                                    ->label('Promedio de Calificación')
-                                    // ->required()
-                                    ->columnSpanFull()
-                                    ->dehydrated(true), */
-                                // me debe de arrojar el item mas cercano al promedio de los score de los controles
+                                // Calculo automatico de la calificacion general del control
                                 Forms\Components\Select::make('risk_control_general_qualification_id')
                                     ->relationship('controlGeneralQualificationCalculated', 'title')
                                     ->disabled()
@@ -155,6 +153,10 @@ class RiskResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('classification_code')
+                    ->label(__('Code'))
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('process.title'),
                 Tables\Columns\TextColumn::make('subProcess.title'),
                 /* Tables\Columns\TextColumn::make('risk_description')
@@ -220,6 +222,7 @@ class RiskResource extends Resource
         return [
             //
             ControlsRelationManager::class,
+            RiskActionsRelationManager::class,
         ];
     }
 
@@ -230,6 +233,8 @@ class RiskResource extends Resource
             'create' => Pages\CreateRisk::route('/create'),
             'view' => Pages\ViewRisk::route('/{record}'),
             // 'edit' => Pages\EditRisk::route('/{record}/edit'),
+            // Acciones
+            'action.create' => \app\filament\resources\ActionResource\Pages\CreateAction::route('/{model_id}/{model}/action/create'),
             // Controles
             'control.create' => \app\filament\resources\RiskControlResource\Pages\CreateRiskControl::route('/{risk}/control/create'),
             'control.view' => \app\filament\resources\RiskControlResource\Pages\ViewRiskControl::route('/{risk}/control/{record}'),

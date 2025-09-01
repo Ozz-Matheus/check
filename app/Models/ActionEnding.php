@@ -10,8 +10,18 @@ class ActionEnding extends Model
         'action_id',
         'real_impact',
         'result',
+        'extemporaneous_reason',
+        'real_closing_date',
+        'estimated_evaluation_date',
         'effectiveness',
         'evaluation_comment',
+        'real_evaluation_date',
+    ];
+
+    protected $casts = [
+        'real_closing_date' => 'date',
+        'estimated_evaluation_date' => 'date',
+        'real_evaluation_date' => 'date',
     ];
 
     /*

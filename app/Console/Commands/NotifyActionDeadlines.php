@@ -12,7 +12,7 @@ class NotifyActionDeadlines extends Command
 {
     use LogsToSchedulerFile;
 
-    protected $signature = 'notify:action-deadlines';
+    protected $signature = 'notify:action-limit_dates';
 
     protected $description = 'Notifica a los responsables de acciones de mejora que vencen hoy o en 10 días.';
 
@@ -21,7 +21,7 @@ class NotifyActionDeadlines extends Command
         $today = Carbon::today();
         $inTenDays = Carbon::today()->addDays(10);
 
-        $acciones = Action::whereIn('deadline', [$today->toDateString(), $inTenDays->toDateString()])->get();
+        $acciones = Action::whereIn('limit_date', [$today->toDateString(), $inTenDays->toDateString()])->get();
 
         $this->logToSchedulerFile('Iniciando revisión de acciones con vencimiento');
 

@@ -16,8 +16,12 @@ return new class extends Migration
             $table->foreignId('action_id')->constrained();
             $table->text('real_impact');
             $table->text('result');
+            $table->text('extemporaneous_reason')->nullable();
+            $table->date('real_closing_date')->nullable();
+            $table->date('estimated_evaluation_date')->nullable();
             $table->enum('effectiveness', ['yes', 'no', 'partial'])->nullable();
             $table->text('evaluation_comment')->nullable();
+            $table->date('real_evaluation_date')->nullable();
             $table->timestamps();
         });
     }

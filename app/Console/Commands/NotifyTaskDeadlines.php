@@ -12,7 +12,7 @@ class NotifyTaskDeadlines extends Command
 {
     use LogsToSchedulerFile;
 
-    protected $signature = 'notify:task-deadlines';
+    protected $signature = 'notify:task-limit_dates';
 
     protected $description = 'Notifica a los responsables de tareas que vencen hoy o en 10 días.';
 
@@ -21,8 +21,8 @@ class NotifyTaskDeadlines extends Command
         $today = Carbon::today();
         $inTenDays = Carbon::today()->addDays(10);
 
-        $tareas = ActionTask::whereDate('deadline', $today)
-            ->orWhereDate('deadline', $inTenDays)
+        $tareas = ActionTask::whereDate('limit_date', $today)
+            ->orWhereDate('limit_date', $inTenDays)
             ->get();
 
         $this->logToSchedulerFile('Iniciando revisión de tareas con vencimiento');

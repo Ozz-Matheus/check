@@ -12,19 +12,22 @@ class ActionTask extends Model
         'detail',
         'responsible_by_id',
         'start_date',
-        'deadline',
-        'actual_start_date',
-        'actual_closing_date',
+        'limit_date',
+        'real_start_date',
+        'real_closing_date',
         'status_id',
         'finished',
         'extemporaneous_reason',
+        'reason_for_cancellation',
+        'cancellation_date',
     ];
 
     protected $casts = [
         'start_date' => 'date',
-        'deadline' => 'date',
-        'actual_start_date' => 'date',
-        'actual_closing_date' => 'date',
+        'limit_date' => 'date',
+        'real_start_date' => 'date',
+        'real_closing_date' => 'date',
+        'cancellation_date' => 'date',
         'finished' => 'boolean',
     ];
 

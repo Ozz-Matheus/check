@@ -14,7 +14,7 @@ Acción próxima a vencer
     <li><strong>Título:</strong> {{ $action->title }}</li>
     <li><strong>Tipo:</strong> {{ $action->type->label }}</li>
     <li><strong>Responsable :</strong> {{ $action->responsibleBy->name ?? 'Sistema' }}</li>
-    <li><strong>Vencimiento:</strong> {{ $action->deadline?->format('d/m/Y') }}</li>
+    <li><strong>Vencimiento:</strong> {{ $action->limit_date?->format('d/m/Y') }}</li>
 </ul>
 
 <p>

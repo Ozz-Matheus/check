@@ -49,17 +49,17 @@ class ActionTaskResource extends Resource
                             ->required(),
                         Forms\Components\DatePicker::make('start_date')
                             ->minDate(now()->format('Y-m-d'))
-                            ->maxDate(fn ($livewire) => $livewire->actionModel?->deadline?->toDateString())
+                            ->maxDate(fn ($livewire) => $livewire->actionModel?->limit_date?->toDateString())
                             ->closeOnDateSelection()
                             ->afterStateUpdated(function (Forms\Set $set) {
-                                $set('deadline', null);
+                                $set('limit_date', null);
                             })
                             ->reactive()
                             ->native(false)
                             ->required(),
-                        Forms\Components\DatePicker::make('deadline')
+                        Forms\Components\DatePicker::make('limit_date')
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))
-                            ->maxDate(fn ($livewire) => $livewire->actionModel?->deadline?->toDateString())
+                            ->maxDate(fn ($livewire) => $livewire->actionModel?->limit_date?->toDateString())
                             ->closeOnDateSelection()
                             ->required()
                             ->disabled(fn (Forms\Get $get) => empty($get('start_date')))
@@ -73,6 +73,10 @@ class ActionTaskResource extends Resource
                             ->visible(fn (string $context) => $context === 'view'),
                         Forms\Components\Textarea::make('extemporaneous_reason')
                             ->visible(fn ($record) => filled($record?->extemporaneous_reason))
+                            ->readOnly()
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('reason_for_cancellation')
+                            ->visible(fn ($record) => filled($record?->reason_for_cancellation))
                             ->readOnly()
                             ->columnSpanFull(),
                     ]),

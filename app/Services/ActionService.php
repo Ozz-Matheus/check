@@ -3,51 +3,56 @@
 namespace App\Services;
 
 use App\Models\Action;
-use App\Models\Status;
 
 /**
  * Servicio para las acciones
  */
 class ActionService
 {
-    public function canCancelAction(Action $action)
+    protected array $statusIds;
+
+    public function __construct(StatusService $statusService)
     {
-
-        $finishedStatusId = Status::byContextAndTitle('action', 'finished')?->id;
-        $canceledStatusId = Status::byContextAndTitle('action', 'canceled')?->id;
-        $currentStatusId = $action->status_id;
-
-        if ($currentStatusId === $finishedStatusId || $currentStatusId === $canceledStatusId) {
-            return false;
-        }
-
-        return auth()->id() === $action->registered_by_id;
+        $this->statusIds = $statusService->getActionAndTaskStatuses();
     }
 
+    // Comprueba si se puede ver el boton de cancelar la accion
+    public function canViewCancelAction(Action $action)
+    {
+        return ! in_array($action->status_id, [$this->statusIds['completed'], $this->statusIds['canceled'], $this->statusIds['extemporaneous']]);
+    }
+
+    // Cancela la accion
+    public function cancelAction(Action $action, array $data)
+    {
+        return $action->update([
+            'status_id' => $this->statusIds['canceled'],
+            'reason_for_cancellation' => $data['reason_for_cancellation'],
+            'cancellation_date' => now()->format('Y-m-d'),
+        ]);
+    }
+
+    // Comprueba si se puede ver el boton de finalizar la accion
     public function canViewFinishAction(Action $action): bool
     {
-
-        $expectedActionStatusId = Status::byContextAndTitle('action', 'in_execution')?->id;
-        $currentActionStatusId = $action->status_id;
-
-        if ($currentActionStatusId !== $expectedActionStatusId) {
+        if (! in_array($action->status_id, [$this->statusIds['in_execution'], $this->statusIds['overdue']])) {
             return false;
         }
 
-        $completedTaskStatusId = Status::byContextAndTitle('task', 'completed')?->id;
-        $extemporaneouTaskStatusId = Status::byContextAndTitle('task', 'extemporaneous')?->id;
-
         $hasInvalidTasks = $action->tasks()
-            ->whereNotIn('status_id', [$completedTaskStatusId, $extemporaneouTaskStatusId]) // Verifica si hay tareas fuera de estos dos estados
+            ->whereNotIn('status_id', [
+                $this->statusIds['completed'],
+                $this->statusIds['extemporaneous'],
+                $this->statusIds['canceled'],
+            ]) // Verifica si hay tareas fuera de estos dos estados
             ->exists();
 
         return ! $hasInvalidTasks;
     }
 
-    public function canViewActionEnding(int $statusId)
+    // Comprueba si se puede ver el boton de ver la finalizacion de la accion
+    public function canViewActionEnding(Action $action): bool
     {
-        $expectedStatusId = Status::byContextAndTitle('action', 'finished')?->id;
-
-        return $statusId === $expectedStatusId;
+        return in_array($action->status_id, [$this->statusIds['completed'], $this->statusIds['extemporaneous']]) && $action->ending()->exists();
     }
 }

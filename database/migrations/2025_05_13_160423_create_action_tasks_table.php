@@ -18,13 +18,15 @@ return new class extends Migration
             $table->text('detail');
             $table->foreignId('responsible_by_id')->constrained('users'); // responsable de la tarea
             $table->date('start_date');        // planificada
-            $table->date('deadline');          // fecha límite
-            $table->date('actual_start_date')->nullable();   // cuándo realmente empezó
-            $table->date('actual_closing_date')->nullable(); // cuándo cerró
+            $table->date('limit_date');          // fecha límite
+            $table->date('real_start_date')->nullable();   // cuándo realmente empezó
+            $table->date('real_closing_date')->nullable(); // cuándo cerró
 
             $table->foreignId('status_id')->constrained('statuses');
             $table->boolean('finished')->default(false);
             $table->text('extemporaneous_reason')->nullable();
+            $table->text('reason_for_cancellation')->nullable();
+            $table->date('cancellation_date')->nullable();
 
             $table->timestamps();
         });

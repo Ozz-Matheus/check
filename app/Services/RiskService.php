@@ -7,6 +7,8 @@ use App\Models\RiskControlQualification;
 use App\Models\RiskImpact;
 use App\Models\RiskLevel;
 use App\Models\RiskProbability;
+use App\Models\SubProcess;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Servicio para riesgos
@@ -122,5 +124,24 @@ class RiskService
         })->first();
 
         return $closest;
+    }
+
+    /* ********************************************************* */
+
+    // Generar código de riesgo
+    public function generateCode($subProcessId): string
+    {
+        return DB::transaction(function () use ($subProcessId) {
+
+            $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
+
+            $count = Risk::where('sub_process_id', $subProcessId)
+                ->lockForUpdate()
+                ->count();
+
+            $consecutive = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+
+            return "R-{$subProcess->acronym}-{$consecutive}";
+        });
     }
 }

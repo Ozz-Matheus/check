@@ -2,17 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ActionAnalysisCauseResource\Pages;
-use App\Models\ActionAnalysisCause;
+use App\Filament\Resources\ActionSourceResource\Pages;
+use App\Models\ActionSource;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class ActionAnalysisCauseResource extends Resource
+class ActionSourceResource extends Resource
 {
-    protected static ?string $model = ActionAnalysisCause::class;
+    protected static ?string $model = ActionSource::class;
 
     protected static ?string $modelLabel = null;
 
@@ -24,17 +24,17 @@ class ActionAnalysisCauseResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Action Analysis Cause');
+        return __('Action Source');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Action Analysis Causes');
+        return __('Action Sources');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Action Analysis Causes');
+        return __('Action Sources');
     }
 
     public static function getNavigationGroup(): string
@@ -44,7 +44,7 @@ class ActionAnalysisCauseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 19;
 
     public static function form(Form $form): Form
     {
@@ -63,11 +63,11 @@ class ActionAnalysisCauseResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->date()
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->date()
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -84,12 +84,19 @@ class ActionAnalysisCauseResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActionAnalysisCauses::route('/'),
-            'create' => Pages\CreateActionAnalysisCause::route('/create'),
-            'edit' => Pages\EditActionAnalysisCause::route('/{record}/edit'),
+            'index' => Pages\ListActionSources::route('/'),
+            'create' => Pages\CreateActionSource::route('/create'),
+            'edit' => Pages\EditActionSource::route('/{record}/edit'),
         ];
     }
 }

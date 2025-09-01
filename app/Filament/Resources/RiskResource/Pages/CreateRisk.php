@@ -13,6 +13,7 @@ class CreateRisk extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['classification_code'] = app(RiskService::class)->generateCode($data['sub_process_id']);
         $data['risk_control_general_qualification_id'] = RiskControlQualification::where('context', 'min')->firstOrFail()->id;
         $data['residual_risk_level_id'] = $data['inherent_risk_level_id'];
 

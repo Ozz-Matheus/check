@@ -8,7 +8,7 @@ use App\Models\Action;
 use App\Models\ActionTask;
 use App\Models\Status;
 use App\Notifications\TaskAssignedNotice;
-use App\Services\ActionStatusService;
+use App\Services\TaskService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateActionTask extends CreateRecord
@@ -28,20 +28,19 @@ class CreateActionTask extends CreateRecord
 
     protected function handleRecordCreation(array $data): ActionTask
     {
-
         $task = ActionTask::create([
             'action_id' => $this->action_id,
             'title' => $data['title'],
             'detail' => $data['detail'],
             'responsible_by_id' => $data['responsible_by_id'],
             'start_date' => $data['start_date'],
-            'deadline' => $data['deadline'],
-            'status_id' => Status::byContextAndTitle('task', 'pending')?->id,
+            'limit_date' => $data['limit_date'],
+            'status_id' => Status::byContextAndTitle('action_and_task', 'pending')?->id,
         ]);
 
         $task->responsibleBy?->notify(new TaskAssignedNotice($task));
 
-        app(ActionStatusService::class)->statusChangesInActions($this->actionModel, 'in_execution');
+        app(TaskService::class)->changeActionStatusToExecution($task);
 
         return $task;
     }
