@@ -61,4 +61,9 @@ class ViewAction extends ViewRecord
                 ->color('gray'),
         ];
     }
+
+    public function getSubheading(): ?string
+    {
+        return $this->record->ActionSubtitle();
+    }
 }

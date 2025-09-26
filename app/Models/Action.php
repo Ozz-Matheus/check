@@ -99,4 +99,14 @@ class Action extends Model
     | Accesores / Métodos útiles
     |--------------------------------------------------------------------------
     */
+
+    public function ActionSubtitle(): string
+    {
+        // Usar el operador ternario para definir el valor de $origin
+        $origin = ($this->origin_type !== null && $this->origin_id !== null)
+            ? $this->origin_label.' : '.$this->origin_type::find($this->origin_id)?->title
+            : $this->origin_label.' : '.$this->source->title;
+
+        return $origin;
+    }
 }

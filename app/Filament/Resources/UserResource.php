@@ -25,12 +25,12 @@ class UserResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('User');
+        return __('models.user.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Users');
+        return __('models.user.plural');
     }
 
     public static function getNavigationLabel(): string
@@ -45,7 +45,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?int $navigationSort = 23;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Form $form): Form
     {

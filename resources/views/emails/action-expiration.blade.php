@@ -18,7 +18,7 @@ Acción próxima a vencer
 </ul>
 
 <p>
-    <a href="{{ $action->url }}"
+    <a href="{{ route('filament.dashboard.resources.actions.view', ['record' => $action->id ]) }}"
        class="button">
         Ver detalles
     </a> 

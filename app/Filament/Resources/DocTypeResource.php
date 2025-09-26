@@ -44,14 +44,14 @@ class DocTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 11;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->label(__('Title'))
+                Forms\Components\TextInput::make('label')
+                    ->label(__('Label'))
                     ->unique()
                     ->required()
                     ->maxLength(255),
@@ -60,6 +60,10 @@ class DocTypeResource extends Resource
                     ->unique()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('expiration_years')
+                    ->label(__('Expiration Years'))
+                    ->required()
+                    ->numeric(),
             ]);
     }
 
@@ -67,12 +71,15 @@ class DocTypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->label(__('Title'))
+                Tables\Columns\TextColumn::make('label')
+                    ->label(__('Label'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('acronym')
                     ->label(__('Acronym'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('expiration_years')
+                    ->label(__('Expiration Years'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->date()

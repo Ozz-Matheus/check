@@ -33,8 +33,8 @@ class DocService
     /**
      * Get DocType instance.
      */
-    public function getDoctype($docTypeId)
+    public function getDocTypeExpiration($docTypeId)
     {
-        return DocType::with('expirationRule')->find($docTypeId);
+        return DocType::find($docTypeId)->expiration_years;
     }
 }

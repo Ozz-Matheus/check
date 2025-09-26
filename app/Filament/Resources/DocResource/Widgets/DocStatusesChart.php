@@ -2,12 +2,22 @@
 
 namespace App\Filament\Resources\DocResource\Widgets;
 
-use App\Models\Doc;
+use App\Filament\Resources\DocResource\Pages\ListDocs;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 
 class DocStatusesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Doc Statuses Chart';
+    use InteractsWithPageTable;
+
+    protected function getTablePage(): string
+    {
+        return ListDocs::class;
+    }
+
+    protected static ?string $heading = 'Documents by Status';
+
+    protected static ?string $maxHeight = '300px';
 
     protected function getData(): array
     {
@@ -20,7 +30,7 @@ class DocStatusesChart extends ChartWidget
         ];
 
         // Obtener todos los registros con su último archivo y estado
-        $records = Doc::with('latestVersion.status')->get();
+        $records = $this->getPageTableQuery()->with('latestVersion.status')->get();
 
         // Agrupar por el campo "title" del status
         $grouped = $records->groupBy(function ($record) {

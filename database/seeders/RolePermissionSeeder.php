@@ -48,14 +48,6 @@ class RolePermissionSeeder extends Seeder
         $permissionCreateDocType = Permission::findByName('create_doc::type');
         $permissionUpdateDocType = Permission::findByName('update_doc::type');
 
-        $permissionViewAnyDocExpiration = Permission::findByName('view_any_doc::expiration');
-        $permissionCreateDocExpiration = Permission::findByName('create_doc::expiration');
-        $permissionUpdateDocExpiration = Permission::findByName('update_doc::expiration');
-
-        $permissionViewAnyDocEnding = Permission::findByName('view_any_doc::ending');
-        $permissionCreateDocEnding = Permission::findByName('create_doc::ending');
-        $permissionUpdateDocEnding = Permission::findByName('update_doc::ending');
-
         // Permisos acciones
         // Permisos finalización de acción
         $permissionViewAnyActionEnding = Permission::findByName('view_any_action::ending');
@@ -118,14 +110,6 @@ class RolePermissionSeeder extends Seeder
         $roleAdmin->givePermissionTo($permissionViewAnyDocType);
         $roleAdmin->givePermissionTo($permissionCreateDocType);
         $roleAdmin->givePermissionTo($permissionUpdateDocType);
-
-        $roleAdmin->givePermissionTo($permissionViewAnyDocExpiration);
-        $roleAdmin->givePermissionTo($permissionCreateDocExpiration);
-        $roleAdmin->givePermissionTo($permissionUpdateDocExpiration);
-
-        $roleAdmin->givePermissionTo($permissionViewAnyDocEnding);
-        $roleAdmin->givePermissionTo($permissionCreateDocEnding);
-        $roleAdmin->givePermissionTo($permissionUpdateDocEnding);
 
         // Standard
         $roleStandard->givePermissionTo($permissionViewAnyDoc);

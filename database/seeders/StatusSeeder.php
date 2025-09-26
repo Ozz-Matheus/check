@@ -54,6 +54,105 @@ class StatusSeeder extends Seeder
             'icon' => 'heroicon-o-arrow-uturn-left',
             'protected' => true,
         ]);
+        // --------- Context: internal audit ---------
+        Status::factory()->create([
+            'context' => 'internal_audit',
+            'title' => 'planned',
+            'label' => 'Planificada',
+            'color' => 'gray',
+            'icon' => 'heroicon-o-calendar',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'internal_audit',
+            'title' => 'in_execution',
+            'label' => 'En ejecución',
+            'color' => 'indigo',
+            'icon' => 'heroicon-o-clock',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'internal_audit',
+            'title' => 'finished',
+            'label' => 'Finalizado',
+            'color' => 'success',
+            'icon' => 'heroicon-o-check-circle',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'internal_audit',
+            'title' => 'canceled',
+            'label' => 'Cancelado',
+            'color' => 'danger',
+            'icon' => 'heroicon-o-x-circle',
+            'protected' => true,
+        ]);
+        // --------- Context: supplier issue ---------
+        Status::factory()->create([
+            'context' => 'supplier_issue',
+            'title' => 'open',
+            'label' => 'Abierto',
+            'color' => 'gray',
+            'icon' => 'heroicon-o-pencil-square',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'supplier_issue',
+            'title' => 'closed',
+            'label' => 'Cerrado',
+            'color' => 'success',
+            'icon' => 'heroicon-o-check-circle',
+            'protected' => true,
+        ]);
+        /* Status::factory()->create([
+            'context' => 'supplier',
+            'title' => 'sent_to_supplier',
+            'label' => 'Enviado al proveedor',
+            'color' => 'warning',
+            'icon' => 'heroicon-o-paper-airplane',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'supplier',
+            'title' => 'answered_by_supplier',
+            'label' => 'Respondido por proveedor',
+            'color' => 'success',
+            'icon' => 'heroicon-o-chat-bubble-left-ellipsis',
+            'protected' => true,
+        ]); */
+        /* Status::factory()->create([
+            'context' => 'supplier',
+            'title' => 'in_execution',
+            'label' => 'En ejecución',
+            'color' => 'indigo',
+            'icon' => 'heroicon-o-clock',
+            'protected' => true,
+        ]); */
+        // --------- Context: incident and accident ---------
+        Status::factory()->create([
+            'context' => 'incident_and_accident',
+            'title' => 'reported',
+            'label' => 'Reportado',
+            'color' => 'gray',
+            'icon' => 'heroicon-o-pencil-square',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'incident_and_accident',
+            'title' => 'in_execution',
+            'label' => 'En ejecución',
+            'color' => 'indigo',
+            'icon' => 'heroicon-o-clock',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'incident_and_accident',
+            'title' => 'finished',
+            'label' => 'Finalizado',
+            'color' => 'success',
+            'icon' => 'heroicon-o-check-circle',
+            'protected' => true,
+        ]);
         // --------- Context: action_and_task ---------
         Status::factory()->create([
             'context' => 'action_and_task',

@@ -78,7 +78,6 @@ class DocVersion extends Model
         return $this->isLatestVersion()
             && ! empty($this->sha256_hash)
             && optional($this->status)->title === 'approved'
-            && optional($this->doc)->classification_code
-            && optional($this->doc)->doc_ending_id;
+            && optional($this->doc)->classification_code;
     }
 }

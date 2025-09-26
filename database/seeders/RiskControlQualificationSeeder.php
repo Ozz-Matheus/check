@@ -20,18 +20,28 @@ class RiskControlQualificationSeeder extends Seeder
         ]);
         RiskControlQualification::factory()->create([
             'context' => 'middle',
-            'title' => 'Débil/Básico',
-            'score' => 20,
+            'title' => 'Necesita mejorar',
+            'score' => 30,
         ]);
         RiskControlQualification::factory()->create([
             'context' => 'middle',
-            'title' => 'Moderado/Intermedio',
+            'title' => 'Parcialmente eficaz',
             'score' => 50,
         ]);
         RiskControlQualification::factory()->create([
+            'context' => 'middle',
+            'title' => 'Generalmente eficaz',
+            'score' => 75,
+        ]);
+        RiskControlQualification::factory()->create([
+            'context' => 'middle',
+            'title' => 'Eficaz',
+            'score' => 90,
+        ]);
+        RiskControlQualification::factory()->create([
             'context' => 'max',
-            'title' => 'Fuerte/Desarrollado',
-            'score' => 80,
+            'title' => 'Altamente eficaz',
+            'score' => 95,
         ]);
     }
 }

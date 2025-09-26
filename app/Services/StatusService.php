@@ -6,6 +6,18 @@ use App\Models\Status;
 
 class StatusService
 {
+    public function getAuditStatuses()
+    {
+        return [
+            'planned' => Status::byContextAndTitle('internal_audit', 'planned')?->id,
+            'in_execution' => Status::byContextAndTitle('internal_audit', 'in_execution')?->id,
+            'completed' => Status::byContextAndTitle('internal_audit', 'completed')?->id,
+            // 'overdue' => Status::byContextAndTitle('internal_audit', 'overdue')?->id,
+            // 'extemporaneous' => Status::byContextAndTitle('internal_audit', 'extemporaneous')?->id,
+            'canceled' => Status::byContextAndTitle('internal_audit', 'canceled')?->id,
+        ];
+    }
+
     public function getActionAndTaskStatuses(): array
     {
         return [

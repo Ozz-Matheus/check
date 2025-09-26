@@ -2,13 +2,23 @@
 
 namespace App\Filament\Resources\ActionResource\Widgets;
 
-use App\Models\Action;
+use App\Filament\Resources\ActionResource\Pages\ListActions;
 use App\Models\ActionType;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 
 class ActionStatusChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
+    protected function getTablePage(): string
+    {
+        return ListActions::class;
+    }
+
     protected static ?string $heading = 'Action Status Chart';
+
+    protected static ?string $maxHeight = '300px';
 
     public ?string $filter = 'improve';
 
@@ -34,7 +44,7 @@ class ActionStatusChart extends ChartWidget
         ];
 
         // Obtener todos los registros con su último archivo y estado
-        $records = Action::with('Status')->where('action_type_id', $actionTypeId)->get();
+        $records = $this->getPageTableQuery()->with('Status')->where('action_type_id', $actionTypeId)->get();
         // dd($records);
 
         // Agrupar por el campo "title" del status

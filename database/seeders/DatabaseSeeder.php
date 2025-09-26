@@ -16,15 +16,18 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
+            // Generales
             RolesSeeder::class,
             ProcessSeeder::class,
             SubProcessSeeder::class,
             UserHasSubProcessesSeeder::class,
             StatusSeeder::class,
+            PrioritySeeder::class,
             // Documentos
             DocTypeSeeder::class,
-            DocExpirationSeeder::class,
-            DocEndingSeeder::class,
+            DocStorageSeeder::class,
+            DocRecoverySeeder::class,
+            DocDispositionSeeder::class,
             // Acciones
             ActionTypeSeeder::class,
             ActionSourceSeeder::class,
@@ -41,6 +44,26 @@ class DatabaseSeeder extends Seeder
             RiskControlPeriodicitySeeder::class,
             RiskControlTypeSeeder::class,
             RiskControlQualificationSeeder::class,
+            // Auditorias
+            InternalAuditQualificationSeeder::class,
+            // Audit items
+            AuditSubProcessActivitySeeder::class,
+            // Audit controls
+            AuditNatureOfControlSeeder::class,
+            AuditEffectTypeSeeder::class,
+            AuditControlClassificationSeeder::class,
+            AuditImpactSeeder::class,
+            AuditProbabilitySeeder::class,
+            AuditLevelSeeder::class,
+            // Audit findings
+            AuditFindingTypeSeeder::class,
+            // Proveedor
+            SupplierSeeder::class,
+            SupplierProductSeeder::class,
+            // Proveedor novedades
+            SupplierIssueCauseSeeder::class,
+            // Incidentes y accidentes
+            IAndAEventTypeSeeder::class,
             // RolePermissionSeeder::class,
         ]);
     }

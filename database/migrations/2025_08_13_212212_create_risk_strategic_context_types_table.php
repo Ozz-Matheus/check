@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('risk_strategic_context_types', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('name')->unique();
+            $table->string('label');
             $table->timestamps();
         });
     }

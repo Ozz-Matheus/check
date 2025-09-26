@@ -14,24 +14,34 @@ class DocTypeSeeder extends Seeder
     {
         //
         DocType::factory()->create([
-            'title' => 'Documento',
+            'name' => 'document',
+            'label' => 'Documento',
             'acronym' => 'D',
+            'expiration_years' => 1,
         ]);
         DocType::factory()->create([
-            'title' => 'Instructivo',
+            'name' => 'instructive',
+            'label' => 'Instructivo',
             'acronym' => 'I',
+            'expiration_years' => 2,
         ]);
         DocType::factory()->create([
-            'title' => 'Politica',
+            'name' => 'policy',
+            'label' => 'Política',
             'acronym' => 'P',
+            'expiration_years' => 1,
         ]);
         DocType::factory()->create([
-            'title' => 'Matriz',
+            'name' => 'matrix',
+            'label' => 'Matriz',
             'acronym' => 'M',
+            'expiration_years' => 6,
         ]);
         DocType::factory()->create([
-            'title' => 'Formato',
+            'name' => 'format',
+            'label' => 'Formato',
             'acronym' => 'F',
+            'expiration_years' => 4,
         ]);
     }
 }

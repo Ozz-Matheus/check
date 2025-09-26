@@ -3,34 +3,33 @@
 namespace App\Models;
 
 use App\Services\DocService;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Doc extends Model
 {
-    /** @use HasFactory<\Database\Factories\DocFactory> */
-    use HasFactory;
-
+    //
     protected $fillable = [
+        'classification_code',
         'title',
         'process_id',
         'sub_process_id',
         'doc_type_id',
-        'classification_code',
-        'created_by_id',
-        'management_review_date',
         'central_expiration_date',
-        'doc_ending_id',
         'expiration',
+        'storage_method_id',
+        'recovery_method_id',
+        'disposition_method_id',
+        'visibility',
+        'created_by_id',
     ];
 
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'management_review_date' => 'date',
         'central_expiration_date' => 'date',
         'expiration' => 'boolean',
+        'visibility' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /*
@@ -54,14 +53,29 @@ class Doc extends Model
         return $this->belongsTo(SubProcess::class);
     }
 
+    public function storageMethod()
+    {
+        return $this->belongsTo(DocStorage::class, 'storage_method_id');
+    }
+
+    public function recoveryMethod()
+    {
+        return $this->belongsTo(DocRecovery::class, 'recovery_method_id');
+    }
+
+    public function dispositionMethod()
+    {
+        return $this->belongsTo(DocDisposition::class, 'disposition_method_id');
+    }
+
+    public function accessToAdditionalUsers()
+    {
+        return $this->belongsToMany(User::class, 'docs_has_confidential_users', 'doc_id', 'user_id');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by_id')->withDefault();
-    }
-
-    public function ending()
-    {
-        return $this->belongsTo(DocEnding::class, 'doc_ending_id');
     }
 
     public function versions()

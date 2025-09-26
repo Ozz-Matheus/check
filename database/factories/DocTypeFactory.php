@@ -18,8 +18,6 @@ class DocTypeFactory extends Factory
     {
         return [
             //
-            'title' => fake()->word(),
-            'acronym' => fake()->randomElement(['D', 'F', 'P']),
         ];
     }
 }

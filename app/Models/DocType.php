@@ -11,8 +11,14 @@ class DocType extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
+        'name',
+        'label',
         'acronym',
+        'expiration_years',
+    ];
+
+    protected $casts = [
+        'expiration_years' => 'integer',
     ];
 
     /*
@@ -24,16 +30,5 @@ class DocType extends Model
     public function docs()
     {
         return $this->hasMany(Doc::class, 'doc_type_id');
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Accesores / Métodos útiles
-    |--------------------------------------------------------------------------
-    */
-
-    public function expirationRule()
-    {
-        return $this->hasOne(DocExpiration::class, 'doc_type_id');
     }
 }

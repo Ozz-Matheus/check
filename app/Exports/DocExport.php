@@ -25,7 +25,6 @@ class DocExport implements FromCollection, WithHeadings, WithMapping
             'subprocess',
             'createdBy',
             'latestVersion',
-            'ending',
         ])
             ->whereIn('id', $this->DocIds)
             ->get();
@@ -42,9 +41,7 @@ class DocExport implements FromCollection, WithHeadings, WithMapping
             $doc->latestVersion?->status?->label ?? __('Stateless'),
             $doc->latestVersion?->version ?? __('No version'),
             optional($doc->createdBy)->name,
-            $doc->management_review_date?->format('Y-m-d'),
             $doc->central_expiration_date?->format('Y-m-d'),
-            optional($doc->ending)->label,
             $doc->expiration ? 'Expired' : 'Current',
             $doc->created_at?->format('Y-m-d H:i'),
             $doc->updated_at?->format('Y-m-d H:i'),
@@ -62,9 +59,7 @@ class DocExport implements FromCollection, WithHeadings, WithMapping
             'Status',
             'Version',
             'Created by',
-            'Management time',
             'Central time',
-            'Final disposition',
             'expiration',
             'Created at',
             'Updated at',

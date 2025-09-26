@@ -46,7 +46,7 @@ class ActionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
@@ -81,12 +81,8 @@ class ActionResource extends Resource
                             ->label('Source')
                             ->relationship('source', 'title')
                             ->native(false)
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(function (Get $get, $record, $livewire) {
-                                if (! self::isCorrective($get('action_type_id'))) {
-                                    return false;
-                                }
-
+                            ->required(fn ($record) => is_null($record))
+                            ->visible(function ($record, $livewire) {
                                 if ($record) {
                                     // En view: mostrar solo si origin_type está vacío
                                     return ! filled($record->origin_type);

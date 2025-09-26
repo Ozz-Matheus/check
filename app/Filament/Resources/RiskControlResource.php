@@ -27,20 +27,15 @@ class RiskControlResource extends Resource
                             ->relationship(
                                 'potentialCauses',
                                 'title',
-                                modifyQueryUsing: fn ($query, $livewire) => $query->where('risk_id', $livewire->risk_id)
+                                modifyQueryUsing: function ($query, $livewire) {
+                                    if (isset($livewire->risk_id)) {
+                                        return $query->where('risk_id', $livewire->risk_id);
+                                    }
+                                }
                             )
                             ->preload()
                             ->multiple()
                             ->required()
-                            ->visible(fn (string $context) => $context !== 'view')
-                            ->columnSpanFull(),
-                        Forms\Components\Select::make('potentialCauses')
-                            ->relationship(
-                                'potentialCauses',
-                                'title',
-                            )
-                            ->multiple()
-                            ->visible(fn (string $context) => $context === 'view')
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('title')
                             ->required()

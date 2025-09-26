@@ -14,10 +14,12 @@ class RiskStrategicContextTypeSeeder extends Seeder
     {
         //
         RiskStrategicContextType::factory()->create([
-            'title' => 'Interno',
+            'name' => 'internal',
+            'label' => 'Interno',
         ]);
         RiskStrategicContextType::factory()->create([
-            'title' => 'Externo',
+            'name' => 'external',
+            'label' => 'Externo',
         ]);
     }
 }

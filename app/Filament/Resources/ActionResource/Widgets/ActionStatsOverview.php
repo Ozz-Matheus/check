@@ -2,23 +2,30 @@
 
 namespace App\Filament\Resources\ActionResource\Widgets;
 
-use App\Models\Action;
+use App\Filament\Resources\ActionResource\Pages\ListActions;
+use App\Models\ActionType;
 use Filament\Support\Enums\IconPosition;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ActionStatsOverview extends BaseWidget
 {
-    /* protected function getColumns(): int
+    use InteractsWithPageTable;
+
+    protected function getTablePage(): string
     {
-        return 2; // Forzar dos columnas para ocupar el ancho completo
-    } */
+        return ListActions::class;
+    }
 
     protected function getStats(): array
     {
-        $totalActions = Action::count('id');
-        $totalImprove = Action::where('action_type_id', 1)->count();
-        $totalCorrective = Action::where('action_type_id', 2)->count();
+        $improveContextNameId = ActionType::where('name', 'improve')->value('id');
+        $correctiveContextNameId = ActionType::where('name', 'corrective')->value('id');
+
+        $totalActions = $this->getPageTableQuery()->count('id');
+        $totalImprove = $this->getPageTableQuery()->where('action_type_id', $improveContextNameId)->count();
+        $totalCorrective = $this->getPageTableQuery()->where('action_type_id', $correctiveContextNameId)->count();
 
         return [
             Stat::make(__('Total Actions'), $totalActions)

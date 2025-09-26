@@ -51,6 +51,10 @@ class RiskResource extends Resource
                     ->description('Prevent abuse by limiting the number of requests per period')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('process_id')
                             ->relationship('process', 'title')
                             ->label(__('Process'))
@@ -70,7 +74,7 @@ class RiskResource extends Resource
                             ->preload()
                             ->required(),
                         Forms\Components\Select::make('strategic_context_type_id')
-                            ->relationship('strategicContextType', 'title')
+                            ->relationship('strategicContextType', 'label')
                             ->afterStateUpdated(fn (Set $set) => $set('strategic_context_id', null))
                             ->reactive()
                             ->native(false)
@@ -84,7 +88,8 @@ class RiskResource extends Resource
                             ->preload()
                             ->native(false)
                             ->required(),
-                        Forms\Components\Textarea::make('risk_description')
+                        Forms\Components\Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('risk_category_id')
@@ -163,7 +168,7 @@ class RiskResource extends Resource
                     ->limit(30)
                     ->searchable()
                     ->tooltip(fn ($record) => $record->risk_description), */
-                Tables\Columns\TextColumn::make('strategicContextType.title'),
+                Tables\Columns\TextColumn::make('strategicContextType.label'),
                 Tables\Columns\TextColumn::make('strategicContext.title'),
                 Tables\Columns\TextColumn::make('riskCategory.title'),
                 Tables\Columns\ColumnGroup::make('Risk Inherent', [
@@ -205,7 +210,7 @@ class RiskResource extends Resource
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('strategic_context_type_id')
-                    ->relationship('strategicContextType', 'title')
+                    ->relationship('strategicContextType', 'label')
                     ->label(__('Strategic Context Type'))
                     ->native(false),
             ])

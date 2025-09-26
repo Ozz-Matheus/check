@@ -2,11 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Resources\ActionResource\Widgets\ActionStatsOverview;
-use App\Filament\Resources\ActionResource\Widgets\ActionStatusChart;
-use App\Filament\Resources\ActionTaskResource\Widgets\UserTaskList;
-use App\Filament\Resources\DocResource\Widgets\DocStatsOverview;
-use App\Filament\Resources\DocResource\Widgets\DocStatusesChart;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -17,6 +12,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -42,6 +38,8 @@ class DashboardPanelProvider extends PanelProvider
         ]);
 
         return $panel
+            ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth(MaxWidth::Full)
             ->default()
             ->id('dashboard')
             ->path('dashboard')
@@ -60,12 +58,7 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // Widgets\AccountWidget::class,
-                DocStatsOverview::class,
-                DocStatusesChart::class,
-                ActionStatsOverview::class,
-                ActionStatusChart::class,
-                UserTaskList::class,
+                Widgets\AccountWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

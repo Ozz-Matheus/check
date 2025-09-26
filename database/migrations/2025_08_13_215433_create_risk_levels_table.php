@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('risk_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->integer('min');
-            $table->integer('max');
+            $table->string('title')->unique();
+            $table->integer('min')->unique();
+            $table->integer('max')->unique();
             $table->timestamps();
         });
     }

@@ -36,13 +36,8 @@ class CreateRisk extends CreateRecord
         if ($impactId && $probabilityId) {
             $riskLevel = app(RiskService::class)->riskLevel($impactId, $probabilityId);
             $this->data['inherent_risk_level_id'] = $riskLevel;
-            // Parcial para ver el calculo
-            /* $riskLevelCalculated = app(RiskService::class)->riskInherentCalculated($impactId, $probabilityId);
-            $this->data['inherent_risk_level_calculated'] = $riskLevelCalculated; */
         } else {
             $this->data['inherent_risk_level_id'] = null;
-            // Parcial referente al calculo
-            /* $this->data['inherent_risk_level_calculated'] = null; */
         }
     }
 

@@ -38,18 +38,32 @@ class SubProcess extends Model
         return $this->belongsToMany(User::class, 'user_has_sub_processes');
     }
 
+    // documentos
     public function docs()
     {
         return $this->hasMany(Doc::class);
     }
 
+    // acciones
     public function actions()
     {
         return $this->hasMany(Action::class);
     }
 
-    public function riskPlans()
+    // riesgos
+    public function risks()
     {
-        return $this->hasMany(RiskPlan::class);
+        return $this->hasMany(Risk::class);
+    }
+
+    // auditorias internas
+    public function internalAudits()
+    {
+        return $this->hasMany(InternalAudit::class);
+    }
+
+    public function auditSubProcessActivities()
+    {
+        return $this->hasMany(AuditSubProcessActivity::class);
     }
 }

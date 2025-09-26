@@ -66,6 +66,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Doc::class);
     }
 
+    public function accessToAdditionalUsers()
+    {
+        return $this->belongsToMany(Doc::class, 'docs_has_confidential_users', 'doc_id', 'user_id');
+    }
+
     public function docVersions()
     {
         return $this->hasMany(DocVersion::class);

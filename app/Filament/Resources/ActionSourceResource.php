@@ -44,7 +44,7 @@ class ActionSourceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 19;
+    protected static ?int $navigationSort = 33;
 
     public static function form(Form $form): Form
     {

@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('risks', function (Blueprint $table) {
             $table->id();
             $table->string('classification_code')->unique();
+            $table->string('title');
             $table->foreignId('process_id')->constrained('processes');
             $table->foreignId('sub_process_id')->constrained('sub_processes');
             $table->foreignId('strategic_context_type_id')->constrained('risk_strategic_context_types');
             $table->foreignId('strategic_context_id')->constrained('risk_strategic_contexts');
-            $table->text('risk_description');
+            $table->text('description');
             $table->foreignId('risk_category_id')->constrained('risk_categories');
             // $table->foreignId('risk_potential_causes') uno a muchos;
             $table->text('consequences');

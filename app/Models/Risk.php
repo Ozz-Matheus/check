@@ -9,11 +9,12 @@ class Risk extends Model
     //
     protected $fillable = [
         'classification_code',
+        'title',
         'process_id',
         'sub_process_id',
         'strategic_context_type_id',
         'strategic_context_id',
-        'risk_description',
+        'description',
         'risk_category_id',
         // risk_potential_causes - uno a muchos
         'consequences',

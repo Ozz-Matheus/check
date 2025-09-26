@@ -48,7 +48,11 @@ class FollowUpsRelationManager extends RelationManager
                             ->required()
                             ->placeholder('Follow up comment'),
                         Forms\Components\Select::make('control_qualification_id')
-                            ->relationship('controlQualification', 'title')
+                            ->relationship(
+                                name: 'controlQualification',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                            )
                             ->native(false)
                             ->required(),
                         static::baseFileUpload('path')

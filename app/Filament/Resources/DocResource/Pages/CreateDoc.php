@@ -31,11 +31,10 @@ class CreateDoc extends CreateRecord
         $data['classification_code'] = $doc->docService()->generateCode($data['doc_type_id'], $data['sub_process_id']);
         $data['created_by_id'] = $user->id;
 
-        $docType = $doc->docService()->getDoctype($data['doc_type_id']);
+        $docTypeExpiration = $doc->docService()->getDocTypeExpiration($data['doc_type_id']);
 
-        if ($docType && $docType->expirationRule) {
-            $data['management_review_date'] = now()->addYears($docType->expirationRule->management_review_years);
-            $data['central_expiration_date'] = now()->addYears($docType->expirationRule->central_expiration_years);
+        if ($docTypeExpiration) {
+            $data['central_expiration_date'] = now()->addYears($docTypeExpiration);
         }
 
         return $data;
