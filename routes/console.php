@@ -8,6 +8,9 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Actualiza el vencimiento de los documentos
+Schedule::command('statuses:update-doc-deadlines')->dailyAt('00:30');
+
 // Actualiza estados antes de notificar
 Schedule::command('statuses:update')->dailyAt('00:10');
 
