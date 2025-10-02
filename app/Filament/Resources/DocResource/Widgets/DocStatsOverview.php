@@ -2,28 +2,20 @@
 
 namespace App\Filament\Resources\DocResource\Widgets;
 
-use App\Filament\Resources\DocResource\Pages\ListDocs;
+use App\Models\Doc;
 use Filament\Support\Enums\IconPosition;
-use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class DocStatsOverview extends BaseWidget
 {
-    use InteractsWithPageTable;
-
-    protected function getTablePage(): string
-    {
-        return ListDocs::class;
-    }
-
     protected function getStats(): array
     {
-        $totalDocs = $this->getPageTableQuery()->count();
+        $totalDocs = Doc::count();
 
-        $docsExpired = $this->getPageTableQuery()->whereDate('central_expiration_date', '<', now())->count();
+        $docsExpired = Doc::whereDate('central_expiration_date', '<', now())->count();
 
-        $aboutToExpire = $this->getPageTableQuery()->whereDate('central_expiration_date', '>=', now())
+        $aboutToExpire = Doc::whereDate('central_expiration_date', '>=', now())
             ->whereDate('central_expiration_date', '<=', now()->addDays(30))
             ->count();
 

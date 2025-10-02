@@ -44,20 +44,23 @@ class SupplierProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 37;
+    protected static ?int $navigationSort = 38;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('supplier_id')
+                    ->label(__('Supplier'))
                     ->relationship('Supplier', 'title')
                     ->native(false)
                     ->required(),
                 Forms\Components\TextInput::make('title')
+                    ->label(__('Title'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('product_code')
+                    ->label(__('Product code'))
                     ->numeric()
                     ->unique()
                     ->required(),
@@ -68,22 +71,39 @@ class SupplierProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('supplier.title'),
+                Tables\Columns\TextColumn::make('supplier.title')
+                    ->label(__('Supplier')),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage(__('Title copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('product_code')
+                    ->label(__('Product code'))
+                    ->copyable()
+                    ->copyMessage(__('Product code copied'))
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('supplier_id')
+                    ->label(__('Supplier'))
+                    ->relationship('supplier', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -44,13 +44,14 @@ class ActionAnalysisCauseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 34;
+    protected static ?int $navigationSort = 35;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label(__('Title'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -61,12 +62,15 @@ class ActionAnalysisCauseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

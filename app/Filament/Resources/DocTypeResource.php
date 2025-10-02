@@ -61,7 +61,7 @@ class DocTypeResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('expiration_years')
-                    ->label(__('Expiration Years'))
+                    ->label(__('Expiration years'))
                     ->required()
                     ->numeric(),
             ]);
@@ -78,7 +78,7 @@ class DocTypeResource extends Resource
                     ->label(__('Acronym'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('expiration_years')
-                    ->label(__('Expiration Years'))
+                    ->label(__('Expiration years'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))

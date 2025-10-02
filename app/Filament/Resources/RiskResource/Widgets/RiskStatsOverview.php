@@ -2,30 +2,22 @@
 
 namespace App\Filament\Resources\RiskResource\Widgets;
 
-use App\Filament\Resources\RiskResource\Pages\ListRisks;
+use App\Models\Risk;
 use App\Models\RiskStrategicContextType;
 use Filament\Support\Enums\IconPosition;
-use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class RiskStatsOverview extends BaseWidget
 {
-    use InteractsWithPageTable;
-
-    protected function getTablePage(): string
-    {
-        return ListRisks::class;
-    }
-
     protected function getStats(): array
     {
         $internalContextNameId = RiskStrategicContextType::where('name', 'internal')->value('id');
         $externalContextNameId = RiskStrategicContextType::where('name', 'external')->value('id');
 
-        $totalRisks = $this->getPageTableQuery()->count('id');
-        $totalInternal = $this->getPageTableQuery()->where('strategic_context_type_id', $internalContextNameId)->count();
-        $totalExternal = $this->getPageTableQuery()->where('strategic_context_type_id', $externalContextNameId)->count();
+        $totalRisks = Risk::count('id');
+        $totalInternal = Risk::where('strategic_context_type_id', $internalContextNameId)->count();
+        $totalExternal = Risk::where('strategic_context_type_id', $externalContextNameId)->count();
 
         return [
             Stat::make(__('Total Risks'), $totalRisks)

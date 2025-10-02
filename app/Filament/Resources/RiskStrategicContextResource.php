@@ -44,16 +44,19 @@ class RiskStrategicContextResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 15;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('strategic_context_type_id')
+                Forms\Components\Select::make('strategic_context_type_id')
+                    ->label(__('Strategic context type'))
+                    ->relationship('strategicContextType', 'label')
                     ->required()
-                    ->numeric(),
+                    ->native(false),
                 Forms\Components\TextInput::make('title')
+                    ->label(__('Title'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -63,22 +66,27 @@ class RiskStrategicContextResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('strategic_context_type_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('strategicContextType.label')
+                    ->label(__('Strategic context type')),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('strategic_context_type_id')
+                    ->label(__('Strategic Context Type'))
+                    ->relationship('strategicContextType', 'label')
+                    ->native(false),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

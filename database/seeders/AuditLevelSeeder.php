@@ -22,25 +22,25 @@ class AuditLevelSeeder extends Seeder
         AuditLevel::factory()->create([
             'title' => 'Bajo',
             'min' => 1,
-            'max' => 4,
+            'max' => 5,
             'score' => 80,
         ]);
         AuditLevel::factory()->create([
             'title' => 'Medio',
-            'min' => 5,
+            'min' => 6,
             'max' => 12,
             'score' => 60,
         ]);
         AuditLevel::factory()->create([
             'title' => 'Alto',
             'min' => 13,
-            'max' => 24,
+            'max' => 19,
             'score' => 20,
         ]);
         AuditLevel::factory()->create([
             'title' => 'Muy alto',
-            'min' => 25,
-            'max' => 40,
+            'min' => 20,
+            'max' => 25,
             'score' => 0,
         ]);
     }

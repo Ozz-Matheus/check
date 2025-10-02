@@ -8,8 +8,6 @@ use App\Models\AuditFinding;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 
 class AuditFindingResource extends Resource
 {
@@ -21,60 +19,28 @@ class AuditFindingResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Control Finding Data')
+                Forms\Components\Section::make(__('Control finding data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->columnSpanFull()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('finding_type_id')
+                            ->label(__('Finding type'))
                             ->relationship('findingType', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\TextInput::make('criteria')
+                            ->label(__('Criteria'))
                             ->required()
                             ->maxLength(255),
                     ]),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('audit_control_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('finding_type_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('criteria')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->date()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->date()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

@@ -10,7 +10,7 @@ class Supplier extends Model
     /** @use HasFactory<\Database\Factories\SupplierFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'supplier_code'];
+    protected $fillable = ['title', 'email'];
 
     public function supplierProducts()
     {

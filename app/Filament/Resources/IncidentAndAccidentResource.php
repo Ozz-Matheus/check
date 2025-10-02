@@ -47,45 +47,50 @@ class IncidentAndAccidentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make(__('Incident and accident identification'))
-                    ->description('Prevent abuse by limiting the number of requests per period')
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('name_affected_person')
+                            ->label(__('Name affected person'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Select::make('event_type_id')
+                            ->label(__('Event type'))
                             ->relationship('eventType', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Select::make('process_id')
-                            ->relationship('process', 'title')
                             ->label(__('Process'))
+                            ->relationship('process', 'title')
                             ->afterStateUpdated(fn (Set $set) => $set('sub_process_id', null))
                             ->searchable()
                             ->preload()
                             ->reactive()
                             ->required(),
                         Forms\Components\Select::make('sub_process_id')
+                            ->label(__('Sub process'))
                             ->relationship(
                                 name: 'subProcess',
                                 titleAttribute: 'title',
                                 modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('process_id'))
                             )
-                            ->label(__('Sub process'))
                             ->searchable()
                             ->preload()
                             ->required(),
                         Forms\Components\DateTimePicker::make('event_date')
+                            ->label(__('Event date'))
                             ->maxDate(now())
-                            // ->native(false)
+                            ->native(false)
                             ->required(),
                         Forms\Components\TextInput::make('event_site')
+                            ->label(__('Event site'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Select::make('priority_id')
@@ -119,34 +124,43 @@ class IncidentAndAccidentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('classification_code')
                     ->label(__('Code'))
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->label('Title')
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->title)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name_affected_person')
+                    ->label('Name affected person')
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->name_affected_person)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('eventType.title')
-                    ->sortable(),
+                    ->label('Event type'),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->sortable(),
+                    ->label('Process'),
                 Tables\Columns\TextColumn::make('subProcess.title')
-                    ->sortable(),
+                    ->label('Sub process'),
                 Tables\Columns\TextColumn::make('priority.title')
-                    ->sortable(),
+                    ->label('Priority'),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
-                    ->searchable()
                     ->badge()
-                    ->color(fn ($record) => $record->status->colorName()),
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName())
+                    ->default('-'),
                 Tables\Columns\TextColumn::make('event_date')
+                    ->label(__('Event date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -154,7 +168,44 @@ class IncidentAndAccidentResource extends Resource
             ->defaultSort('id', 'desc')
             ->filters([
                 //
+                Tables\Filters\SelectFilter::make('event_type_id')
+                    ->label(__('Event type'))
+                    ->relationship('eventType', 'title')
+                    ->native(false),
+                Tables\Filters\SelectFilter::make('process_id')
+                    ->label(__('Process'))
+                    ->relationship('process', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('sub_process_id')
+                    ->label(__('Sub process'))
+                    ->relationship('subProcess', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('priority_id')
+                    ->label(__('Priority'))
+                    ->relationship('priority', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('status_id')
+                    ->relationship(
+                        name: 'status',
+                        titleAttribute: 'label',
+                        modifyQueryUsing: fn ($query) => $query->where('context', 'incident_and_accident')->orderBy('id', 'asc'),
+                    )
+                    ->label(__('Status'))
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
+            ->filtersTriggerAction(
+                fn ($action) => $action
+                    ->button()
+                    ->label(__('Filter')),
+            )
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ])

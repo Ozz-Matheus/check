@@ -20,18 +20,20 @@ class ActionTaskResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Action Task Data')
-                    ->description('')
+                Section::make('Action task data')
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('detail')
+                            ->label(__('Detail'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('responsible_by_id')
+                            ->label(__('Responsible'))
                             ->relationship(
                                 'responsibleBy',
                                 'name',
@@ -40,7 +42,6 @@ class ActionTaskResource extends Resource
                                     fn ($q) => $q->where('sub_process_id', $livewire->actionModel->sub_process_id)
                                 )
                             )
-                            ->label(__('Responsible'))
                             /* ->options(fn ($livewire) => method_exists($livewire, 'getResponsibleUserOptions')
                                 ? $livewire->getResponsibleUserOptions()
                                 : []) */
@@ -48,6 +49,7 @@ class ActionTaskResource extends Resource
                             ->searchable()
                             ->required(),
                         Forms\Components\DatePicker::make('start_date')
+                            ->label(__('Start date'))
                             ->minDate(now()->format('Y-m-d'))
                             ->maxDate(fn ($livewire) => $livewire->actionModel?->limit_date?->toDateString())
                             ->closeOnDateSelection()
@@ -58,6 +60,7 @@ class ActionTaskResource extends Resource
                             ->native(false)
                             ->required(),
                         Forms\Components\DatePicker::make('limit_date')
+                            ->label(__('Limit date'))
                             ->minDate(fn (Forms\Get $get) => $get('start_date'))
                             ->maxDate(fn ($livewire) => $livewire->actionModel?->limit_date?->toDateString())
                             ->closeOnDateSelection()
@@ -72,10 +75,12 @@ class ActionTaskResource extends Resource
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
                         Forms\Components\Textarea::make('extemporaneous_reason')
+                            ->label(__('Reason for extemporaneous closing'))
                             ->visible(fn ($record) => filled($record?->extemporaneous_reason))
                             ->readOnly()
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('reason_for_cancellation')
+                            ->label(__('Reason for cancellation'))
                             ->visible(fn ($record) => filled($record?->reason_for_cancellation))
                             ->readOnly()
                             ->columnSpanFull(),

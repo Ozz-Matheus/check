@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Services\DocService;
+use App\Traits\AppNotifier;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Doc extends Model
 {
+    use AppNotifier;
+
     //
     protected $fillable = [
         'classification_code',
@@ -16,18 +19,16 @@ class Doc extends Model
         'sub_process_id',
         'doc_type_id',
         'central_expiration_date',
-        'expiration',
         'storage_method_id',
         'recovery_method_id',
         'disposition_method_id',
-        'visibility',
+        'display_restriction',
         'created_by_id',
     ];
 
     protected $casts = [
         'central_expiration_date' => 'date',
-        'expiration' => 'boolean',
-        'visibility' => 'boolean',
+        'display_restriction' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -135,19 +136,51 @@ class Doc extends Model
     // Determina si el documento está vencido.
     public function getIsExpiredAttribute(): bool
     {
-        return $this->central_expiration_date && now()->greaterThan($this->central_expiration_date);
+        return $this->central_expiration_date && today()->isAfter($this->central_expiration_date);
     }
 
     // Determina si el documento está por vencer en los próximos 30 días.
     public function getIsAboutToExpireAttribute(): bool
     {
-        if (! $this->central_expiration_date) {
+        if (! $this->central_expiration_date || $this->is_expired) {
             return false;
         }
 
-        $now = now();
+        $today = today();
         $expiration = $this->central_expiration_date;
 
-        return $now->lessThanOrEqualTo($expiration) && $now->diffInDays($expiration) <= 30;
+        // El documento no está vencido y caducará en 30 días o menos.
+        return $today->isBefore($expiration) && $today->diffInDays($expiration) <= 30;
     }
+
+    public function reactivateDoc(): void
+    {
+        $docTypeExpiration = $this->docService()->getDocTypeExpiration($this->doc_type_id);
+        $centralExpirationDate = today()->addYears($docTypeExpiration);
+
+        $this->update([
+            'central_expiration_date' => $centralExpirationDate,
+        ]);
+
+        $this::notifySuccess(__('Document active'));
+    }
+
+    /* public function reactivateDoc(): void
+    {
+        if (! $this->IsExpired) {
+            $this::notifyInfo(__('Document still active'));
+
+            return;
+        }
+
+        $docTypeExpiration = $this->docService()->getDocTypeExpiration($this->doc_type_id);
+        $centralExpirationDate = now()->addYears($docTypeExpiration);
+
+        $this->update([
+            'expiration' => 0,
+            'central_expiration_date' => $centralExpirationDate,
+        ]);
+
+        $this::notifySuccess(__('Document active'));
+    } */
 }

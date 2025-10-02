@@ -14,11 +14,11 @@ class SupplierSeeder extends Seeder
     {
         //
         Supplier::factory()->createMany([
-            ['title' => 'Proveedor 1', 'supplier_code' => 1234],
-            ['title' => 'Proveedor 2', 'supplier_code' => 5678],
-            ['title' => 'Proveedor 3', 'supplier_code' => 9012],
-            ['title' => 'Proveedor 4', 'supplier_code' => 3456],
-            ['title' => 'Proveedor 5', 'supplier_code' => 7890],
+            ['title' => 'Proveedor 1', 'email' => fake()->unique()->safeEmail()],
+            ['title' => 'Proveedor 2', 'email' => fake()->unique()->safeEmail()],
+            ['title' => 'Proveedor 3', 'email' => fake()->unique()->safeEmail()],
+            ['title' => 'Proveedor 4', 'email' => fake()->unique()->safeEmail()],
+            ['title' => 'Proveedor 5', 'email' => fake()->unique()->safeEmail()],
         ]);
     }
 }

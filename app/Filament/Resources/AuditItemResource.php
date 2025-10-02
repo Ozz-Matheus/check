@@ -8,8 +8,6 @@ use App\Models\AuditItem;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class AuditItemResource extends Resource
@@ -22,7 +20,7 @@ class AuditItemResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Audit Item Data')
+                Forms\Components\Section::make(__('Audit item data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('activity_id')
@@ -49,15 +47,17 @@ class AuditItemResource extends Resource
                             ->native(false)
                             ->required(),
                         Forms\Components\Textarea::make('risk_description')
+                            ->label(__('Risk description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('risk_category_id')
+                            ->label(__('Risk category'))
                             ->relationship('riskCategory', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Repeater::make('potentialCauses')
-                            ->relationship()
                             ->label(__('Potential causes'))
+                            ->relationship()
                             ->simple(
                                 Forms\Components\TextInput::make('title')
                                     ->label(__('Title'))
@@ -65,57 +65,15 @@ class AuditItemResource extends Resource
                             )
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('consequences')
+                            ->label(__('Consequences'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('general_level_id')
+                            ->label(__('General level'))
                             ->relationship('generalLevel', 'title')
                             ->native(false)
                             ->visible(fn ($record, $context) => filled($record?->general_level_id) && $context === 'view'),
                     ]),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('internal_audit_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('activity_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('risk_category_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('impact_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('probability_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('level_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

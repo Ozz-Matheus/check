@@ -57,9 +57,11 @@ class ActionEndingResource extends Resource
                             // ->maxParallelUploads(1)
                             ->visible(fn (string $context) => $context === 'create'),
                         Forms\Components\TextInput::make('effectiveness')
+                            ->label(__('Effectiveness'))
                             ->visible(fn ($record) => filled($record?->effectiveness))
                             ->readOnly(),
                         Forms\Components\Textarea::make('evaluation_comment')
+                            ->label(__('Evaluation comment'))
                             ->visible(fn ($record) => filled($record?->evaluation_comment))
                             ->readOnly(),
                         Forms\Components\DatePicker::make('real_evaluation_date')

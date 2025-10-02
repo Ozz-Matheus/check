@@ -9,8 +9,6 @@ use App\Models\AuditControl;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 
 class AuditControlResource extends Resource
 {
@@ -22,14 +20,16 @@ class AuditControlResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Audit control Data')
+                Forms\Components\Section::make(__('Audit control Data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
                         Forms\Components\Select::make('potentialCauses')
+                            ->label(__('Potential causes'))
                             ->relationship(
                                 'potentialCauses',
                                 'title',
@@ -44,18 +44,22 @@ class AuditControlResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('nature_of_control_id')
+                            ->label(__('Nature of control'))
                             ->relationship('natureOfControl', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Select::make('control_type_id')
+                            ->label(__('Control type'))
                             ->relationship('controlType', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Select::make('control_periodicity_id')
+                            ->label(__('Control periodicity'))
                             ->relationship('controlPeriodicity', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Select::make('effect_type_id')
+                            ->label(__('Effect type'))
                             ->relationship('effectType', 'title')
                             ->native(false)
                             ->required(),
@@ -64,18 +68,22 @@ class AuditControlResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('impact_id')
+                            ->label(__('Impact'))
                             ->relationship('impact', 'title')
                             ->native(false)
                             ->visible(fn ($record) => filled($record?->impact_id)),
                         Forms\Components\Select::make('probability_id')
+                            ->label(__('Probability'))
                             ->relationship('probability', 'title')
                             ->native(false)
                             ->visible(fn ($record) => filled($record?->probability_id)),
                         Forms\Components\Select::make('level_id')
+                            ->label(__('Level'))
                             ->relationship('level', 'title')
                             ->native(false)
                             ->visible(fn ($record) => filled($record?->level_id)),
                         Forms\Components\Select::make('classification_id')
+                            ->label(__('Classification'))
                             ->relationship('classification', 'title')
                             ->native(false)
                             ->visible(fn ($record) => filled($record?->classification_id)),
@@ -84,56 +92,6 @@ class AuditControlResource extends Resource
                             ->columnSpanFull()
                             ->visible(fn ($record) => filled($record?->content)),
                     ]),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('audit_item_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('nature_of_control_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('control_type_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('control_periodicity_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('category_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('impact_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('probability_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('level_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
             ]);
     }
 

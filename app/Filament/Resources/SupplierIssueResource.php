@@ -54,26 +54,30 @@ class SupplierIssueResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Risk identification'))
-                    ->description('Record any issues in problems with suppliers')
+                Forms\Components\Section::make(__('Suplier issue data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Select::make('cause_id')
+                            ->label(__('Cause'))
                             ->relationship('cause', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('issue_date')
-                            ->maxDate(now()->format('Y-m-d'))
+                            ->label(__('Issue date'))
+                            ->maxDate(today())
                             ->closeOnDateSelection()
                             ->native(false)
                             ->required(),
                         Forms\Components\Select::make('supplier_id')
+                            ->label(__('Supplier'))
                             ->relationship('supplier', 'title')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('product_id', null);
@@ -104,17 +108,21 @@ class SupplierIssueResource extends Resource
                             ->dehydrated(false)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('amount')
+                            ->label(__('Amount'))
                             ->required()
                             ->numeric(),
                         Forms\Components\TextInput::make('supplier_lot')
+                            ->label(__('Supplier lot'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('report_date')
-                            ->maxDate(now()->format('Y-m-d'))
+                            ->label(__('Report date'))
+                            ->maxDate(today())
                             ->closeOnDateSelection()
                             ->native(false)
                             ->required(),
                         Forms\Components\TextInput::make('monetary_impact')
+                            ->label(__('Monetary impact'))
                             ->numeric()
                             ->prefix('$')
                             ->required(),
@@ -152,28 +160,42 @@ class SupplierIssueResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->limit(30)
-                    ->searchable()
-                    ->tooltip(fn ($record) => $record->title),
-                Tables\Columns\TextColumn::make('cause.title')
+                    ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage(__('Title copied'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('cause.title')
+                    ->label(__('Cause')),
                 Tables\Columns\TextColumn::make('issue_date')
+                    ->label(__('Issue date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('supplier.title'),
+                Tables\Columns\TextColumn::make('supplier.title')
+                    ->label(__('Supplier')),
                 Tables\Columns\TextColumn::make('product.title')
+                    ->label(__('Product'))
                     ->limit(30)
                     ->searchable()
                     ->tooltip(fn ($record) => $record->product->title),
                 Tables\Columns\TextColumn::make('amount')
+                    ->label(__('Amount'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('supplier_lot')
+                    ->label(__('Supplier lot'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->supplier_lot)
+                    ->copyable()
+                    ->copyMessage(__('Supplier lot copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('report_date')
+                    ->label(__('Report date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('monetary_impact')
+                    ->label(__('Monetary impact'))
                     ->numeric()
                     ->prefix('$')
                     ->sortable(),
@@ -181,30 +203,46 @@ class SupplierIssueResource extends Resource
                     ->label(__('Status'))
                     ->searchable()
                     ->badge()
-                    ->color(fn ($record) => $record->status->colorName()),
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName())
+                    ->default('-'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
-                //
-                Tables\Filters\SelectFilter::make('status_id')
-                    ->relationship(
-                        name: 'status',
-                        titleAttribute: 'label',
-                        modifyQueryUsing: fn ($query) => $query->where('context', 'supplier')->orderBy('id', 'asc'),
-                    )
-                    ->label(__('Status'))
+                Tables\Filters\SelectFilter::make('cause_id')
+                    ->label(__('Cause'))
+                    ->relationship('cause', 'title')
+                    ->native(false),
+                Tables\Filters\SelectFilter::make('supplier_id')
+                    ->label(__('Supplier'))
+                    ->relationship('supplier', 'title')
                     ->multiple()
                     ->searchable()
                     ->preload(),
+                Tables\Filters\SelectFilter::make('status_id')
+                    ->label(__('Status'))
+                    ->relationship(
+                        name: 'status',
+                        titleAttribute: 'label',
+                        modifyQueryUsing: fn ($query) => $query->where('context', 'supplier_issue')->orderBy('id', 'asc'),
+                    )
+                    ->native(false),
             ])
+            ->filtersTriggerAction(
+                fn ($action) => $action
+                    ->button()
+                    ->label(__('Filter')),
+            )
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ])

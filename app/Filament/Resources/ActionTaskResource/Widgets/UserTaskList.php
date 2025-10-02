@@ -66,7 +66,7 @@ class UserTaskList extends BaseWidget implements HasTable
         return [
 
             SelectFilter::make('status_id')
-                ->label(__('Estado'))
+                ->label(__('Status'))
                 ->relationship(
                     'status',
                     'label',

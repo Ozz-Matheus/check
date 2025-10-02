@@ -66,18 +66,15 @@ class StatusResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\TextInput::make('color')
-                    ->label(__('Color')),
+                    ->label(__('Color'))
+                    ->required(),
 
                 Forms\Components\TextInput::make('icon')
-                    ->label(__('Icon')),
+                    ->label(__('Icon'))
+                    ->required(),
 
-                Forms\Components\Select::make('context')
+                Forms\Components\TextInput::make('context')
                     ->label(__('Context'))
-                    ->options([
-                        'doc' => 'Doc',
-                        'action' => 'Action',
-                        'task' => 'Task',
-                    ])
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -88,7 +85,7 @@ class StatusResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('context')
-                    ->label(__('Type'))
+                    ->label(__('Context'))
                     ->searchable()
                     ->formatStateUsing(fn ($state) => ucfirst($state)),
                 Tables\Columns\TextColumn::make('title')

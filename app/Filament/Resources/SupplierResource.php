@@ -44,19 +44,21 @@ class SupplierResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 36;
+    protected static ?int $navigationSort = 37;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label(__('Title'))
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('supplier_code')
-                    ->numeric()
-                    ->unique()
-                    ->required(),
+                Forms\Components\TextInput::make('email')
+                    ->label(__('Email'))
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -65,14 +67,26 @@ class SupplierResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage(__('Title copied'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('supplier_code')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label(__('Email'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->email)
+                    ->copyable()
+                    ->copyMessage(__('Email copied'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -15,6 +15,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -30,7 +31,7 @@ class DocVersionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('File Data'))
+                Forms\Components\Section::make(__('File data'))
                     ->schema([
                         static::baseFileUpload('path')
                             ->label(__('File'))
@@ -51,21 +52,22 @@ class DocVersionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('file.name')
-                    ->label(__('Title'))
+                    ->label(__('Name'))
                     ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('file.readable_mime_type')
                     ->label(__('Type')),
                 Tables\Columns\TextColumn::make('file.readable_size')
-                    ->label('Size'),
+                    ->label('Size')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
-                    ->searchable()
                     ->badge()
-                    ->color(fn ($record) => $record->status->colorName()),
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName()),
                 Tables\Columns\TextColumn::make('version')
                     ->label(__('Version'))
-                    ->searchable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('comment')
                     ->label(__('Comment'))
                     ->limit(30)
@@ -92,7 +94,6 @@ class DocVersionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('sha256_hash')
                     ->label(__('Sha256_hash'))
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
@@ -107,10 +108,19 @@ class DocVersionResource extends Resource
             ])
             ->filters([
                 //
+                SelectFilter::make('status_id')
+                    ->label(__('Status'))
+                    ->relationship(
+                        name: 'status',
+                        titleAttribute: 'label',
+                        modifyQueryUsing: fn ($query) => $query->where('context', 'doc')->where('title', '!=', 'restore')->orderBy('id', 'asc')
+                    )
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 ActionGroup::make([
-
                     // PENDING
                     Action::make('pending')
                         ->label(fn ($record) => Status::labelFromTitle('pending') ?? 'Pending')
@@ -125,7 +135,7 @@ class DocVersionResource extends Resource
                         })
                         ->visible(function ($record) {
                             return auth()->user()->canPending($record)
-                                && $record->status_id === 1
+                                && $record->status_id === Status::byContextAndTitle('doc', 'draft')?->id
                                 && $record->isLatestVersion();
                         }),
 
@@ -170,7 +180,8 @@ class DocVersionResource extends Resource
                         ->visible(function ($record) {
                             return auth()->user()->canApproveAndReject(
                                 $record->doc->sub_process_id ?? null
-                            ) && $record->status_id === 2 && $record->isLatestVersion();
+                            ) && $record->status_id === Status::byContextAndTitle('doc', 'pending')?->id
+                                && $record->isLatestVersion();
                         }),
 
                     // REJECTED
@@ -195,22 +206,19 @@ class DocVersionResource extends Resource
                         ->visible(function ($record) {
                             return auth()->user()->canApproveAndReject(
                                 $record->doc->sub_process_id ?? null
-                            ) && $record->status_id === 2 && $record->isLatestVersion();
+                            ) && $record->status_id === Status::byContextAndTitle('doc', 'pending')?->id
+                                && $record->isLatestVersion();
                         }),
 
                     Action::make('file')
                         ->label(__('Download'))
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('primary')
-                        ->url(fn ($record) => $record->file?->url())
-                        ->openUrlInNewTab(false)
-                        ->extraAttributes(fn ($record) => [
-                            'download' => $record->file?->name,
-                        ])
+                        ->url(fn ($record) => route('filament.dashboard.pages.file-viewer', ['file' => $record->file]))
+                        ->openUrlInNewTab(true)
                         ->visible(
                             fn ($record) => auth()->user()->canAccessSubProcess($record->doc->sub_process_id)
                         ),
-
                     DeleteAction::make()
                         ->visible(function ($record) {
                             $user = auth()->user();
@@ -222,16 +230,13 @@ class DocVersionResource extends Resource
                 ])->color('primary')->link()->label(false)->tooltip('Actions'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    //
-                    BulkAction::make('export')
-                        ->label(__('Export selected'))
-                        ->icon('heroicon-o-arrow-down-tray')
-                        ->action(fn ($records) => Excel::download(
-                            new VersionExport($records->pluck('id')->toArray()),
-                            'versions_'.now()->format('Y_m_d_His').'.xlsx'
-                        )),
-                ]),
+                BulkAction::make('export')
+                    ->label(__('Export selected'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(fn ($records) => Excel::download(
+                        new VersionExport($records->pluck('id')->toArray()),
+                        'versions_'.now()->format('Y_m_d_His').'.xlsx'
+                    )),
             ]);
     }
 

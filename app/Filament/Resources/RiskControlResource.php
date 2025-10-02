@@ -20,13 +20,13 @@ class RiskControlResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make(__('Risk control'))
-                    ->description('Determine and record controls to manage risk correctly and in a timely manner')
                     ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('potentialCauses')
+                            ->label(__('Potential causes'))
                             ->relationship(
-                                'potentialCauses',
-                                'title',
+                                name: 'potentialCauses',
+                                titleAttribute: 'title',
                                 modifyQueryUsing: function ($query, $livewire) {
                                     if (isset($livewire->risk_id)) {
                                         return $query->where('risk_id', $livewire->risk_id);
@@ -38,18 +38,22 @@ class RiskControlResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
                         Forms\Components\Select::make('control_periodicity_id')
+                            ->label(__('Control periodicity'))
                             ->relationship('periodicity', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Select::make('control_type_id')
+                            ->label(__('Control type'))
                             ->relationship('controlType', 'title')
                             ->native(false)
                             ->required(),
                         Forms\Components\Select::make('control_qualification_id')
+                            ->label(__('Control qualification'))
                             ->relationship('controlQualification', 'title')
                             ->native(false)
                             ->visible(fn (string $context) => $context === 'view')

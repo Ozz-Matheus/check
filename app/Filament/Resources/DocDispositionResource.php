@@ -14,17 +14,49 @@ class DocDispositionResource extends Resource
 {
     protected static ?string $model = DocDisposition::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Doc Disposition');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Doc Dispositions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Doc Dispositions');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Document Management');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?int $navigationSort = 14;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('storage_id')
+                    ->label(__('Storage'))
                     ->relationship('storage', 'label')
                     ->native(false)
                     ->required(),
                 Forms\Components\TextInput::make('title')
+                    ->label(__('Title'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -35,14 +67,18 @@ class DocDispositionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('storage.label')
+                    ->label(__('Storage'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

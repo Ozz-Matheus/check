@@ -70,8 +70,8 @@ class SubProcessResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('leader_by_id')
                     ->label(__('Leader'))
-                    ->label('Assigned thread leader')
-                    ->options(fn ($record) => $record->users()->pluck('users.name', 'users.id') ?? [])
+                    ->relationship('leader', 'name')
+                    // ->options(fn ($record) => $record->users()->pluck('users.name', 'users.id') ?? [])
                     ->searchable()
                     ->preload()
                     ->required(fn (string $context) => $context === 'edit')
@@ -90,12 +90,9 @@ class SubProcessResource extends Resource
                     ->label(__('Acronym'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->label(__('Process'))
-                    ->searchable()
-                    ->sortable(),
+                    ->label(__('Process')),
                 Tables\Columns\TextColumn::make('leader.name')
                     ->label(__('Leader'))
-                    ->label('Thread leader')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
@@ -109,14 +106,18 @@ class SubProcessResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('process_id')
+                    ->label(__('Process'))
+                    ->relationship('process', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    //
                 ]),
             ]);
     }

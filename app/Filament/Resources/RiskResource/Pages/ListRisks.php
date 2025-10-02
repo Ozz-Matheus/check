@@ -12,13 +12,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 
 class ListRisks extends ListRecords
 {
-    use ExposesTableToWidgets;
-
     protected static string $resource = RiskResource::class;
 
     protected function getHeaderActions(): array

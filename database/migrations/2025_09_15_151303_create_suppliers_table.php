@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->integer('supplier_code')->unique();
+            $table->string('email')->unique();
             $table->timestamps();
         });
     }

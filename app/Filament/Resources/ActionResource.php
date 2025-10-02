@@ -7,16 +7,13 @@ use App\Filament\Resources\ActionResource\Pages;
 use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationManager;
 use App\Models\Action;
 use App\Models\ActionType;
-use App\Models\SubProcess;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ActionResource extends Resource
@@ -50,19 +47,24 @@ class ActionResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $isCorrective = fn (Get $get) => self::isCorrective($get('action_type_id'));
+
         return $form
             ->schema([
-                Forms\Components\Section::make('Action Data')
+                Forms\Components\Section::make('Action data')
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('action_type_id')
+                            ->label(__('Action type'))
                             ->relationship('type', 'label')
                             ->native(false)
                             ->required()
@@ -70,15 +72,16 @@ class ActionResource extends Resource
                             ->afterStateUpdated(function ($state, Set $set) {
                                 if (! self::isCorrective($state)) {
                                     $set('detection_date', null);
-                                    $set('containment_actions', null);
                                     $set('action_analysis_cause_id', null);
+                                    $set('root_cause', null);
+                                    $set('containment_actions', null);
                                     $set('corrective_action', null);
                                     $set('action_verification_method_id', null);
                                     $set('verification_responsible_by_id', null);
                                 }
                             }),
                         Forms\Components\Select::make('source_id')
-                            ->label('Source')
+                            ->label(__('Source'))
                             ->relationship('source', 'title')
                             ->native(false)
                             ->required(fn ($record) => is_null($record))
@@ -94,10 +97,14 @@ class ActionResource extends Resource
                             ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
                             ->reactive(),
                         Forms\Components\Select::make('process_id')
+                            ->label(__('Process'))
                             ->relationship('process', 'title')
-                            ->afterStateUpdated(function (Set $set) {
+                            ->afterStateUpdated(function (Get $get, Set $set) {
                                 $set('sub_process_id', null);
                                 $set('responsible_by_id', null);
+                                if (self::isCorrective($get('action_type_id'))) {
+                                    $set('verification_responsible_by_id', null);
+                                }
                             })
                             ->searchable()
                             ->preload()
@@ -105,13 +112,18 @@ class ActionResource extends Resource
                             ->visible(fn ($livewire) => isset($livewire->originType) ? false : true)
                             ->required(),
                         Forms\Components\Select::make('sub_process_id')
-                            ->label('Sub Process')
-                            ->options(
-                                fn (Get $get): Collection => SubProcess::query()
-                                    ->where('process_id', $get('process_id'))
-                                    ->pluck('title', 'id')
+                            ->label(__('Sub process'))
+                            ->relationship(
+                                name: 'subProcess',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('process_id'))
                             )
-                            ->afterStateUpdated(fn (Set $set) => $set('responsible_by_id', null))
+                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                $set('responsible_by_id', null);
+                                if (self::isCorrective($get('action_type_id'))) {
+                                    $set('verification_responsible_by_id', null);
+                                }
+                            })
                             ->searchable()
                             ->preload()
                             ->reactive()
@@ -119,82 +131,108 @@ class ActionResource extends Resource
                             ->required(),
                         // Correctiva
                         Forms\Components\DatePicker::make('detection_date')
-                            ->maxDate(now()->format('Y-m-d'))
+                            ->label(__('Detection date'))
+                            ->maxDate(today())
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->required($isCorrective)
+                            ->visible($isCorrective)
+                            ->dehydrated($isCorrective)
                             ->reactive(),
                         Forms\Components\Select::make('action_analysis_cause_id')
+                            ->label(__('Analysis cause'))
                             ->relationship('analysisCause', 'title')
                             ->native(false)
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->required($isCorrective)
+                            ->visible($isCorrective)
+                            ->dehydrated($isCorrective)
                             ->reactive(),
                         Forms\Components\Textarea::make('root_cause')
+                            ->label(__('Root cause'))
                             ->columnSpanFull()
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->required($isCorrective)
+                            ->visible($isCorrective)
+                            ->dehydrated($isCorrective)
                             ->reactive(),
                         Forms\Components\Textarea::make('containment_actions')
+                            ->label(__('Containment actions'))
                             ->columnSpanFull()
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->required($isCorrective)
+                            ->visible($isCorrective)
+                            ->dehydrated($isCorrective)
                             ->reactive(),
                         Forms\Components\Textarea::make('corrective_actions')
+                            ->label(__('Corrective actions'))
                             ->columnSpanFull()
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->required($isCorrective)
+                            ->visible($isCorrective)
+                            ->dehydrated($isCorrective)
                             ->reactive(),
                         Forms\Components\Select::make('action_verification_method_id')
+                            ->label(__('Verification method'))
                             ->relationship('verificationMethod', 'title')
                             ->native(false)
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->required($isCorrective)
+                            ->visible($isCorrective)
+                            ->dehydrated($isCorrective)
                             ->reactive(),
                         Forms\Components\Select::make('verification_responsible_by_id')
-                            ->relationship('verificationResponsible', 'name')
+                            ->label(__('Verification responsible'))
+                            ->relationship(
+                                name: 'verificationResponsible',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function ($query, Get $get, $livewire) {
+                                    $subProcessId = $get('sub_process_id') ?? ($livewire->subProcessId ?? null);
+
+                                    if (! $subProcessId) {
+                                        // If no sub-process is selected, return no users.
+                                        return $query->whereNull('id');
+                                    }
+
+                                    return $query->whereDoesntHave(
+                                        'subProcesses',
+                                        fn ($q) => $q->where('sub_process_id', $subProcessId)
+                                    );
+                                }
+                            )
                             ->searchable()
                             ->preload()
-                            ->required(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->visible(fn (Get $get) => self::isCorrective($get('action_type_id')))
-                            ->dehydrated(fn (Get $get) => self::isCorrective($get('action_type_id')))
+                            ->required($isCorrective)
+                            ->visible($isCorrective)
+                            ->dehydrated($isCorrective)
                             ->reactive(),
                         // Fin Correctiva
                         Forms\Components\Select::make('responsible_by_id')
+                            ->label(__('Responsible'))
                             ->relationship(
                                 name: 'responsibleBy',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function ($query, Get $get, $livewire) {
-                                    if (isset($livewire->originType)) {
-                                        return $query->whereHas(
-                                            'subProcesses',
-                                            fn ($q) => $q->where('sub_process_id', $livewire->subProcessId)
-                                        );
+                                    $subProcessId = $get('sub_process_id') ?? ($livewire->subProcessId ?? null);
+
+                                    if (! $subProcessId) {
+                                        // If no sub-process is selected, return no users.
+                                        return $query->whereNull('id');
                                     }
 
                                     return $query->whereHas(
                                         'subProcesses',
-                                        fn ($q) => $q->where('sub_process_id', $get('sub_process_id'))
+                                        fn ($q) => $q->where('sub_process_id', $subProcessId)
                                     );
                                 }
                             )
-                            ->label('Responsible')
                             ->searchable()
                             ->preload()
                             ->reactive()
                             ->required(),
                         Forms\Components\Textarea::make('expected_impact')
+                            ->label(__('Expected impact'))
+                            ->columnSpanFull()
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('limit_date')
-                            ->minDate(now()->format('Y-m-d'))
+                            ->label(__('Limit date'))
+                            ->minDate(today())
                             ->native(false)
                             ->closeOnDateSelection()
                             ->required(),
@@ -205,7 +243,7 @@ class ActionResource extends Resource
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
                         Forms\Components\Textarea::make('reason_for_cancellation')
-                            ->label('Reason for cancellation')
+                            ->label(__('Reason for cancellation'))
                             ->visible(fn ($record) => filled($record?->reason_for_cancellation))
                             ->columnSpanFull(),
                     ]),
@@ -220,28 +258,36 @@ class ActionResource extends Resource
                     ->label(__('Origin'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type.label')
-                    ->searchable(),
+                    ->label(__('Type')),
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
                     ->searchable()
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->searchable(),
+                    ->label(__('Process')),
                 Tables\Columns\TextColumn::make('subProcess.title')
-                    ->searchable(),
+                    ->label(__('Sub process')),
                 Tables\Columns\TextColumn::make('registeredBy.name')
+                    ->label(__('Registered by'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
+                    ->label(__('Responsible'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status.label')
-                    ->searchable()
+                    ->label(__('Status'))
                     ->badge()
-                    ->color(fn ($record) => $record->status->colorName()),
-                Tables\Columns\IconColumn::make('finished')
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName())
+                    ->default('-'),
+                Tables\Columns\TextColumn::make('finished')
                     ->label(__('Finished'))
-                    ->boolean()
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => (bool) $state ? __('Yes') : __('No'))
+                    ->color(fn ($state) => (bool) $state ? 'success' : 'danger')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('limit_date')
+                    ->label(__('Limit Date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ending.real_closing_date')
@@ -255,47 +301,68 @@ class ActionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
-                //
                 Tables\Filters\SelectFilter::make('type_id')
+                    ->label(__('Type'))
                     ->relationship('type', 'label')
+                    ->native(false),
+                Tables\Filters\SelectFilter::make('process_id')
+                    ->label(__('Process'))
+                    ->relationship('process', 'title')
                     ->multiple()
-                    ->preload()
-                    ->label(__('Type')),
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('sub_process_id')
+                    ->label(__('Sub Process'))
+                    ->relationship('subProcess', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\SelectFilter::make('status_id')
+                    ->label(__('Status'))
                     ->relationship(
                         name: 'status',
                         titleAttribute: 'label',
                         modifyQueryUsing: fn ($query) => $query->where('context', 'action_and_task')->orderBy('id', 'asc'),
                     )
                     ->multiple()
-                    ->preload()
-                    ->label(__('Status')),
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('finished')
+                    ->label(__('Finished'))
+                    ->options([
+                        1 => __('Yes'),
+                        0 => __('No'),
+                    ])
+                    ->native(false),
             ])
+            ->filtersTriggerAction(
+                fn ($action) => $action
+                    ->button()
+                    ->label(__('Filter')),
+            )
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    //
-                    BulkAction::make('export')
-                        ->label('Export selected')
-                        ->icon('heroicon-o-arrow-down-tray')
-                        ->action(fn ($records) => Excel::download(
-                            new ActionExport($records->pluck('id')->toArray()),
-                            'actions_improve_'.now()->format('Y_m_d_His').'.xlsx'
-                        )),
-                ]),
+                Tables\Actions\BulkAction::make('export')
+                    ->label(__('Export selected'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(fn ($records) => Excel::download(
+                        new ActionExport($records->pluck('id')->toArray()),
+                        'actions_improve_'.now()->format('Y_m_d_His').'.xlsx'
+                    )),
             ]);
     }
 

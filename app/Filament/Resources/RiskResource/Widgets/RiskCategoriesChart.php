@@ -2,27 +2,18 @@
 
 namespace App\Filament\Resources\RiskResource\Widgets;
 
-use App\Filament\Resources\RiskResource\Pages\ListRisks;
+use App\Models\Risk;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\Concerns\InteractsWithPageTable;
 
 class RiskCategoriesChart extends ChartWidget
 {
-    use InteractsWithPageTable;
-
     protected static ?string $heading = 'Risk Distribution by Category';
 
     protected static ?string $pollingInterval = null;
 
-    protected function getTablePage(): string
-    {
-        return ListRisks::class;
-    }
-
     protected function getData(): array
     {
-        $data = $this->getPageTableQuery()
-            ->reorder()
+        $data = Risk::reorder()
             ->join('risk_categories', 'risks.risk_category_id', '=', 'risk_categories.id')
             ->selectRaw('risk_categories.title, count(risks.id) as count')
             ->groupBy('risk_categories.title')

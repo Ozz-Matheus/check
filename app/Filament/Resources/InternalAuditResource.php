@@ -49,7 +49,7 @@ class InternalAuditResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Internal Audit Data')
+                Forms\Components\Section::make(__('Internal audit data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
@@ -58,20 +58,20 @@ class InternalAuditResource extends Resource
                             ->columnSpanFull()
                             ->maxLength(255),
                         Forms\Components\Select::make('process_id')
-                            ->relationship('process', 'title')
                             ->label(__('Process'))
+                            ->relationship('process', 'title')
                             ->afterStateUpdated(fn (Set $set) => $set('sub_process_id', null))
                             ->searchable()
                             ->preload()
                             ->reactive()
                             ->required(),
                         Forms\Components\Select::make('sub_process_id')
+                            ->label(__('Sub process'))
                             ->relationship(
                                 name: 'subProcess',
                                 titleAttribute: 'title',
                                 modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('process_id'))
                             )
-                            ->label(__('Sub process'))
                             ->searchable()
                             ->preload()
                             ->required(),
@@ -84,7 +84,7 @@ class InternalAuditResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('audit_date')
-                            ->label(__('Audit Date'))
+                            ->label(__('Audit date'))
                             ->minDate(now()->format('Y-m-d'))
                             ->closeOnDateSelection()
                             ->native(false)
@@ -105,7 +105,7 @@ class InternalAuditResource extends Resource
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
                         Forms\Components\Select::make('internal_audit_qualification_id')
-                            ->label(__('Internal Audit Qualification'))
+                            ->label(__('Internal audit qualification'))
                             ->relationship(
                                 name: 'internalAuditQualification',
                                 titleAttribute: 'title'
@@ -113,13 +113,13 @@ class InternalAuditResource extends Resource
                             ->disabled()
                             ->visible(fn ($record) => filled($record?->internal_audit_qualification_id)),
                         Forms\Components\TextInput::make('qualification_value')
-                            ->label(__('Qualification Value'))
+                            ->label(__('Qualification value'))
                             ->suffix('%')
                             ->numeric()
                             ->disabled()
                             ->visible(fn ($record) => filled($record?->qualification_value)),
                         Forms\Components\Select::make('evaluated_by_id')
-                            ->label(__('Evaluated By'))
+                            ->label(__('Evaluated by'))
                             ->relationship(
                                 name: 'evaluatedBy',
                                 titleAttribute: 'name'
@@ -140,48 +140,54 @@ class InternalAuditResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('classification_code')
-                    ->label(__('Classification Code'))
-                    ->searchable(),
+                    ->label(__('Classification code'))
+                    ->searchable()
+                    ->copyable()
+                    ->copyMessage(__('Classification code copied')),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage(__('Title copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->label(__('Process'))
-                    ->searchable(),
+                    ->label(__('Process')),
                 Tables\Columns\TextColumn::make('subProcess.title')
-                    ->label(__('Sub process'))
-                    ->searchable(),
+                    ->label(__('Sub process')),
                 Tables\Columns\TextColumn::make('audit_date')
-                    ->label(__('Audit Date'))
+                    ->label(__('Audit date'))
                     ->date(),
+                Tables\Columns\TextColumn::make('priority.title')
+                    ->label(__('Priority')),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
-                    ->searchable()
                     ->badge()
-                    ->color(fn ($record) => $record->status->colorName()),
-                Tables\Columns\TextColumn::make('priority.title')
-                    ->label(__('Priority'))
-                    ->searchable(),
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName())
+                    ->default('-'),
                 Tables\Columns\TextColumn::make('internalAuditQualification.title')
-                    ->label(__('Qualification')),
+                    ->label(__('Qualification'))
+                    ->default(__('Unrated')),
                 Tables\Columns\TextColumn::make('qualification_value')
                     ->label(__('Qualification Value'))
+                    ->default('-')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('createdBy.name')
-                    ->label(__('Created By'))
+                    ->label(__('Created by'))
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('evaluatedBy.name')
-                    ->label(__('Evaluated By'))
+                    ->label(__('Evaluated by'))
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Created At'))
+                    ->label(__('Created at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Updated At'))
+                    ->label(__('Updated at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -189,7 +195,53 @@ class InternalAuditResource extends Resource
             ->defaultSort('id', 'desc')
             ->filters([
                 //
+                Tables\Filters\SelectFilter::make('process_id')
+                    ->label(__('Process'))
+                    ->relationship('process', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('sub_process_id')
+                    ->label(__('Sub process'))
+                    ->relationship('subProcess', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('priority_id')
+                    ->label(__('Priority'))
+                    ->relationship(
+                        name: 'priority',
+                        titleAttribute: 'title',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc'), )
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('status_id')
+                    ->relationship(
+                        name: 'status',
+                        titleAttribute: 'label',
+                        modifyQueryUsing: fn ($query) => $query->where('context', 'internal_audit')->orderBy('id', 'asc'),
+                    )
+                    ->label(__('Status'))
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('internal_audit_qualification_id')
+                    ->label(__('Qualification'))
+                    ->relationship(
+                        name: 'internalAuditQualification',
+                        titleAttribute: 'title',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc'),
+                    )
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
+            ->filtersTriggerAction(
+                fn ($action) => $action
+                    ->button()
+                    ->label(__('Filter')),
+            )
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Action::make('export')
@@ -202,7 +254,6 @@ class InternalAuditResource extends Resource
                         return response()->streamDownload(function () use ($reportData) {
                             echo Pdf::loadView('reports.audit-executive', $reportData)->output();
                         }, 'informe-ejecutivo-auditoria.pdf');
-
                     }),
 
             ])

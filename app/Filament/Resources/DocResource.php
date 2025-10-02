@@ -6,6 +6,7 @@ use App\Exports\DocExport;
 use App\Filament\Resources\DocResource\Pages;
 use App\Models\Doc;
 use App\Models\DocType;
+use App\Models\Status;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -53,9 +54,11 @@ class DocResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $docTypeFormat = fn (Get $get) => (int) $get('doc_type_id') === DocType::where('name', 'format')->value('id');
+
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Doc Data'))
+                Forms\Components\Section::make(__('Doc data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
@@ -65,8 +68,8 @@ class DocResource extends Resource
                             ->maxLength(255)
                             ->unique(),
                         Forms\Components\Select::make('doc_type_id')
-                            ->relationship('type', 'label')
                             ->label(__('Doc type'))
+                            ->relationship('type', 'label')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('storage_method_id', null);
                                 $set('recovery_method_id', null);
@@ -78,72 +81,72 @@ class DocResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('process_id')
-                            ->relationship('process', 'title')
                             ->label(__('Process'))
+                            ->relationship('process', 'title')
                             ->afterStateUpdated(fn (Set $set) => $set('sub_process_id', null))
                             ->searchable()
                             ->preload()
                             ->reactive()
                             ->required(),
                         Forms\Components\Select::make('sub_process_id')
+                            ->label(__('Sub process'))
                             ->relationship(
                                 name: 'subProcess',
                                 titleAttribute: 'title',
                                 modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('process_id'))
                             )
-                            ->label(__('Sub process'))
                             ->searchable()
                             ->preload()
                             ->required(),
                         Forms\Components\Select::make('storage_method_id')
-                            ->relationship('storageMethod', 'label')
                             ->label(__('Storage method'))
+                            ->relationship('storageMethod', 'label')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('recovery_method_id', null);
                                 $set('disposition_method_id', null);
                             })
                             ->reactive()
                             ->native(false)
-                            ->visible(fn (Get $get) => (int) $get('doc_type_id') === DocType::where('name', 'format')->value('id'))
-                            ->required(fn (Get $get) => (int) $get('doc_type_id') === DocType::where('name', 'format')->value('id')),
+                            ->visible($docTypeFormat)
+                            ->required($docTypeFormat),
                         Forms\Components\Select::make('recovery_method_id')
+                            ->label(__('Recovery method'))
                             ->relationship(
                                 name: 'recoveryMethod',
                                 titleAttribute: 'title',
                                 modifyQueryUsing: fn ($query, Get $get) => $query->where('storage_id', $get('storage_method_id'))
                             )
-                            ->label(__('Recovery method'))
                             ->native(false)
                             ->preload()
-                            ->visible(fn (Get $get) => (int) $get('doc_type_id') === DocType::where('name', 'format')->value('id'))
-                            ->required(fn (Get $get) => (int) $get('doc_type_id') === DocType::where('name', 'format')->value('id')),
+                            ->visible($docTypeFormat)
+                            ->required($docTypeFormat),
                         Forms\Components\Select::make('disposition_method_id')
+                            ->label(__('Disposition method'))
                             ->relationship(
                                 name: 'dispositionMethod',
                                 titleAttribute: 'title',
                                 modifyQueryUsing: fn ($query, Get $get) => $query->where('storage_id', $get('storage_method_id'))
                             )
-                            ->label(__('Disposition method'))
                             ->native(false)
                             ->preload()
-                            ->visible(fn (Get $get) => (int) $get('doc_type_id') === DocType::where('name', 'format')->value('id'))
-                            ->required(fn (Get $get) => (int) $get('doc_type_id') === DocType::where('name', 'format')->value('id')),
-                        Forms\Components\Fieldset::make(__('Doc Restriction'))
+                            ->visible($docTypeFormat)
+                            ->required($docTypeFormat),
+                        Forms\Components\Fieldset::make(__('Doc restriction'))
                             ->schema([
-                                Forms\Components\Toggle::make('visibility')
-                                    ->label(__('Visibility'))
+                                Forms\Components\Toggle::make('display_restriction')
+                                    ->label(__('Display restriction'))
                                     ->inline(false)
                                     ->afterStateUpdated(fn (Set $set) => $set('accessToAdditionalUsers', null))
                                     ->columnSpanFull()
                                     ->reactive(),
                                 Forms\Components\Select::make('accessToAdditionalUsers')
-                                    ->relationship('accessToAdditionalUsers', 'name')
                                     ->label(__('Access to additional users'))
+                                    ->relationship('accessToAdditionalUsers', 'name')
                                     ->multiple()
                                     ->searchable()
                                     ->preload()
-                                    ->visible(fn (Get $get) => $get('visibility') === true)
-                                    ->required(fn (Get $get) => $get('visibility') === true),
+                                    ->visible(fn (Get $get) => $get('display_restriction') === true)
+                                    ->required(fn (Get $get) => $get('display_restriction') === true),
                             ]),
                     ]),
             ]);
@@ -164,44 +167,41 @@ class DocResource extends Resource
                 Tables\Columns\TextColumn::make('type.label')
                     ->label(__('Doc type')),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->label(__('Process'))
-                    ->sortable(),
+                    ->label(__('Process')),
                 Tables\Columns\TextColumn::make('subprocess.title')
-                    ->label(__('Sub process'))
-                    ->sortable(),
+                    ->label(__('Sub process')),
                 Tables\Columns\TextColumn::make('latestVersion.status.label')
                     ->label(__('Status'))
-                    ->searchable()
                     ->badge()
-                    ->color(fn ($record) => $record->latestVersion?->status->colorName()),
+                    ->color(fn ($record) => $record->latestVersion?->status?->colorName() ?? 'gray')
+                    ->icon(fn ($record) => $record->latestVersion?->status?->iconName() ?? 'heroicon-o-information-circle')
+                    ->default('-'),
                 Tables\Columns\TextColumn::make('latestVersion.version')
                     ->label(__('Version'))
-                    ->searchable(),
+                    ->sortable()
+                    ->default('-'),
                 Tables\Columns\TextColumn::make('central_expiration_date')
                     ->label(__('Central expiration date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('expiration')
-                    ->label(__('Expiration state'))
+                Tables\Columns\TextColumn::make('expiration_status')
+                    ->label(__('Expiration status'))
                     ->badge()
-                    ->formatStateUsing(fn ($state) => (bool) $state ? __('Expired') : __('Current'))
-                    ->color(fn ($state) => (bool) $state ? 'danger' : 'success'),
-                Tables\Columns\TextColumn::make('visibility')
-                    ->label(__('Visibility'))
+                    ->state(fn (Doc $record): string => $record->is_expired ? __('Expired') : __('Current'))
+                    ->color(fn (string $state): string => $state === __('Expired') ? 'danger' : 'success'),
+                Tables\Columns\TextColumn::make('display_restriction')
+                    ->label(__('Display restriction'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => (bool) $state ? __('Private') : __('Public'))
                     ->color(fn ($state) => (bool) $state ? 'warning' : 'success'),
                 Tables\Columns\TextColumn::make('storageMethod.label')
                     ->label(__('Storage method'))
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('recoveryMethod.title')
                     ->label('Recovery method')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('dispositionMethod.title')
                     ->label('Disposition method')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->label(__('Created by'))
@@ -221,31 +221,56 @@ class DocResource extends Resource
             ])->defaultSort('id', 'desc')
             ->filters([
                 SelectFilter::make('doc_type_id')
-                    ->relationship('type', 'label')
                     ->label(__('Doc type'))
+                    ->relationship('type', 'label')
                     ->multiple()
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('process_id')
-                    ->relationship('process', 'title')
                     ->label(__('Process'))
+                    ->relationship('process', 'title')
                     ->multiple()
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('sub_process_id')
-                    ->relationship('subProcess', 'title')
                     ->label(__('Sub Process'))
+                    ->relationship('subProcess', 'title')
                     ->multiple()
                     ->searchable()
                     ->preload(),
-                SelectFilter::make('expiration')
-                    ->label(__('Expiration state'))
+                SelectFilter::make('status_id')
+                    ->label(__('Status'))
+                    ->options(
+                        Status::where('context', 'doc')->where('title', '!=', 'restore')->orderBy('id', 'asc')->pluck('label', 'id')
+                    )
+                    ->multiple()
+                    ->query(function (Builder $query, array $data): Builder {
+                        $values = $data['values'];
+
+                        if (empty($values)) {
+                            return $query;
+                        }
+
+                        return $query->whereHas('latestVersion', fn (Builder $query) => $query->whereIn('status_id', $values));
+                    }),
+                SelectFilter::make('expiration_status')
+                    ->label(__('Expiration status'))
                     ->options([
-                        1 => 'Expired',
-                        0 => 'Current',
+                        1 => __('Expired'),
+                        0 => __('Current'),
                     ])
-                    ->searchable()
-                    ->preload(),
+                    ->query(function (Builder $query, array $data): Builder {
+                        $value = $data['value'];
+
+                        if ($value === null || ! in_array((int) $value, [0, 1], true)) {
+                            return $query;
+                        }
+
+                        return (int) $value === 1
+                            ? $query->whereNotNull('central_expiration_date')->where('central_expiration_date', '<', today())
+                            : $query->where(fn (Builder $q) => $q->whereNull('central_expiration_date')->orWhere('central_expiration_date', '>=', today()));
+                    })
+                    ->native(false),
                 SelectFilter::make('expiration_soon')
                     ->label(__('Expiring soon'))
                     ->options([
@@ -256,19 +281,24 @@ class DocResource extends Resource
                         $days = $data['value'] ?? null;
 
                         return $days
-                            ? $query->whereBetween('central_expiration_date', [now(), now()->addDays((int) $days)])
+                            ? $query->whereBetween('central_expiration_date', [today(), today()->addDays((int) $days)])
                             : $query;
                     })
-                    ->searchable()
-                    ->preload(),
-                SelectFilter::make('visibility')
-                    ->label(__('Visibility'))
+                    ->native(false),
+                SelectFilter::make('display_restriction')
+                    ->label(__('Display restriction'))
                     ->options([
-                        1 => 'Yes',
-                        0 => 'No',
+                        1 => __('Private'),
+                        0 => __('Public'),
                     ])
                     ->native(false),
             ])
+            ->filtersTriggerAction(
+                fn ($action) => $action
+                    ->button()
+                    ->label(__('Filter')),
+            )
+            ->filtersFormColumns(2)
             ->actions([
                 Action::make('files')
                     ->label(__('Versions'))
@@ -289,10 +319,23 @@ class DocResource extends Resource
                         fn ($record) => $record->approvedVersionUrl()
                     )
                     ->openUrlInNewTab(false)
-                    ->disabled(fn ($record) => ! $record->hasApprovedVersion())
+                    ->visible(function ($record) {
+                        if (! $record->display_restriction) {
+                            return true;
+                        }
+
+                        $user = auth()->user();
+
+                        if ($user->canAccessSubProcess($record->sub_process_id)) {
+                            return true;
+                        }
+
+                        return $record->accessToAdditionalUsers()->where('user_id', $user->id)->exists();
+                    })
+                    ->disabled(fn ($record) => ! $record->hasApprovedVersion() || $record->is_expired)
                     ->extraAttributes(fn ($record) => [
                         'download' => $record->latestApprovedVersion?->file->name,
-                        'style' => $record->hasApprovedVersion()
+                        'style' => $record->hasApprovedVersion() && ! $record->is_expired
                             ? ''
                             : 'opacity: 0.3; cursor: not-allowed;',
 
@@ -306,14 +349,14 @@ class DocResource extends Resource
                         ->form(function ($record) {
 
                             // Helpers para no repetir tanto fn(Get $get) / fn(Set $set)
-                            $isVisible = fn (Get $get): bool => $get('visibility') === true;
+                            $isPrivate = fn (Get $get): bool => $get('display_restriction') === true;
                             $resetAccess = fn (Set $set) => $set('users', null);
 
                             return [
-                                Forms\Components\Toggle::make('visibility')
-                                    ->label(__('Visibility'))
+                                Forms\Components\Toggle::make('display_restriction')
+                                    ->label(__('Display restriction'))
                                     ->inline(false)
-                                    ->default($record->visibility)
+                                    ->default($record->display_restriction)
                                     ->afterStateUpdated($resetAccess)
                                     ->columnSpanFull()
                                     ->reactive(),
@@ -325,16 +368,16 @@ class DocResource extends Resource
                                     ->multiple()
                                     ->searchable()
                                     ->preload()
-                                    ->visible($isVisible)
-                                    ->required($isVisible),
+                                    ->visible($isPrivate)
+                                    ->required($isPrivate),
                             ];
-
                         })
+                        ->authorize(fn ($record): bool => auth()->id() === $record->subProcess?->leader?->id)
                         ->action(function ($record, array $data) {
 
                             session([
                                 'doc_edit_payload' => [
-                                    'visibility' => $data['visibility'],
+                                    'display_restriction' => $data['display_restriction'],
                                     'users' => $data['users'] ?? null,
                                 ],
                             ]);
@@ -342,6 +385,16 @@ class DocResource extends Resource
                             redirect(DocResource::getUrl('access', [
                                 'record' => $record,
                             ]));
+                        }),
+                    Action::make('reinstate_doc')
+                        ->label(__('Reinstate Document'))
+                        ->icon('heroicon-o-document-check')
+                        ->color('primary')
+                        ->requiresConfirmation()
+                        ->authorize(fn ($record): bool => auth()->id() === $record->subProcess?->leader?->id)
+                        ->visible(fn ($record) => $record->is_about_to_expire || $record->is_expired)
+                        ->action(function ($record) {
+                            $record->reactivateDoc();
                         }),
                     DeleteAction::make()
                         ->visible(fn ($record): bool => auth()->user()?->can('delete', $record)),
@@ -352,15 +405,13 @@ class DocResource extends Resource
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    BulkAction::make('export')
-                        ->label(__('Export selected'))
-                        ->icon('heroicon-o-arrow-down-tray')
-                        ->action(fn ($records) => Excel::download(
-                            new DocExport($records->pluck('id')->toArray()),
-                            'docs_'.now()->format('Y_m_d_His').'.xlsx'
-                        )),
-                ]),
+                BulkAction::make('export')
+                    ->label(__('Export selected'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(fn ($records) => Excel::download(
+                        new DocExport($records->pluck('id')->toArray()),
+                        'docs_'.now()->format('Y_m_d_His').'.xlsx'
+                    )),
             ]);
     }
 

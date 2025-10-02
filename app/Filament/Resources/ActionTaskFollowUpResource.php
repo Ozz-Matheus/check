@@ -20,10 +20,10 @@ class ActionTaskFollowUpResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make(__('Task Follow-up'))
-                    ->description('Determine and record controls to manage risk correctly and in a timely manner')
                     ->columns(2)
                     ->schema([
                         Forms\Components\Textarea::make('content')
+                            ->label(__('Content'))
                             ->columnSpanFull(),
                     ]),
             ]);
