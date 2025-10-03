@@ -23,6 +23,7 @@ class FileViewer extends Page
     public function mount(): void
     {
         $this->file = File::findOrFail(request('file'));
+
         if ($this->file->fileable_type === DocVersion::class) {
 
             $docVersion = DocVersion::findOrFail($this->file->fileable_id);

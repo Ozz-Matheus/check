@@ -15,9 +15,10 @@ trait HasStandardFileUpload
                 'application/pdf',
                 'application/msword',
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ])
             ->maxSize(10240)
-            ->helperText(__('Allowed types: PDF, DOC, DOCX, XLS, XLSX (max. 10MB)'));
+            ->helperText(__('Tipos permitidos: PDF, DOC/DOCX, XLS/XLSX (máx. 10MB)'));
     }
 }

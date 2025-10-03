@@ -168,7 +168,7 @@ class DocResource extends Resource
                     ->label(__('Doc type')),
                 Tables\Columns\TextColumn::make('process.title')
                     ->label(__('Process')),
-                Tables\Columns\TextColumn::make('subprocess.title')
+                Tables\Columns\TextColumn::make('subProcess.title')
                     ->label(__('Sub process')),
                 Tables\Columns\TextColumn::make('latestVersion.status.label')
                     ->label(__('Status'))
