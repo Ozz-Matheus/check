@@ -7,10 +7,16 @@ use App\Services\TaskService;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ActionTasksRelationManager extends RelationManager
 {
     protected static string $relationship = 'tasks';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Tasks');
+    }
 
     public function table(Table $table): Table
     {
@@ -18,36 +24,56 @@ class ActionTasksRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable()
+                    ->label(__('Title'))
                     ->limit(30)
-                    ->tooltip(fn ($record) => $record->title),
+                    ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage(__('Title copied'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->sortable(),
+                    ->label(__('Responsible'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->responsibleBy->name)
+                    ->copyable()
+                    ->copyMessage(__('Responsible copied'))
+                    ->searchable(['name', 'email']),
                 Tables\Columns\TextColumn::make('status.label')
-                    ->searchable()
+                    ->label(__('Status'))
                     ->badge()
-                    ->color(fn ($record) => $record->status->colorName()),
-                Tables\Columns\IconColumn::make('finished')
-                    ->boolean(),
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName())
+                    ->placeholder('-'),
+                Tables\Columns\TextColumn::make('finished')
+                    ->label(__('Finished'))
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => (bool) $state ? __('Yes') : __('No'))
+                    ->color(fn ($state) => (bool) $state ? 'success' : 'danger')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
+                    ->label(__('Start date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('limit_date')
+                    ->label(__('Limit date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('real_start_date')
+                    ->label(__('Real start date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('real_closing_date')
+                    ->label(__('Real closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -61,8 +87,7 @@ class ActionTasksRelationManager extends RelationManager
             })
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label('New action task')
-                    ->button()
+                    ->label(__('New task'))
                     ->color('primary')
                     ->authorize($this->getOwnerRecord()->responsible_by_id === auth()->id() && auth()->user()->can('create_action::task'))
                     ->visible(fn () => app(TaskService::class)->canViewCreateTask($this->getOwnerRecord()->status_id))
@@ -72,7 +97,7 @@ class ActionTasksRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\Action::make('follow-up')
-                    ->label('Follow-up')
+                    ->label(__('Follow up'))
                     ->color('primary')
                     ->icon('heroicon-o-eye')
                     ->url(fn ($record) => ActionResource::getUrl('task.view', [

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\DocResource\Pages;
 
 use App\Filament\Resources\DocResource;
 use App\Models\Doc;
+use App\Support\AppNotifier;
 use Filament\Resources\Pages\Page;
 
 class UpdateAdditionalUsers extends Page
@@ -27,7 +28,7 @@ class UpdateAdditionalUsers extends Page
         // limpiar sesión
         session()->forget('doc_edit_payload');
 
-        $record::notifySuccess(__('Update additional users'));
+        AppNotifier::success(__('Update additional users'));
 
         redirect()->to(DocResource::getUrl('index'));
 

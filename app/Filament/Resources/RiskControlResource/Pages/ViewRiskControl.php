@@ -40,9 +40,9 @@ class ViewRiskControl extends ViewRecord
     public function getBreadcrumbs(): array
     {
         return [
-            RiskResource::getUrl('view', ['record' => $this->risk_id]) => 'Risk',
-            RiskResource::getUrl('control.view', ['risk' => $this->risk_id, 'record' => $this->record->id]) => 'Control',
-            false => 'View',
+            RiskResource::getUrl('view', ['record' => $this->risk_id]) => __('Risk'),
+            RiskResource::getUrl('control.view', ['risk' => $this->risk_id, 'record' => $this->record->id]) => __('Control'),
+            false => __('View'),
         ];
     }
 }

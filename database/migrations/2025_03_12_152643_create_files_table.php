@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
+            $table->string('context')->nullable();
             $table->morphs('fileable'); // Genera fileable_type y fileable_id
             $table->string('name');
             $table->string('path'); // ruta en disco o en S3

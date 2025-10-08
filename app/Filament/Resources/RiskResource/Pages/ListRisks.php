@@ -22,25 +22,25 @@ class ListRisks extends ListRecords
     {
         return [
 
-            Actions\Action::make('filtrarPorEstado')
-                ->label('Reporte ejecutivo')
+            Actions\Action::make('executive_report')
+                ->label(__('Executive Report'))
                 ->outlined()
                 ->modalWidth('md')
                 ->form([
                     Select::make('process_id')
-                        ->relationship('process', 'title')
                         ->label(__('Process'))
+                        ->relationship('process', 'title')
                         ->afterStateUpdated(fn (Set $set) => $set('sub_process_id', null))
                         ->searchable()
                         ->preload()
                         ->reactive(),
                     Select::make('sub_process_id')
+                        ->label(__('Sub process'))
                         ->relationship(
                             name: 'subProcess',
                             titleAttribute: 'title',
                             modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('process_id'))
                         )
-                        ->label(__('Sub process'))
                         ->searchable()
                         ->preload(),
                 ])
@@ -61,9 +61,9 @@ class ListRisks extends ListRecords
 
                     return response()->streamDownload(function () use ($reportData) {
                         echo Pdf::loadView('reports.risk-executive', $reportData)->output();
-                    }, 'informe-ejecutivo-riesgos.pdf');
+                    }, __('executive-risk-report.pdf'));
 
-                })->modalSubmitActionLabel('Descargar'),
+                })->modalSubmitActionLabel(__('Download')),
             Actions\CreateAction::make(),
         ];
     }

@@ -13,13 +13,25 @@ class AuditFindingResource extends Resource
 {
     protected static ?string $model = AuditFinding::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Control Finding');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Control Findings');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Control finding data'))
+                Forms\Components\Section::make(__('Finding data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')

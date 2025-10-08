@@ -28,22 +28,22 @@ class ViewRiskControlFollowUp extends ViewRecord
     public function getBreadcrumbs(): array
     {
         return [
-            RiskResource::getUrl('view', ['record' => $this->record->control->risk_id]) => 'Risk',
+            RiskResource::getUrl('view', ['record' => $this->record->control->risk_id]) => __('Risk'),
             RiskResource::getUrl(
                 'control.view',
                 [
                     'risk' => $this->record->control->risk_id,
                     'record' => $this->record->risk_control_id,
                 ]
-            ) => 'Control',
+            ) => __('Control'),
             RiskResource::getUrl(
                 'follow-up.view',
                 [
                     'control' => $this->record->risk_control_id,
                     'record' => $this->record->id,
                 ]
-            ) => 'Follow-up',
-            false => 'View',
+            ) => __('Follow up'),
+            false => __('View'),
         ];
     }
 }

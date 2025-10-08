@@ -18,6 +18,7 @@ class FileService
                 'path' => $path,
                 'mime_type' => Storage::disk('public')->mimeType($path),
                 'size' => Storage::disk('public')->size($path),
+                'context' => $data['context'] ?? null,
             ];
 
             $model->files()->create($fileMetadata);

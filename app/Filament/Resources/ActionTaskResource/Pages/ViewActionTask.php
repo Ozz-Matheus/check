@@ -30,8 +30,7 @@ class ViewActionTask extends ViewRecord
         return [
 
             FilamentAction::make('finish_task')
-                ->label('End task')
-                ->button()
+                ->label(__('End task'))
                 ->color('success')
                 ->authorize(fn ($record) => $record->responsible_by_id === auth()->id())
                 ->visible(fn ($record) => app(TaskService::class)->canViewFinishTask($record))
@@ -39,10 +38,10 @@ class ViewActionTask extends ViewRecord
                     fn ($record) => in_array($record->status_id, [
                         app(StatusService::class)->getActionAndTaskStatuses()['overdue'],
                         app(StatusService::class)->getActionAndTaskStatuses()['extemporaneous'],
-                    ])
+                    ]) || $record->limit_date < today()
                         ? [
                             \Filament\Forms\Components\Textarea::make('extemporaneous_reason')
-                                ->label('Reason for delay')
+                                ->label(__('Reason for delay'))
                                 ->required(),
                         ]
                         : []
@@ -55,16 +54,15 @@ class ViewActionTask extends ViewRecord
                     ]));
                 }),
             FilamentAction::make('cancel')
-                ->label('Cancel')
-                ->button()
+                ->label(__('Cancel'))
                 ->color('danger')
                 ->authorize(fn ($record) => auth()->id() === $record->action?->responsible_by_id)
                 ->visible(fn ($record) => app(TaskService::class)->canViewCancelTask($record))
                 ->form([
                     \Filament\Forms\Components\Textarea::make('reason_for_cancellation')
-                        ->label('Reason for cancellation')
+                        ->label(__('Reason for cancellation'))
                         ->required()
-                        ->placeholder('Write the reason for cancellation'),
+                        ->placeholder(__('Write the reason for cancellation')),
                 ])
                 ->action(function ($record, array $data) {
                     app(TaskService::class)->cancelTask($record, $data);
@@ -78,7 +76,6 @@ class ViewActionTask extends ViewRecord
                 ->url(fn ($record): string => ActionResource::getUrl('view', [
                     'record' => $record->action_id,
                 ]))
-                ->button()
                 ->color('gray'),
 
         ];
@@ -92,12 +89,12 @@ class ViewActionTask extends ViewRecord
     public function getBreadcrumbs(): array
     {
         return [
-            ActionResource::getUrl('view', ['record' => $this->action_id]) => 'Action',
+            ActionResource::getUrl('view', ['record' => $this->action_id]) => __('Action'),
             ActionResource::getUrl('task.view', [
                 'action' => $this->action_id,
                 'record' => $this->record->id,
-            ]) => 'Task',
-            false => 'View',
+            ]) => __('Task'),
+            false => __('View'),
         ];
     }
 }

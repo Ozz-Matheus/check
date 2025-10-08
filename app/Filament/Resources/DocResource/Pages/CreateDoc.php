@@ -5,6 +5,7 @@ namespace App\Filament\Resources\DocResource\Pages;
 use App\Filament\Resources\DocResource;
 use App\Models\Doc;
 use App\Notifications\DocCreatedNotice;
+use App\Services\DocService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -28,14 +29,8 @@ class CreateDoc extends CreateRecord
             $this->halt();
         }
 
-        $data['classification_code'] = $doc->docService()->generateCode($data['doc_type_id'], $data['sub_process_id']);
+        $data['classification_code'] = app(DocService::class)->generateCode($data['doc_type_id'], $data['sub_process_id']);
         $data['created_by_id'] = $user->id;
-
-        $docTypeExpiration = $doc->docService()->getDocTypeExpiration($data['doc_type_id']);
-
-        if ($docTypeExpiration) {
-            $data['central_expiration_date'] = now()->addYears($docTypeExpiration);
-        }
 
         return $data;
     }

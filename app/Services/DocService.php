@@ -37,4 +37,23 @@ class DocService
     {
         return DocType::find($docTypeId)->expiration_years;
     }
+
+    /**
+     * Update in Doc central expiration date.
+     */
+    public function docExpirationChange($docId): void
+    {
+        $doc = Doc::findOrFail($docId);
+
+        $docTypeId = $doc->doc_type_id;
+
+        $docTypeExpiration = $this->getDocTypeExpiration($docTypeId);
+
+        if ($docTypeExpiration) {
+
+            $central_expiration_date = now()->addYears($docTypeExpiration);
+
+            $doc->update(['central_expiration_date' => $central_expiration_date]);
+        }
+    }
 }

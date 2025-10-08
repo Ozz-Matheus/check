@@ -66,9 +66,9 @@ class CreateActionTask extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            ActionResource::getUrl('view', ['record' => $this->action_id]) => 'Action',
-            ActionResource::getUrl('task.create', ['action' => $this->action_id]) => 'Task',
-            false => 'Create',
+            ActionResource::getUrl('view', ['record' => $this->action_id]) => __('Action'),
+            ActionResource::getUrl('task.create', ['action' => $this->action_id]) => __('Task'),
+            false => __('Create'),
         ];
     }
 }

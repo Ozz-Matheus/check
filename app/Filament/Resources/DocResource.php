@@ -35,12 +35,12 @@ class DocResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('models.doc.singular');
+        return __('Document');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('models.doc.plural');
+        return __('Documents');
     }
 
     public static function getNavigationLabel(): string
@@ -145,8 +145,7 @@ class DocResource extends Resource
                                     ->multiple()
                                     ->searchable()
                                     ->preload()
-                                    ->visible(fn (Get $get) => $get('display_restriction') === true)
-                                    ->required(fn (Get $get) => $get('display_restriction') === true),
+                                    ->visible(fn (Get $get) => $get('display_restriction') === true),
                             ]),
                     ]),
             ]);
@@ -158,12 +157,18 @@ class DocResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('classification_code')
                     ->label(__('Classification code'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->classification_code)
+                    ->copyable()
+                    ->copyMessage('Classification code copied')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
-                    ->searchable()
                     ->limit(30)
-                    ->tooltip(fn ($record) => $record->title),
+                    ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage('Title copied')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('type.label')
                     ->label(__('Doc type')),
                 Tables\Columns\TextColumn::make('process.title')
@@ -175,13 +180,14 @@ class DocResource extends Resource
                     ->badge()
                     ->color(fn ($record) => $record->latestVersion?->status?->colorName() ?? 'gray')
                     ->icon(fn ($record) => $record->latestVersion?->status?->iconName() ?? 'heroicon-o-information-circle')
-                    ->default('-'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('latestVersion.version')
                     ->label(__('Version'))
                     ->sortable()
-                    ->default('-'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('central_expiration_date')
                     ->label(__('Central expiration date'))
+                    ->placeholder('-')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expiration_status')
@@ -198,10 +204,10 @@ class DocResource extends Resource
                     ->label(__('Storage method'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('recoveryMethod.title')
-                    ->label('Recovery method')
+                    ->label(__('Recovery method'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('dispositionMethod.title')
-                    ->label('Disposition method')
+                    ->label(__('Disposition method'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->label(__('Created by'))
@@ -274,8 +280,8 @@ class DocResource extends Resource
                 SelectFilter::make('expiration_soon')
                     ->label(__('Expiring soon'))
                     ->options([
-                        10 => 'Expiring in 10 days',
-                        30 => 'Expiring in 30 days',
+                        10 => __('Expiring in 10 days'),
+                        30 => __('Expiring in 30 days'),
                     ])
                     ->query(function (Builder $query, array $data) {
                         $days = $data['value'] ?? null;
@@ -368,8 +374,7 @@ class DocResource extends Resource
                                     ->multiple()
                                     ->searchable()
                                     ->preload()
-                                    ->visible($isPrivate)
-                                    ->required($isPrivate),
+                                    ->visible($isPrivate),
                             ];
                         })
                         ->authorize(fn ($record): bool => auth()->id() === $record->subProcess?->leader?->id)

@@ -25,7 +25,19 @@ class DocVersionResource extends Resource
 
     protected static ?string $model = DocVersion::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Doc Version');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Doc Versions');
+    }
 
     public static function form(Form $form): Form
     {
@@ -119,6 +131,11 @@ class DocVersionResource extends Resource
                     ->searchable()
                     ->preload(),
             ])
+            ->filtersTriggerAction(
+                fn ($action) => $action
+                    ->button()
+                    ->label(__('Filter')),
+            )
             ->actions([
                 ActionGroup::make([
                     // PENDING

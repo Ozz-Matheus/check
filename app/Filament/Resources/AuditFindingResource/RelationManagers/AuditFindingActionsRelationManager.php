@@ -2,15 +2,22 @@
 
 namespace App\Filament\Resources\AuditFindingResource\RelationManagers;
 
+use App\Filament\Resources\ActionResource;
 use App\Filament\Resources\InternalAuditResource;
 use App\Models\AuditFinding;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class AuditFindingActionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'actions';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Actions');
+    }
 
     public function table(Table $table): Table
     {
@@ -18,17 +25,27 @@ class AuditFindingActionsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('type.label')
-                    ->searchable(),
+                    ->label(__('Type')),
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable()
+                    ->label(__('Title'))
                     ->limit(30)
-                    ->tooltip(fn ($record) => $record->title),
-                Tables\Columns\TextColumn::make('responsibleBy.name')
+                    ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage(__('Title copied'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('responsibleBy.name')
+                    ->label(__('Responsible'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->responsibleBy->name)
+                    ->copyable()
+                    ->copyMessage(__('Responsible copied'))
+                    ->searchable(['name', 'email']),
                 Tables\Columns\TextColumn::make('status.label')
-                    ->searchable()
+                    ->label(__('Status'))
                     ->badge()
-                    ->color(fn ($record) => $record->status->colorName()),
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName())
+                    ->placeholder('-'),
                 Tables\Columns\IconColumn::make('finished')
                     ->label(__('Finished'))
                     ->boolean()
@@ -37,41 +54,42 @@ class AuditFindingActionsRelationManager extends RelationManager
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ending.real_closing_date')
-                    ->label(__('Real Closing Date'))
+                    ->label(__('Real closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('cancellation_date')
-                    ->label(__('Cancellation Date'))
+                    ->label(__('Cancellation date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('id', 'desc')
+            ->recordUrl(fn ($record) => ActionResource::getUrl('view', ['record' => $record->id]), true)
             ->filters([
-                //
                 Tables\Filters\SelectFilter::make('type_id')
+                    ->label(__('Type'))
                     ->relationship('type', 'label')
-                    ->multiple()
-                    ->preload()
-                    ->label(__('Type')),
+                    ->native(false),
                 Tables\Filters\SelectFilter::make('status_id')
+                    ->label(__('Status'))
                     ->relationship(
                         name: 'status',
                         titleAttribute: 'label',
                         modifyQueryUsing: fn ($query) => $query->where('context', 'action_and_task')->orderBy('id', 'asc'),
                     )
                     ->multiple()
-                    ->preload()
-                    ->label(__('Status')),
+                    ->preload(),
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
@@ -93,12 +111,14 @@ class AuditFindingActionsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()
+                    // 📌 Falta la autorización
+                    // 📌 Falta la visibilidad
+                    ->url(fn ($record) => ActionResource::getUrl('view', ['record' => $record->id]))
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

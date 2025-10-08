@@ -46,10 +46,10 @@ class CreateAuditControl extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            InternalAuditResource::getUrl('view', ['record' => $this->auditItemModel->internal_audit_id]) => 'Internal Audit',
-            InternalAuditResource::getUrl('audit-item.view', ['internalAudit' => $this->auditItemModel->internal_audit_id, 'record' => $this->audit_item_id]) => 'Audit Item',
-            InternalAuditResource::getUrl('control.create', ['auditItem' => $this->audit_item_id]) => 'Audit Control',
-            false => 'Create',
+            InternalAuditResource::getUrl('view', ['record' => $this->auditItemModel->internal_audit_id]) => __('Internal Audit'),
+            InternalAuditResource::getUrl('audit-item.view', ['internalAudit' => $this->auditItemModel->internal_audit_id, 'record' => $this->audit_item_id]) => __('Audit Item'),
+            InternalAuditResource::getUrl('control.create', ['auditItem' => $this->audit_item_id]) => __('Audit Control'),
+            false => __('Create'),
         ];
     }
 }

@@ -17,8 +17,7 @@ class ViewAction extends ViewRecord
         return [
 
             Action::make('view')
-                ->label('View action completion')
-                ->button()
+                ->label(__('View action completion'))
                 ->color('primary')
                 ->authorize(auth()->user()->can('view_action::ending'))
                 ->visible(fn ($record) => app(ActionService::class)->canViewActionEnding($record))
@@ -28,8 +27,7 @@ class ViewAction extends ViewRecord
                 ])),
 
             Action::make('finish')
-                ->label('End action')
-                ->button()
+                ->label(__('End action'))
                 ->color('success')
                 ->authorize(fn ($record) => auth()->id() === $record->responsible_by_id && auth()->user()->can('create_action::ending'))
                 ->visible(fn ($record) => app(ActionService::class)->canViewFinishAction($record))
@@ -38,16 +36,15 @@ class ViewAction extends ViewRecord
                 ])),
 
             Action::make('cancel')
-                ->label('Cancel')
-                ->button()
+                ->label(__('Cancel'))
                 ->color('danger')
                 ->authorize(fn ($record) => auth()->id() === $record->responsible_by_id)
                 ->visible(fn ($record) => app(ActionService::class)->canViewCancelAction($record))
                 ->form([
                     Textarea::make('reason_for_cancellation')
-                        ->label('Reason for cancellation')
+                        ->label(__('Reason for cancellation'))
                         ->required()
-                        ->placeholder('Write the reason for cancellation'),
+                        ->placeholder(__('Write the reason for cancellation')),
                 ])
                 ->action(function ($record, array $data) {
                     app(ActionService::class)->cancelAction($record, $data);
@@ -55,9 +52,8 @@ class ViewAction extends ViewRecord
                 }),
 
             Action::make('back')
-                ->label('Return')
+                ->label(__('Return'))
                 ->url($this->getResource()::getUrl('index'))
-                ->button()
                 ->color('gray'),
         ];
     }

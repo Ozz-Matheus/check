@@ -10,18 +10,21 @@ use Illuminate\Support\Facades\DB;
 
 class ActionStatusChart extends ChartWidget
 {
-    protected static ?string $heading = 'Action Status Chart';
-
     protected static ?string $maxHeight = '300px';
 
     public ?string $filter = 'all';
 
+    public function getHeading(): ?string
+    {
+        return __('Actions by status');
+    }
+
     protected function getFilters(): ?array
     {
         return [
-            'all' => 'All',
-            'improve' => 'Improve',
-            'corrective' => 'Corrective',
+            'all' => __('All'),
+            'improve' => __('Improve'),
+            'corrective' => __('Corrective'),
         ];
     }
 
@@ -56,7 +59,6 @@ class ActionStatusChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Action Statuses',
                     'data' => $chartData,
                     'backgroundColor' => $chartColors,
                 ],

@@ -38,12 +38,14 @@ class CreateDocVersion extends CreateRecord
 
         $version = DocVersion::create($validated);
 
+        $cfg = config('uploads');
+
         $fileMetadata = [
 
             'name' => $name,
             'path' => $path,
-            'mime_type' => Storage::disk('public')->mimeType($path),
-            'size' => Storage::disk('public')->size($path),
+            'mime_type' => Storage::disk($cfg['disk'])->mimeType($path),
+            'size' => Storage::disk($cfg['disk'])->size($path),
 
         ];
 
@@ -81,9 +83,9 @@ class CreateDocVersion extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            DocResource::getUrl('index') => 'Documents',
-            DocResource::getUrl('versions.index', ['doc' => $this->doc_id]) => 'Versions',
-            false => 'Create',
+            DocResource::getUrl('index') => __('Documents'),
+            DocResource::getUrl('versions.index', ['doc' => $this->doc_id]) => __('Versions'),
+            false => __('Create'),
         ];
     }
 }

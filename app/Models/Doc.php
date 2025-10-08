@@ -3,14 +3,12 @@
 namespace App\Models;
 
 use App\Services\DocService;
-use App\Traits\AppNotifier;
+use App\Support\AppNotifier;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Doc extends Model
 {
-    use AppNotifier;
-
     //
     protected $fillable = [
         'classification_code',
@@ -98,17 +96,6 @@ class Doc extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Doc Services
-    |--------------------------------------------------------------------------
-    */
-
-    public function docService(): DocService
-    {
-        return app(DocService::class);
-    }
-
-    /*
-    |--------------------------------------------------------------------------
     | Accesores / Métodos útiles
     |--------------------------------------------------------------------------
     */
@@ -155,32 +142,14 @@ class Doc extends Model
 
     public function reactivateDoc(): void
     {
-        $docTypeExpiration = $this->docService()->getDocTypeExpiration($this->doc_type_id);
+        $service = app(DocService::class);
+        $docTypeExpiration = $service->getDocTypeExpiration($this->doc_type_id);
         $centralExpirationDate = today()->addYears($docTypeExpiration);
 
         $this->update([
             'central_expiration_date' => $centralExpirationDate,
         ]);
 
-        $this::notifySuccess(__('Document active'));
+        AppNotifier::success(__('Document active'));
     }
-
-    /* public function reactivateDoc(): void
-    {
-        if (! $this->IsExpired) {
-            $this::notifyInfo(__('Document still active'));
-
-            return;
-        }
-
-        $docTypeExpiration = $this->docService()->getDocTypeExpiration($this->doc_type_id);
-        $centralExpirationDate = now()->addYears($docTypeExpiration);
-
-        $this->update([
-            'expiration' => 0,
-            'central_expiration_date' => $centralExpirationDate,
-        ]);
-
-        $this::notifySuccess(__('Document active'));
-    } */
 }

@@ -1,8 +1,3 @@
-@php
-    /** @var \App\Models\File $file */
-    /** @var \App\Models\Doc|null $doc */
-@endphp
-
 <x-filament::page>
     <div class="space-y-4">
         <h2 class="text-xl font-bold">{{ $file->name }}</h2>
@@ -13,7 +8,7 @@
             {{-- PDF embebido directamente --}}
             <iframe
                 src="{{ $file->url() }}"
-                class="w-full h-[80vh] border rounded shadow"
+                class="w-full h-screen border rounded shadow"
                 title="PDF Viewer"
             ></iframe>
 
@@ -28,18 +23,18 @@
                 {{-- Office Online Viewer necesita URL ABSOLUTA y accesible públicamente --}}
                 <iframe
                     src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode($file->absoluteUrl()) }}"
-                    class="w-full h-[80vh] border rounded shadow"
+                    class="w-full h-screen border rounded shadow"
                     title="Office Viewer"
                 ></iframe>
             @else
                 <div class="p-4 border rounded bg-yellow-50">
-                    {{ __('Este documento es confidencial. Descárgalo para verlo.') }}
+                    {{ __('This document is confidential. Download it to view it') }}
                 </div>
             @endif
 
         @else
             <div class="p-4 border rounded bg-gray-50">
-                {{ __('Vista previa no disponible para este tipo de archivo.') }}
+                {{ __('Preview not available for this file type') }}
             </div>
         @endif
 
@@ -49,7 +44,7 @@
                 class="px-4 py-2 bg-primary-600 text-white rounded"
                 download="{{ $file->name }}"
             >
-                {{ __('Descargar archivo') }}
+                {{ __('Download file') }}
             </a>
         </div>
     </div>

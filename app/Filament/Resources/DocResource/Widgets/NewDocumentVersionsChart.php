@@ -9,22 +9,25 @@ use Illuminate\Support\Facades\DB;
 
 class NewDocumentVersionsChart extends ChartWidget
 {
-    protected static ?string $heading = 'New Document Versions';
-
     protected static ?string $maxHeight = '300px';
 
     protected string|int|array $columnSpan = 'full';
 
     protected static ?string $pollingInterval = null;
 
-    public ?string $filter = 'year';
+    public ?string $filter = 'week';
+
+    public function getHeading(): ?string
+    {
+        return __('New document versions');
+    }
 
     protected function getFilters(): ?array
     {
         return [
-            'week' => 'Last 7 days',
-            'month' => 'Last 30 days',
-            'year' => 'Last year',
+            'week' => __('Last 7 days'),
+            'month' => __('Last 30 days'),
+            'year' => __('Last year'),
         ];
     }
 
@@ -75,7 +78,7 @@ class NewDocumentVersionsChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'New Versions',
+                    'label' => __('New versions'),
                     'data' => $data->values(),
                 ],
             ],

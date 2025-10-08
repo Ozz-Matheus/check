@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\IncidentAndAccidentResource\Pages;
 
 use App\Filament\Resources\IncidentAndAccidentResource;
+use App\Filament\Resources\IncidentAndAccidentResource\Widgets\IAndAStatsOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -16,4 +17,17 @@ class ListIncidentAndAccidents extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            IAndAStatsOverview::class,
+        ];
+    }
+
+    /* protected function getFooterWidgets(): array
+    {
+        return [
+        ];
+    } */
 }

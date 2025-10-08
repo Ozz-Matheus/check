@@ -8,27 +8,30 @@ use Illuminate\Support\Facades\DB;
 
 class DocTypesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Documents by Type';
-
     protected static ?string $maxHeight = '300px';
+
+    public function getHeading(): ?string
+    {
+        return __('Documents by type');
+    }
 
     protected function getData(): array
     {
         $data = Doc::reorder() // Remove any existing ordering from the table query
             ->join('doc_types', 'docs.doc_type_id', '=', 'doc_types.id')
-            ->select('doc_types.name as type_name', DB::raw('count(*) as count'))
-            ->groupBy('type_name')
-            ->orderBy('type_name')
+            ->select('doc_types.label as type_label', DB::raw('count(*) as count'))
+            ->groupBy('type_label')
+            ->orderBy('type_label')
             ->get();
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Document types',
+                    'label' => __('Document types'),
                     'data' => $data->pluck('count')->toArray(),
                 ],
             ],
-            'labels' => $data->pluck('type_name')->toArray(),
+            'labels' => $data->pluck('type_label')->toArray(),
         ];
     }
 

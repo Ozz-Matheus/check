@@ -35,9 +35,9 @@ class ViewAuditItem extends ViewRecord
     public function getBreadcrumbs(): array
     {
         return [
-            InternalAuditResource::getUrl('view', ['record' => $this->record->internal_audit_id]) => 'Internal Audit',
-            InternalAuditResource::getUrl('audit-item.view', ['internalAudit' => $this->record->internal_audit_id, 'record' => $this->record->id]) => 'Audit Item',
-            false => 'View',
+            InternalAuditResource::getUrl('view', ['record' => $this->record->internal_audit_id]) => __('Internal Audit'),
+            InternalAuditResource::getUrl('audit-item.view', ['internalAudit' => $this->record->internal_audit_id, 'record' => $this->record->id]) => __('Audit Item'),
+            false => __('View'),
         ];
     }
 }

@@ -29,6 +29,8 @@ class VersionService
 
         $newVersion = $this->calculateNewVersion($lastVersion, $hasApprovalAccess);
 
+        $hasApprovalAccess ? app(DocService::class)->docExpirationChange($doc->id) : null;
+
         return array_merge($data, [
             'status_id' => in_array('status_id', $preserve) ? ($data['status_id'] ?? null) : ($hasApprovalAccess ? $statusApproved->id : $statusDraft->id),
             'version' => in_array('version', $preserve) ? ($data['version'] ?? null) : $newVersion,

@@ -13,20 +13,32 @@ class RiskControlFollowUpResource extends Resource
 {
     protected static ?string $model = RiskControlFollowUp::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Risk Control Follow Up');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Risk Control Follow Ups');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Control Follow-up'))
+                Forms\Components\Section::make(__('Control follow-up'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\Textarea::make('content')
-                            ->label(__('Content'))
+                            ->label(__('Comment'))
                             ->columnSpanFull(),
                         Forms\Components\Select::make('control_qualification_id')
-                            ->label(__('Control Qualification'))
+                            ->label(__('Control qualification'))
                             ->relationship('controlQualification', 'title')
                             ->columnSpanFull(),
                     ]),

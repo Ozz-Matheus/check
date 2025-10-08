@@ -8,12 +8,18 @@ use App\Traits\HasStandardFileUpload;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class AuditControlFilesRelationManager extends RelationManager
 {
     use HasStandardFileUpload;
 
-    protected static string $relationship = 'files';
+    protected static string $relationship = 'supportFiles';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Control documentation');
+    }
 
     public function table(Table $table): Table
     {
@@ -21,13 +27,18 @@ class AuditControlFilesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
-                    ->searchable(),
+                    ->label(__('Name'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->name)
+                    ->copyable()
+                    ->copyMessage('Name copied')
+                    ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME))),
                 Tables\Columns\TextColumn::make('readable_mime_type')
                     ->label(__('Type')),
                 Tables\Columns\TextColumn::make('readable_size')
                     ->label('Size'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date(),
             ])
             ->defaultSort('id', 'desc')
@@ -36,7 +47,7 @@ class AuditControlFilesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label(__('New support files'))
+                    ->label(__('New control documentation'))
                     ->button()
                     ->color('primary')
                     // 📌 Falta la autorización
@@ -61,7 +72,7 @@ class AuditControlFilesRelationManager extends RelationManager
             ->actions([
                 //
                 Tables\Actions\Action::make('file')
-                    ->label('Download')
+                    ->label(__('Download'))
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('primary')
                     ->url(

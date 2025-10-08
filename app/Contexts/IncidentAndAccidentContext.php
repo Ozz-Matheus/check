@@ -11,7 +11,7 @@ class IncidentAndAccidentContext implements ActionOriginInterface
 
     public function getLabel(): string
     {
-        return __('Incident and accidents');
+        return __('Incident And Accidents');
     }
 
     public function getProcessId(): ?int
@@ -29,7 +29,7 @@ class IncidentAndAccidentContext implements ActionOriginInterface
         return [
             route('filament.dashboard.resources.incident-and-accidents.view', [
                 'record' => $this->model->id,
-            ]) => __('Incident and accident'),
+            ]) => __('Incident And Accident'),
             route('filament.dashboard.resources.incident-and-accidents.action.create', [
                 'model_id' => $this->model->id,
                 'model' => class_basename($this->model),

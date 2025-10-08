@@ -126,29 +126,29 @@ class IncidentAndAccidentResource extends Resource
                     ->label(__('Code'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Title')
+                    ->label(__('Title'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name_affected_person')
-                    ->label('Name affected person')
+                    ->label(__('Name affected person'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->name_affected_person)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('eventType.title')
-                    ->label('Event type'),
+                    ->label(__('Event type')),
                 Tables\Columns\TextColumn::make('process.title')
-                    ->label('Process'),
+                    ->label(__('Process')),
                 Tables\Columns\TextColumn::make('subProcess.title')
-                    ->label('Sub process'),
+                    ->label(__('Sub process')),
                 Tables\Columns\TextColumn::make('priority.title')
-                    ->label('Priority'),
+                    ->label(__('Priority')),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName())
                     ->icon(fn ($record) => $record->status->iconName())
-                    ->default('-'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('event_date')
                     ->label(__('Event date'))
                     ->dateTime()
@@ -167,7 +167,6 @@ class IncidentAndAccidentResource extends Resource
             ])
             ->defaultSort('id', 'desc')
             ->filters([
-                //
                 Tables\Filters\SelectFilter::make('event_type_id')
                     ->label(__('Event type'))
                     ->relationship('eventType', 'title')
@@ -186,17 +185,21 @@ class IncidentAndAccidentResource extends Resource
                     ->preload(),
                 Tables\Filters\SelectFilter::make('priority_id')
                     ->label(__('Priority'))
-                    ->relationship('priority', 'title')
+                    ->relationship(
+                        name: 'priority',
+                        titleAttribute: 'title',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                    )
                     ->multiple()
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('status_id')
+                    ->label(__('Status'))
                     ->relationship(
                         name: 'status',
                         titleAttribute: 'label',
                         modifyQueryUsing: fn ($query) => $query->where('context', 'incident_and_accident')->orderBy('id', 'asc'),
                     )
-                    ->label(__('Status'))
                     ->multiple()
                     ->searchable()
                     ->preload(),

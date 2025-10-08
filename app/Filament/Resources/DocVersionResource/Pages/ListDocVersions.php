@@ -75,9 +75,9 @@ class ListDocVersions extends ListRecords
     public function getBreadcrumbs(): array
     {
         return [
-            DocResource::getUrl('index') => 'Documents',
-            DocResource::getUrl('versions.index', ['doc' => $this->doc_id]) => 'Versions',
-            false => 'List',
+            DocResource::getUrl('index') => __('Documents'),
+            DocResource::getUrl('versions.index', ['doc' => $this->doc_id]) => __('Versions'),
+            false => __('List'),
         ];
     }
 }

@@ -10,6 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ActionTaskFollowUpsRelationManager extends RelationManager
 {
@@ -17,14 +18,21 @@ class ActionTaskFollowUpsRelationManager extends RelationManager
 
     protected static string $relationship = 'followUps';
 
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Follow ups');
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('content')
+                    ->label(__('Comment'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->content),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date(),
             ])
             ->defaultSort('id', 'desc')
@@ -39,14 +47,13 @@ class ActionTaskFollowUpsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
-                    ->label(__('New task follow-up'))
-                    ->button()
+                    ->label(__('New follow-up'))
                     ->color('primary')
                     ->form([
                         Textarea::make('content')
                             ->label(__('Comment'))
                             ->required()
-                            ->placeholder('Follow up comment'),
+                            ->placeholder(__('Follow up comment')),
                         static::baseFileUpload('path')
                             ->label(__('Support follow-up files'))
                             ->directory('risks/controls/follow-ups/files')
@@ -71,10 +78,7 @@ class ActionTaskFollowUpsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
-                    ->label('View')
-                    ->color('gray')
-                    ->icon('heroicon-s-eye')
+                Tables\Actions\ViewAction::make()
                     // 📌 Falta la autorización
                     // 📌 Falta la visibilidad
                     ->url(fn ($record) => ActionResource::getUrl('follow-up.view', [

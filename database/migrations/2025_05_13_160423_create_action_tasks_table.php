@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('detail');
             $table->foreignId('responsible_by_id')->constrained('users'); // responsable de la tarea
             $table->date('start_date');        // planificada
-            $table->date('limit_date');          // fecha límite
+            $table->date('limit_date')->nullable()->index();          // fecha límite
             $table->date('real_start_date')->nullable();   // cuándo realmente empezó
             $table->date('real_closing_date')->nullable(); // cuándo cerró
 
@@ -28,6 +28,7 @@ return new class extends Migration
             $table->text('reason_for_cancellation')->nullable();
             $table->date('cancellation_date')->nullable();
 
+            $table->index(['status_id', 'limit_date']);
             $table->timestamps();
         });
     }

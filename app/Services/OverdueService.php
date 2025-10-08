@@ -10,8 +10,7 @@ class OverdueService
     {
         $today = Carbon::today()->toDateString();
 
-        $statusService = new StatusService;
-        $statusIds = $statusService->getActionAndTaskStatuses();
+        $statusIds = app(StatusService::class)->getActionAndTaskStatuses();
 
         return $modelClass::whereDate($dateColumn, '<', $today)
             ->whereIn($statusColumn, [

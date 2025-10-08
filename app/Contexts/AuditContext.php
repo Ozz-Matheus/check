@@ -11,7 +11,7 @@ class AuditContext implements ActionOriginInterface
 
     public function getLabel(): string
     {
-        return __('Audit findings');
+        return __('Internal Audits');
     }
 
     public function getProcessId(): ?int
@@ -30,7 +30,7 @@ class AuditContext implements ActionOriginInterface
             route('filament.dashboard.resources.internal-audits.finding.view', [
                 'auditControl' => $this->model->audit_control_id,
                 'record' => $this->model->id,
-            ]) => __('Audit finding'),
+            ]) => __('Internal Audit'),
             route('filament.dashboard.resources.internal-audits.action.create', [
                 'model_id' => $this->model->id,
                 'model' => class_basename($this->model),

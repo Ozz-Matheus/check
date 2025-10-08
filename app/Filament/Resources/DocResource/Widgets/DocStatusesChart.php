@@ -7,9 +7,12 @@ use Filament\Widgets\ChartWidget;
 
 class DocStatusesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Documents by Status';
-
     protected static ?string $maxHeight = '300px';
+
+    public function getHeading(): ?string
+    {
+        return __('Documents by status');
+    }
 
     protected function getData(): array
     {
@@ -18,7 +21,7 @@ class DocStatusesChart extends ChartWidget
             'rejected' => config('filament-colors.danger.rgba'),
             'pending' => config('filament-colors.primary.rgba'),
             'draft' => config('filament-colors.warning.rgba'),
-            'Sin estado' => config('filament-colors.secondary.rgba'),
+            'without status' => config('filament-colors.secondary.rgba'),
         ];
 
         // Obtener todos los registros con su último archivo y estado
@@ -26,7 +29,7 @@ class DocStatusesChart extends ChartWidget
 
         // Agrupar por el campo "title" del status
         $grouped = $records->groupBy(function ($record) {
-            return $record->latestVersion?->status?->title ?? 'Sin estado';
+            return $record->latestVersion?->status?->title ?? __('Without status');
         });
 
         // Contar registros por grupo
@@ -45,7 +48,7 @@ class DocStatusesChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Document Statuses',
+                    'label' => __('Document statuses'),
                     'data' => $counts->values()->toArray(),
                     'backgroundColor' => $colors->values()->toArray(),
                 ],

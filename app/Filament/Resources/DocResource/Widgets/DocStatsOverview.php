@@ -22,13 +22,13 @@ class DocStatsOverview extends BaseWidget
         return [
             Stat::make(__('Total Docs'), $totalDocs)
                 ->description(__('Records in the system'))
-                ->descriptionIcon('heroicon-o-numbered-list', IconPosition::Before),
-            Stat::make(__('To overdue'), $aboutToExpire)
+                ->descriptionIcon('heroicon-o-document-text', IconPosition::Before),
+            Stat::make(__('Expiring soon'), $aboutToExpire)
                 ->description(__('30 days left until expiration'))
                 ->descriptionIcon('heroicon-o-clock', IconPosition::Before)
                 ->color('warning'),
-            Stat::make(__('Expired registrations'), $docsExpired)
-                ->description(__('Expired records'))
+            Stat::make(__('Expired Documents'), $docsExpired)
+                ->description(__('Documents past their expiration date'))
                 ->descriptionIcon('heroicon-o-exclamation-triangle', IconPosition::Before)
                 ->color('danger'),
         ];

@@ -6,6 +6,7 @@ use App\Filament\Resources\DocResource;
 use App\Models\Doc;
 use App\Models\DocVersion;
 use App\Models\File;
+use App\Support\AppNotifier;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
@@ -30,18 +31,18 @@ class FileViewer extends Page
 
             $this->doc = Doc::findOrFail($docVersion->doc_id);
 
-            if ($this->doc->display_restriction) {
+            $user = auth()->user();
 
-                $userId = auth()->id();
+            if ($this->doc->display_restriction) {
 
                 $hasAccess = DB::table('docs_has_confidential_users')
                     ->where('doc_id', $this->doc->id)
-                    ->where('user_id', $userId)
+                    ->where('user_id', $user->id)
                     ->exists();
 
-                if (! $hasAccess) {
+                if (! $hasAccess && ! $user->canAccessSubProcess($this->doc->sub_process_id)) {
 
-                    $this->doc::notifyError(__('You do not have permission to view this document.'));
+                    AppNotifier::error(__('You do not have permission to view this document.'));
                     abort(403);
                 }
             }

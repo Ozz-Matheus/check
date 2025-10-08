@@ -7,21 +7,40 @@ use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class AuditControlFindingsRelationManager extends RelationManager
 {
     protected static string $relationship = 'findings';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Findings');
+    }
 
     public function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextColumn::make('description'),
-                Tables\Columns\TextColumn::make('findingType.title'),
-                Tables\Columns\TextColumn::make('criteria'),
+                Tables\Columns\TextColumn::make('title')
+                    ->label(__('Title'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->title)
+                    ->copyable()
+                    ->copyMessage('Title copied')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('findingType.title')
+                    ->label(__('Type')),
+                Tables\Columns\TextColumn::make('criteria')
+                    ->label(__('Criteria'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->criteria)
+                    ->copyable()
+                    ->copyMessage('Criteria copied')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date(),
             ])
             ->defaultSort('id', 'desc')
@@ -32,7 +51,14 @@ class AuditControlFindingsRelationManager extends RelationManager
                 ]);
             })
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('finding_type_id')
+                    ->label(__('Type'))
+                    ->relationship(
+                        name: 'findingType',
+                        titleAttribute: 'title',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                    )
+                    ->native(false),
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
@@ -41,16 +67,24 @@ class AuditControlFindingsRelationManager extends RelationManager
                     ->color('primary')
                     ->form([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('Title'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('finding_type_id')
-                            ->relationship('findingType', 'title')
+                            ->label(__('Type'))
+                            ->relationship(
+                                name: 'findingType',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                            )
                             ->native(false)
                             ->required(),
                         Forms\Components\TextInput::make('criteria')
+                            ->label(__('Criteria'))
                             ->required()
                             ->maxLength(255),
                     ])
@@ -66,10 +100,7 @@ class AuditControlFindingsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
-                    ->label(__('View'))
-                    ->color('gray')
-                    ->icon('heroicon-s-eye')
+                Tables\Actions\ViewAction::make()
                     ->url(fn ($record) => InternalAuditResource::getUrl('finding.view', [
                         'auditControl' => $this->getOwnerRecord()->id,
                         'record' => $record->id,

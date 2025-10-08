@@ -57,6 +57,7 @@ class VersionStatusService
         DB::transaction(fn () => $docVersion->update($validated));
 
         $status = Status::byContextAndTitle('doc', 'approved');
+
         $this->notifyStatusChange($docVersion, $status, $data['change_reason']);
     }
 

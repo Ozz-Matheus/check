@@ -22,8 +22,8 @@ class ActionStatsOverview extends BaseWidget
         $totalUnfinishedActions = Action::where('finished', false)->count();
 
         return [
-            Stat::make(__('Actions'), $totalActions)
-                ->description(__('Total actions in the system'))
+            Stat::make(__('Total actions'), $totalActions)
+                ->description(__('Records in the system'))
                 ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before),
             Stat::make(__('Total improves'), $totalImprove)
                 ->description(__('Improve actions in the system'))
@@ -32,9 +32,9 @@ class ActionStatsOverview extends BaseWidget
                 ->description(__('Corrective actions in the system'))
                 ->descriptionIcon('heroicon-s-list-bullet', IconPosition::Before),
             Stat::make(__('Finished actions'), "{$totalFinishedActions} / {$totalUnfinishedActions}")
-                ->description(__('Finished vs Unfinished actions'))
+                ->description(__('Finished vs unfinished'))
                 ->descriptionIcon('heroicon-s-check', IconPosition::Before)
-                // ->chart([$totalFinishedActions, $totalUnfinishedActions])
+                ->chart([$totalFinishedActions, $totalUnfinishedActions])
                 ->color('success'),
         ];
     }

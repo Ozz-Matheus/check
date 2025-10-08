@@ -20,13 +20,13 @@ class RiskStatsOverview extends BaseWidget
         $totalExternal = Risk::where('strategic_context_type_id', $externalContextNameId)->count();
 
         return [
-            Stat::make(__('Total Risks'), $totalRisks)
+            Stat::make(__('Total risks'), $totalRisks)
                 ->description(__('General risks in the system'))
                 ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before),
-            Stat::make(__('Total Internal Risks'), $totalInternal)
+            Stat::make(__('Total internal risks'), $totalInternal)
                 ->description(__('Internal risks in the system'))
                 ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before),
-            Stat::make(__('Total External Risks'), $totalExternal)
+            Stat::make(__('Total external risks'), $totalExternal)
                 ->description(__('External risks in the system'))
                 ->descriptionIcon('heroicon-s-numbered-list', IconPosition::Before),
         ];

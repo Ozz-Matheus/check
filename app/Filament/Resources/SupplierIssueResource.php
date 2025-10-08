@@ -205,7 +205,7 @@ class SupplierIssueResource extends Resource
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName())
                     ->icon(fn ($record) => $record->status->iconName())
-                    ->default('-'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()

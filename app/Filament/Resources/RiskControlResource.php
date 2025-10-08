@@ -13,13 +13,25 @@ class RiskControlResource extends Resource
 {
     protected static ?string $model = RiskControl::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Risk Control');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Risk Controls');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Risk control'))
+                Forms\Components\Section::make(__('Control data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('potentialCauses')

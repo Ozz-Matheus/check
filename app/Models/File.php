@@ -15,6 +15,7 @@ class File extends Model
         'path',
         'mime_type',
         'size',
+        'context',
     ];
 
     protected $casts = [
@@ -41,6 +42,11 @@ class File extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function scopeContext($query, $context)
+    {
+        return $query->where('context', $context);
+    }
+
     public function url(): ?string
     {
         return Storage::url($this->path);
@@ -52,6 +58,7 @@ class File extends Model
     public function absoluteUrl(): string
     {
         $url = $this->url();
+
         // Si $url ya es absoluta (S3), URL::to() la deja igual.
         return URL::to($url);
     }
@@ -62,7 +69,7 @@ class File extends Model
             'application/pdf' => 'PDF',
             'application/msword' => 'Word',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
-            'application/vnd.ms-excel',
+            'application/vnd.ms-excel' => 'Excel',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
             default => __('Otro'),
         };
@@ -82,7 +89,6 @@ class File extends Model
 
         return round($bytes / (1024 ** $pow), 2).' '.$units[$pow];
     }
-
 
     // Helpers para la Blade:
     public function isPdf(): bool

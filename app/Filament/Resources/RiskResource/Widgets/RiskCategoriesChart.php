@@ -7,9 +7,12 @@ use Filament\Widgets\ChartWidget;
 
 class RiskCategoriesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Risk Distribution by Category';
-
     protected static ?string $pollingInterval = null;
+
+    public function getHeading(): ?string
+    {
+        return __('Risk distribution by category');
+    }
 
     protected function getData(): array
     {
@@ -22,7 +25,7 @@ class RiskCategoriesChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Risks by Category',
+                    'label' => __('Risks'),
                     'data' => $data->values()->toArray(),
                 ],
             ],

@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class FollowUpsRelationManager extends RelationManager
 {
@@ -17,15 +18,29 @@ class FollowUpsRelationManager extends RelationManager
 
     protected static string $relationship = 'followUps';
 
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Follow ups');
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('content')
             ->columns([
-                Tables\Columns\TextColumn::make('content'),
-                Tables\Columns\TextColumn::make('controlQualification.title'),
+                Tables\Columns\TextColumn::make('content')
+                    ->label(__('Comment'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->content)
+                    ->copyable()
+                    ->copyMessage(__('Comment copied'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('controlQualification.title')
+                    ->label(__('Control qualification')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->date(),
+                    ->label(__('Created at'))
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->defaultSort('id', 'desc')
             ->recordUrl(function ($record) {
@@ -35,7 +50,14 @@ class FollowUpsRelationManager extends RelationManager
                 ]);
             })
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('control_qualification_id')
+                    ->label(__('Control qualification'))
+                    ->relationship(
+                        name: 'controlQualification',
+                        titleAttribute: 'title',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                    )
+                    ->native(false),
             ])
             ->headerActions([
                 Tables\Actions\Action::make('create')
@@ -46,8 +68,9 @@ class FollowUpsRelationManager extends RelationManager
                         Forms\Components\Textarea::make('content')
                             ->label(__('Comment'))
                             ->required()
-                            ->placeholder('Follow up comment'),
+                            ->placeholder(__('Follow up comment')),
                         Forms\Components\Select::make('control_qualification_id')
+                            ->label(__('Control qualification'))
                             ->relationship(
                                 name: 'controlQualification',
                                 titleAttribute: 'title',
@@ -78,10 +101,7 @@ class FollowUpsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
-                    ->label('View')
-                    ->color('gray')
-                    ->icon('heroicon-s-eye')
+                Tables\Actions\ViewAction::make()
                     // 📌 Falta la autorización
                     // 📌 Falta la visibilidad
                     ->url(fn ($record) => RiskResource::getUrl('follow-up.view', [

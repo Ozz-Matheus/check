@@ -89,7 +89,13 @@ class TaskService
         $updates = [];
 
         if ($actionTask->real_start_date === null) {
-            $updates['real_start_date'] = now()->format('Y-m-d');
+            $updates['real_start_date'] = today();
+        }
+
+        if ($actionTask->limit_date->isPast()) {
+            $updates['status_id'] = $this->statusIds['extemporaneous'];
+
+            return $actionTask->update($updates);
         }
 
         switch ($actionTask->status_id) {

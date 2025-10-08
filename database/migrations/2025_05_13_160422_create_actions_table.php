@@ -41,7 +41,7 @@ return new class extends Migration
             $table->text('expected_impact')->nullable();
 
             // $table->foreignId('priority_id')->constrained('priorities'); integrar
-            $table->date('limit_date');
+            $table->date('limit_date')->nullable()->index();
             $table->foreignId('status_id')->constrained('statuses');
             $table->boolean('finished')->default(false);
 

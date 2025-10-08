@@ -6,9 +6,13 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+use function __;
+
 class FollowUpfilesRelationManager extends RelationManager
 {
     protected static string $relationship = 'files';
+
+    protected static ?string $title = 'Files';
 
     public function table(Table $table): Table
     {
@@ -16,13 +20,18 @@ class FollowUpfilesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
-                    ->searchable(),
+                    ->label(__('Name'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->name)
+                    ->copyable()
+                    ->copyMessage('Name copied')
+                    ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME))),
                 Tables\Columns\TextColumn::make('readable_mime_type')
                     ->label(__('Type')),
                 Tables\Columns\TextColumn::make('readable_size')
                     ->label('Size'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created at'))
                     ->date(),
             ])
             ->defaultSort('id', 'desc')
@@ -32,7 +41,7 @@ class FollowUpfilesRelationManager extends RelationManager
             ->actions([
                 //
                 Tables\Actions\Action::make('file')
-                    ->label('Download')
+                    ->label(__('Download'))
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('primary')
                     ->url(

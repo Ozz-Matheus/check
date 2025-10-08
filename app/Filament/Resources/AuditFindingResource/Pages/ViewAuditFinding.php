@@ -28,11 +28,11 @@ class ViewAuditFinding extends ViewRecord
     public function getBreadcrumbs(): array
     {
         return [
-            InternalAuditResource::getUrl('view', ['record' => $this->record->auditControl->auditItem->internal_audit_id]) => 'Internal Audit',
-            InternalAuditResource::getUrl('audit-item.view', ['internalAudit' => $this->record->auditControl->auditItem->internal_audit_id, 'record' => $this->record->auditControl->audit_item_id]) => 'Audit Item',
-            InternalAuditResource::getUrl('control.view', ['auditItem' => $this->record->auditControl->audit_item_id, 'record' => $this->record->audit_control_id]) => 'Audit control',
-            InternalAuditResource::getUrl('finding.view', ['auditControl' => $this->record->audit_control_id, 'record' => $this->record->id]) => 'Control finding',
-            false => 'View',
+            InternalAuditResource::getUrl('view', ['record' => $this->record->auditControl->auditItem->internal_audit_id]) => __('Internal Audit'),
+            InternalAuditResource::getUrl('audit-item.view', ['internalAudit' => $this->record->auditControl->auditItem->internal_audit_id, 'record' => $this->record->auditControl->audit_item_id]) => __('Audit Item'),
+            InternalAuditResource::getUrl('control.view', ['auditItem' => $this->record->auditControl->audit_item_id, 'record' => $this->record->audit_control_id]) => __('Audit Control'),
+            InternalAuditResource::getUrl('finding.view', ['auditControl' => $this->record->audit_control_id, 'record' => $this->record->id]) => __('Control Finding'),
+            false => __('View'),
         ];
     }
 }

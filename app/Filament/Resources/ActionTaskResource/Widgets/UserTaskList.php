@@ -33,15 +33,18 @@ class UserTaskList extends BaseWidget implements HasTable
                 ->searchable(),
 
             Tables\Columns\TextColumn::make('status.label')
-                ->searchable()
+                ->label(__('Status'))
                 ->badge()
-                ->color(fn ($record) => $record->status->colorName()),
+                ->color(fn ($record) => $record->status->colorName())
+                ->icon(fn ($record) => $record->status->iconName()),
 
             Tables\Columns\TextColumn::make('start_date')
+                ->label(__('Start date'))
                 ->date()
                 ->sortable(),
 
             Tables\Columns\TextColumn::make('limit_date')
+                ->label(__('Limit date'))
                 ->date()
                 ->sortable(),
         ];
@@ -51,10 +54,10 @@ class UserTaskList extends BaseWidget implements HasTable
     {
         return [
             Tables\Actions\Action::make('follow-up')
-                ->label('Follow-up')
+                ->label(__('Follow up'))
                 ->color('primary')
                 ->icon('heroicon-o-eye')
-                ->url(fn ($record) => ActionResource::getUrl('task.view', [
+                ->url(fn ($record): string => ActionResource::getUrl('task.view', [
                     'action' => $record->action_id,
                     'record' => $record->id,
                 ])),
@@ -68,15 +71,13 @@ class UserTaskList extends BaseWidget implements HasTable
             SelectFilter::make('status_id')
                 ->label(__('Status'))
                 ->relationship(
-                    'status',
-                    'label',
-                    fn (Builder $query) => $query->where('context', 'action_and_task')->orderBy('id', 'asc')
+                    name: 'status',
+                    titleAttribute: 'label',
+                    modifyQueryUsing: fn ($query) => $query->where('context', 'action_and_task')->orderBy('id', 'asc')
                 )
                 ->multiple()
                 ->searchable()
                 ->preload(),
-
         ];
-
     }
 }

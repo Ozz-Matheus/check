@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AuditControlResource\Pages;
 use App\Filament\Resources\AuditControlResource\RelationManagers\AuditControlFilesRelationManager;
 use App\Filament\Resources\AuditControlResource\RelationManagers\AuditControlFindingsRelationManager;
+use App\Filament\Resources\AuditControlResource\RelationManagers\AuditControlTestDocFilesRelationManager;
 use App\Models\AuditControl;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -14,7 +15,19 @@ class AuditControlResource extends Resource
 {
     protected static ?string $model = AuditControl::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Audit Control');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Audit Controls');
+    }
 
     public static function form(Form $form): Form
     {
@@ -100,6 +113,7 @@ class AuditControlResource extends Resource
         return [
             //
             AuditControlFilesRelationManager::class,
+            AuditControlTestDocFilesRelationManager::class,
             AuditControlFindingsRelationManager::class,
         ];
     }

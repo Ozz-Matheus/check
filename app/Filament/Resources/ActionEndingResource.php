@@ -19,7 +19,19 @@ class ActionEndingResource extends Resource
 
     protected static ?string $model = ActionEnding::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Action Ending');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Action Endings');
+    }
 
     public static function form(Form $form): Form
     {

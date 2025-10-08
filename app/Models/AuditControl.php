@@ -82,6 +82,19 @@ class AuditControl extends Model
         return $this->morphMany(File::class, 'fileable');
     }
 
+    public function supportFiles()
+    {
+        return $this->morphMany(File::class, 'fileable')
+            ->whereNull('context')
+            ->orWhere('context', 'support');
+    }
+
+    public function testDocumentationFiles()
+    {
+        return $this->morphMany(File::class, 'fileable')
+            ->where('context', 'test-documentation');
+    }
+
     public function findings()
     {
         return $this->hasMany(AuditFinding::class);

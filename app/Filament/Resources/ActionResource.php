@@ -259,6 +259,9 @@ class ActionResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type.label')
                     ->label(__('Type')),
+                Tables\Columns\TextColumn::make('source.title')
+                    ->label(__('Source'))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable()
@@ -279,7 +282,7 @@ class ActionResource extends Resource
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName())
                     ->icon(fn ($record) => $record->status->iconName())
-                    ->default('-'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('finished')
                     ->label(__('Finished'))
                     ->badge()
@@ -287,16 +290,16 @@ class ActionResource extends Resource
                     ->color(fn ($state) => (bool) $state ? 'success' : 'danger')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('limit_date')
-                    ->label(__('Limit Date'))
+                    ->label(__('Limit date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ending.real_closing_date')
-                    ->label(__('Real Closing Date'))
+                    ->label(__('Real closing date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('cancellation_date')
-                    ->label(__('Cancellation Date'))
+                    ->label(__('Cancellation date'))
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

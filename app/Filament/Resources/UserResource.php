@@ -25,12 +25,12 @@ class UserResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('models.user.singular');
+        return __('User');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('models.user.plural');
+        return __('Users');
     }
 
     public static function getNavigationLabel(): string
@@ -51,7 +51,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('User Data'))
+                Forms\Components\Section::make(__('User data'))
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('name')

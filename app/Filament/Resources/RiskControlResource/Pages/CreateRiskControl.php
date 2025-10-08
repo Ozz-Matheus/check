@@ -48,9 +48,9 @@ class CreateRiskControl extends CreateRecord
     public function getBreadcrumbs(): array
     {
         return [
-            RiskResource::getUrl('view', ['record' => $this->risk_id]) => 'Risk',
-            RiskResource::getUrl('control.create', ['risk' => $this->risk_id]) => 'Control',
-            false => 'Create',
+            RiskResource::getUrl('view', ['record' => $this->risk_id]) => __('Risk'),
+            RiskResource::getUrl('control.create', ['risk' => $this->risk_id]) => __('Control'),
+            false => __('Create'),
         ];
     }
 }

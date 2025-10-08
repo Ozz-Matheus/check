@@ -165,13 +165,13 @@ class InternalAuditResource extends Resource
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName())
                     ->icon(fn ($record) => $record->status->iconName())
-                    ->default('-'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('internalAuditQualification.title')
                     ->label(__('Qualification'))
                     ->default(__('Unrated')),
                 Tables\Columns\TextColumn::make('qualification_value')
                     ->label(__('Qualification Value'))
-                    ->default('-')
+                    ->placeholder('-')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->label(__('Created by'))
@@ -194,7 +194,6 @@ class InternalAuditResource extends Resource
             ])
             ->defaultSort('id', 'desc')
             ->filters([
-                //
                 Tables\Filters\SelectFilter::make('process_id')
                     ->label(__('Process'))
                     ->relationship('process', 'title')
@@ -253,7 +252,7 @@ class InternalAuditResource extends Resource
 
                         return response()->streamDownload(function () use ($reportData) {
                             echo Pdf::loadView('reports.audit-executive', $reportData)->output();
-                        }, 'informe-ejecutivo-auditoria.pdf');
+                        }, __('executive-report-internal-audit.pdf'));
                     }),
 
             ])

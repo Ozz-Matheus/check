@@ -14,7 +14,19 @@ class AuditItemResource extends Resource
 {
     protected static ?string $model = AuditItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Audit Item');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Audit Items');
+    }
 
     public static function form(Form $form): Form
     {
