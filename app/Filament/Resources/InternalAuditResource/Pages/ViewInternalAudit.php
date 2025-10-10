@@ -17,7 +17,6 @@ class ViewInternalAudit extends ViewRecord
         return [
             Action::make('finish')
                 ->label(__('Finish'))
-                ->button()
                 ->color('success')
                 // 📌 Falta la autorización
                 ->visible($this->record->qualification_value !== null)
@@ -36,7 +35,6 @@ class ViewInternalAudit extends ViewRecord
             Action::make('back')
                 ->label(__('Return'))
                 ->url($this->getResource()::getUrl('index'))
-                ->button()
                 ->color('gray'),
         ];
     }

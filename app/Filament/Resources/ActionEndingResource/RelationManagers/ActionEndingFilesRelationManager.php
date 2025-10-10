@@ -24,12 +24,12 @@ class ActionEndingFilesRelationManager extends RelationManager
                 ->limit(30)
                 ->tooltip(fn ($record) => $record->name)
                 ->copyable()
-                ->copyMessage('Name copied')
+                ->copyMessage(__('Name copied'))
                 ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME))),
             Tables\Columns\TextColumn::make('readable_mime_type')
                 ->label(__('Type')),
             Tables\Columns\TextColumn::make('readable_size')
-                ->label('Size'),
+                ->label(__('Size')),
             Tables\Columns\TextColumn::make('created_at')
                 ->label(__('Created at'))
                 ->date(),

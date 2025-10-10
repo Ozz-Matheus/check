@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Exports\ActionExport;
 use App\Filament\Resources\ActionResource\Pages;
+use App\Filament\Resources\ActionResource\RelationManagers\ActionFollowUpsRelationManager;
 use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationManager;
 use App\Models\Action;
 use App\Models\ActionType;
@@ -156,13 +157,6 @@ class ActionResource extends Resource
                             ->reactive(),
                         Forms\Components\Textarea::make('containment_actions')
                             ->label(__('Containment actions'))
-                            ->columnSpanFull()
-                            ->required($isCorrective)
-                            ->visible($isCorrective)
-                            ->dehydrated($isCorrective)
-                            ->reactive(),
-                        Forms\Components\Textarea::make('corrective_actions')
-                            ->label(__('Corrective actions'))
                             ->columnSpanFull()
                             ->required($isCorrective)
                             ->visible($isCorrective)
@@ -373,6 +367,7 @@ class ActionResource extends Resource
     {
         return [
             //
+            ActionFollowUpsRelationManager::class,
             ActionTasksRelationManager::class,
         ];
     }
@@ -387,11 +382,13 @@ class ActionResource extends Resource
             // Finalización
             'ending.create' => \App\Filament\Resources\ActionEndingResource\Pages\CreateActionEnding::route('/{action}/endings/create'),
             'ending.view' => \App\Filament\Resources\ActionEndingResource\Pages\ViewActionEnding::route('/{action}/endings/{record}'),
+            // Segimiento de accion
+            'action-follow-up.view' => \App\Filament\Resources\ActionFollowUpResource\Pages\ViewActionFollowUp::route('/{action}/follow-up/{record}'),
             // Tareas
             'task.create' => \App\Filament\Resources\ActionTaskResource\Pages\CreateActionTask::route('/{action}/tasks/create'),
             'task.view' => \App\Filament\Resources\ActionTaskResource\Pages\ViewActionTask::route('/{action}/tasks/{record}'),
             // Segimiento de tareas
-            'follow-up.view' => \App\Filament\Resources\ActionTaskFollowUpResource\Pages\ViewActionTaskFollowUp::route('/tasks/{task}/follow-up/{record}'),
+            'task-follow-up.view' => \App\Filament\Resources\ActionTaskFollowUpResource\Pages\ViewActionTaskFollowUp::route('/tasks/{task}/follow-up/{record}'),
         ];
     }
 

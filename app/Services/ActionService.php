@@ -55,4 +55,20 @@ class ActionService
     {
         return in_array($action->status_id, [$this->statusIds['completed'], $this->statusIds['extemporaneous']]) && $action->ending()->exists();
     }
+
+    // Comprueba si se puede ver el boton de crear tarea y seguimiento
+    public function canViewCreateTaskAndFollowUp(int $statusId): bool
+    {
+        return in_array($statusId, [$this->statusIds['pending'], $this->statusIds['in_execution']]);
+    }
+
+    // Cambia el estado de la acción a en ejecución si esta pendiente
+    public function changeActionStatusToExecution(Action $action): bool
+    {
+        if ($action->status_id !== $this->statusIds['pending']) {
+            return false;
+        }
+
+        return $action->update(['status_id' => $this->statusIds['in_execution']]);
+    }
 }

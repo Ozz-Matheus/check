@@ -8,7 +8,7 @@ use App\Models\Action;
 use App\Models\ActionTask;
 use App\Models\Status;
 use App\Notifications\TaskAssignedNotice;
-use App\Services\TaskService;
+use App\Services\ActionService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateActionTask extends CreateRecord
@@ -40,7 +40,7 @@ class CreateActionTask extends CreateRecord
 
         $task->responsibleBy?->notify(new TaskAssignedNotice($task));
 
-        app(TaskService::class)->changeActionStatusToExecution($task);
+        app(ActionService::class)->changeActionStatusToExecution($this->actionModel);
 
         return $task;
     }

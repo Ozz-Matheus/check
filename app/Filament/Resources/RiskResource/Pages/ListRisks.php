@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RiskResource\Pages;
 use App\Exports\RiskExecutiveReportExport;
 use App\Filament\Resources\RiskResource;
 use App\Filament\Resources\RiskResource\Widgets\RiskCategoriesChart;
+use App\Filament\Resources\RiskResource\Widgets\RiskHeatmapGrid;
 use App\Filament\Resources\RiskResource\Widgets\RiskStatsOverview;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
@@ -79,6 +80,7 @@ class ListRisks extends ListRecords
     {
         return [
             RiskCategoriesChart::class,
+            RiskHeatmapGrid::class,
         ];
     }
 }

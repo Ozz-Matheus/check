@@ -31,7 +31,7 @@ class FollowUpFilesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('readable_mime_type')
                     ->label(__('Type')),
                 Tables\Columns\TextColumn::make('readable_size')
-                    ->label('Size'),
+                    ->label(__('Size')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()

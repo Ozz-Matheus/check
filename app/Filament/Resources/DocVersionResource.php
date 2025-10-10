@@ -65,12 +65,16 @@ class DocVersionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('file.name')
                     ->label(__('Name'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->file->name)
+                    ->copyable()
+                    ->copyMessage(__('Name copied'))
                     ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME)))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('file.readable_mime_type')
                     ->label(__('Type')),
                 Tables\Columns\TextColumn::make('file.readable_size')
-                    ->label('Size')
+                    ->label(__('Size'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
@@ -84,6 +88,8 @@ class DocVersionResource extends Resource
                     ->label(__('Comment'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->comment)
+                    ->copyable()
+                    ->copyMessage(__('Comment copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('change_reason')
                     ->label(__('Reason for change'))

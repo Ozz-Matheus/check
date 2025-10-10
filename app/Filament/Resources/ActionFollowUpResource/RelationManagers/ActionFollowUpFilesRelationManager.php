@@ -1,24 +1,19 @@
 <?php
 
-namespace App\Filament\Resources\AuditControlResource\RelationManagers;
+namespace App\Filament\Resources\ActionFollowUpResource\RelationManagers;
 
-use App\Filament\Resources\InternalAuditResource;
-use App\Services\FileService;
-use App\Traits\HasStandardFileUpload;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class AuditControlFilesRelationManager extends RelationManager
+class ActionFollowUpFilesRelationManager extends RelationManager
 {
-    use HasStandardFileUpload;
-
-    protected static string $relationship = 'supportFiles';
+    protected static string $relationship = 'files';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('Control documentation');
+        return __('Support files');
     }
 
     public function table(Table $table): Table
@@ -44,30 +39,6 @@ class AuditControlFilesRelationManager extends RelationManager
             ->defaultSort('id', 'desc')
             ->filters([
                 //
-            ])
-            ->headerActions([
-                Tables\Actions\Action::make('create')
-                    ->label(__('New control documentation'))
-                    ->button()
-                    ->color('primary')
-                    // 📌 Falta la autorización
-                    ->visible($this->getOwnerRecord()->qualified === false)
-                    ->form([
-                        static::baseFileUpload('path')
-                            ->label(__('Support files'))
-                            ->directory('internal-audit/audit/control/files')
-                            ->multiple()
-                            ->columnSpanFull(),
-                    ])
-                    ->action(function (array $data) {
-                        $owner = $this->getOwnerRecord();
-                        app(FileService::class)->createFiles($owner, $data);
-
-                        redirect(InternalAuditResource::getUrl('control.view', [
-                            'auditItem' => $owner->audit_item_id,
-                            'record' => $owner->id,
-                        ]));
-                    }),
             ])
             ->actions([
                 //

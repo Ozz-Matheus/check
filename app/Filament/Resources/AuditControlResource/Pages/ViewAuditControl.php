@@ -27,7 +27,7 @@ class ViewAuditControl extends ViewRecord
                 ->button()
                 ->color('primary')
                 // 📌 Falta la autorización
-                ->visible(fn ($record) => $record->qualified === false)
+                ->visible(fn ($record) => app(AuditControlService::class)->canViewQualify($record->auditItem->internalAudit->status_id))
                 // ->requiresConfirmation()
                 ->form([
                     Grid::make(2)

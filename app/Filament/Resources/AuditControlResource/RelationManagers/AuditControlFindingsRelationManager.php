@@ -28,7 +28,7 @@ class AuditControlFindingsRelationManager extends RelationManager
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title)
                     ->copyable()
-                    ->copyMessage('Title copied')
+                    ->copyMessage(__('Title copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('findingType.title')
                     ->label(__('Type')),
@@ -37,7 +37,7 @@ class AuditControlFindingsRelationManager extends RelationManager
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->criteria)
                     ->copyable()
-                    ->copyMessage('Criteria copied')
+                    ->copyMessage(__('Criteria copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))

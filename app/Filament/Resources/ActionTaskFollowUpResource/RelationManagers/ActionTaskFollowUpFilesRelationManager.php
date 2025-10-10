@@ -5,14 +5,16 @@ namespace App\Filament\Resources\ActionTaskFollowUpResource\RelationManagers;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
-use function __;
-
-class FollowUpfilesRelationManager extends RelationManager
+class ActionTaskFollowUpFilesRelationManager extends RelationManager
 {
     protected static string $relationship = 'files';
 
-    protected static ?string $title = 'Files';
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Support files');
+    }
 
     public function table(Table $table): Table
     {
@@ -24,12 +26,12 @@ class FollowUpfilesRelationManager extends RelationManager
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->name)
                     ->copyable()
-                    ->copyMessage('Name copied')
+                    ->copyMessage(__('Name copied'))
                     ->formatStateUsing(fn (string $state) => ucfirst(pathinfo($state, PATHINFO_FILENAME))),
                 Tables\Columns\TextColumn::make('readable_mime_type')
                     ->label(__('Type')),
                 Tables\Columns\TextColumn::make('readable_size')
-                    ->label('Size'),
+                    ->label(__('Size')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->date(),

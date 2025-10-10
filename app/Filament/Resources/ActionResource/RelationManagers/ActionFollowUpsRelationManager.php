@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Filament\Resources\ActionTaskResource\RelationManagers;
+namespace App\Filament\Resources\ActionResource\RelationManagers;
 
 use App\Filament\Resources\ActionResource;
+use App\Services\ActionService;
 use App\Services\FileService;
-use App\Services\TaskService;
 use App\Traits\HasStandardFileUpload;
+use Filament\Forms;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class ActionTaskFollowUpsRelationManager extends RelationManager
+class ActionFollowUpsRelationManager extends RelationManager
 {
     use HasStandardFileUpload;
 
@@ -23,9 +25,20 @@ class ActionTaskFollowUpsRelationManager extends RelationManager
         return __('Follow ups');
     }
 
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('content')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('content')
             ->columns([
                 Tables\Columns\TextColumn::make('content')
                     ->label(__('Comment'))
@@ -50,22 +63,21 @@ class ActionTaskFollowUpsRelationManager extends RelationManager
                             ->placeholder(__('Follow up comment')),
                         static::baseFileUpload('path')
                             ->label(__('Support follow-up files'))
-                            ->directory('actions/tasks/follow-ups/files')
+                            ->directory('actions/follow-ups/files')
                             ->multiple()
                             ->columnSpanFull(),
                     ])
-                    ->authorize(auth()->id() === $this->getOwnerRecord()->responsible_by_id)
-                    ->visible(fn () => app(TaskService::class)->canViewCreateTaskFollowUp($this->getOwnerRecord()))
+                    ->authorize($this->getOwnerRecord()->responsible_by_id === auth()->id() && auth()->user()->can('create_action::follow::up'))
+                    ->visible(fn () => app(ActionService::class)->canViewCreateTaskAndFollowUp($this->getOwnerRecord()->status_id))
                     ->action(function (array $data) {
                         $owner = $this->getOwnerRecord();
                         $followUp = $owner->followUps()->create([
                             'content' => $data['content'],
                         ]);
                         app(FileService::class)->createFiles($followUp, $data);
-                        app(TaskService::class)->updateTaskStatus($owner);
+                        app(ActionService::class)->changeActionStatusToExecution($owner);
 
-                        redirect(ActionResource::getUrl('task.view', [
-                            'action' => $this->getOwnerRecord()->action_id,
+                        redirect(ActionResource::getUrl('view', [
                             'record' => $this->getOwnerRecord()->id,
 
                         ]));
@@ -75,13 +87,14 @@ class ActionTaskFollowUpsRelationManager extends RelationManager
                 Tables\Actions\ViewAction::make()
                     // 📌 Falta la autorización
                     // 📌 Falta la visibilidad
-                    ->url(fn ($record) => ActionResource::getUrl('task-follow-up.view', [
-                        'task' => $this->getOwnerRecord()->id,
+                    ->url(fn ($record) => ActionResource::getUrl('action-follow-up.view', [
+                        'action' => $this->getOwnerRecord()->id,
                         'record' => $record->id,
                     ])),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+                Tables\Actions\BulkActionGroup::make([
+                ]),
             ]);
     }
 }

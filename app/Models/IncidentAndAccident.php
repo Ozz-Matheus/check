@@ -17,6 +17,7 @@ class IncidentAndAccident extends Model
         'sub_process_id',
         'event_date',
         'event_site',
+        'observations',
         'priority_id',
         'status_id',
         'created_by_id',

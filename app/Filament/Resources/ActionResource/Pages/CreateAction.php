@@ -6,6 +6,7 @@ use App\Factories\ActionOriginFactory;
 use App\Filament\Resources\ActionResource;
 use App\Models\Status;
 use App\Notifications\ActionCreatedNotice;
+use App\Services\IncidentAndAccidentService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAction extends CreateRecord
@@ -76,6 +77,10 @@ class CreateAction extends CreateRecord
     {
         if ($this->record->responsible_by_id && $this->record->responsibleBy) {
             $this->record->responsibleBy->notify(new ActionCreatedNotice($this->record));
+        }
+        if ($this->originType === "App\Models\IncidentAndAccident") {
+            $incidentAndAccident = $this->record->origin;
+            app(IncidentAndAccidentService::class)->changeIncidentAndAccidentStatusToExecution($incidentAndAccident);
         }
     }
 

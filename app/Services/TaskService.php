@@ -18,12 +18,6 @@ class TaskService
         $this->statusIds = $statusService->getActionAndTaskStatuses();
     }
 
-    // Comprueba si se puede ver el boton de crear la tarea
-    public function canViewCreateTask(int $statusId): bool
-    {
-        return in_array($statusId, [$this->statusIds['pending'], $this->statusIds['in_execution']]);
-    }
-
     // Comprueba si se puede ver el boton de cerrar la tarea
     public function canViewFinishTask(ActionTask $actionTask): bool
     {
@@ -109,16 +103,6 @@ class TaskService
         }
 
         return ! empty($updates) ? $actionTask->update($updates) : false;
-    }
-
-    // Cambia el estado de la acción a en ejecución si la tarea es la primera creada
-    public function changeActionStatusToExecution(ActionTask $actionTask): bool
-    {
-        if ($actionTask->action->status_id !== $this->statusIds['pending']) {
-            return false;
-        }
-
-        return $actionTask->action->update(['status_id' => $this->statusIds['in_execution']]);
     }
 
     // Métodos auxiliares privados.

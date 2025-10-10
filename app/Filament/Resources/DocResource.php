@@ -160,14 +160,14 @@ class DocResource extends Resource
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->classification_code)
                     ->copyable()
-                    ->copyMessage('Classification code copied')
+                    ->copyMessage(__('Classification code copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->title)
                     ->copyable()
-                    ->copyMessage('Title copied')
+                    ->copyMessage(__('Title copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type.label')
                     ->label(__('Doc type')),
@@ -193,8 +193,15 @@ class DocResource extends Resource
                 Tables\Columns\TextColumn::make('expiration_status')
                     ->label(__('Expiration status'))
                     ->badge()
-                    ->state(fn (Doc $record): string => $record->is_expired ? __('Expired') : __('Current'))
-                    ->color(fn (string $state): string => $state === __('Expired') ? 'danger' : 'success'),
+                    ->state(function (Doc $record) {
+                        if (! $record->central_expiration_date) {
+                            return null;
+                        }
+
+                        return $record->is_expired ? __('Expired') : __('Current');
+                    })
+                    ->color(fn (string $state): string => $state === __('Expired') ? 'danger' : 'success')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('display_restriction')
                     ->label(__('Display restriction'))
                     ->badge()

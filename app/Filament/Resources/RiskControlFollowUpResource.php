@@ -31,7 +31,7 @@ class RiskControlFollowUpResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Control follow-up'))
+                Forms\Components\Section::make(__('Follow up data'))
                     ->columns(2)
                     ->schema([
                         Forms\Components\Textarea::make('content')

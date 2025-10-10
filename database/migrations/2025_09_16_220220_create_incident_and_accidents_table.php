@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('sub_process_id')->constrained('sub_processes');
             $table->dateTime('event_date');
             $table->string('event_site');
+            $table->text('observations')->nullable();
             $table->foreignId('priority_id')->constrained('priorities');
             $table->foreignId('status_id')->constrained('statuses');
             $table->foreignId('created_by_id')->constrained('users');

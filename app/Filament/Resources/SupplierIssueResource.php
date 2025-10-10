@@ -132,7 +132,7 @@ class SupplierIssueResource extends Resource
                             ->visible(fn ($record) => filled($record?->supplier_response))
                             ->readOnly(),
                         Forms\Components\Textarea::make('supplier_actions')
-                            ->label('Supplier actions')
+                            ->label(__('Supplier actions'))
                             ->rows(3)
                             ->visible(fn ($record) => filled($record?->supplier_actions))
                             ->readOnly(),

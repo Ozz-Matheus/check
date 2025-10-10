@@ -60,6 +60,6 @@ class ViewAction extends ViewRecord
 
     public function getSubheading(): ?string
     {
-        return $this->record->ActionSubtitle();
+        return $this->record->subtitle;
     }
 }

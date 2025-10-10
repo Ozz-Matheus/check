@@ -114,6 +114,10 @@ class IncidentAndAccidentResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
+                        Forms\Components\Textarea::make('observations')
+                            ->label(__('Observations'))
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => filled($record?->observations)),
                     ]),
             ]);
     }

@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ActionTaskFollowUpResource\Pages;
-use App\Filament\Resources\ActionTaskFollowUpResource\RelationManagers\ActionTaskFollowUpFilesRelationManager;
-use App\Models\ActionTaskFollowUp;
+use App\Filament\Resources\ActionFollowUpResource\Pages;
+use App\Filament\Resources\ActionFollowUpResource\RelationManagers\ActionFollowUpFilesRelationManager;
+use App\Models\ActionFollowUp;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 
-class ActionTaskFollowUpResource extends Resource
+class ActionFollowUpResource extends Resource
 {
-    protected static ?string $model = ActionTaskFollowUp::class;
+    protected static ?string $model = ActionFollowUp::class;
 
     protected static ?string $modelLabel = null;
 
@@ -19,12 +19,12 @@ class ActionTaskFollowUpResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Task Follow Up');
+        return __('Action Follow Up');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Task Follow Ups');
+        return __('Action Follow Ups');
     }
 
     public static function form(Form $form): Form
@@ -45,16 +45,16 @@ class ActionTaskFollowUpResource extends Resource
     {
         return [
             //
-            ActionTaskFollowUpFilesRelationManager::class,
+            ActionFollowUpFilesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActionTaskFollowUps::route('/'),
-            'create' => Pages\CreateActionTaskFollowUp::route('/create'),
-            'edit' => Pages\EditActionTaskFollowUp::route('/{record}/edit'),
+            'index' => Pages\ListActionFollowUps::route('/'),
+            'create' => Pages\CreateActionFollowUp::route('/create'),
+            'edit' => Pages\EditActionFollowUp::route('/{record}/edit'),
         ];
     }
 

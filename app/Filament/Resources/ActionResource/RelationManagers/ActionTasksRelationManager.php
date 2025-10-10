@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ActionResource\RelationManagers;
 
 use App\Filament\Resources\ActionResource;
-use App\Services\TaskService;
+use App\Services\ActionService;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -90,7 +90,7 @@ class ActionTasksRelationManager extends RelationManager
                     ->label(__('New task'))
                     ->color('primary')
                     ->authorize($this->getOwnerRecord()->responsible_by_id === auth()->id() && auth()->user()->can('create_action::task'))
-                    ->visible(fn () => app(TaskService::class)->canViewCreateTask($this->getOwnerRecord()->status_id))
+                    ->visible(fn () => app(ActionService::class)->canViewCreateTaskAndFollowUp($this->getOwnerRecord()->status_id))
                     ->url(fn () => ActionResource::getUrl('task.create', [
                         'action' => $this->getOwnerRecord()->id,
                     ])),

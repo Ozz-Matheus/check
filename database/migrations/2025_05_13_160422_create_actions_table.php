@@ -33,7 +33,6 @@ return new class extends Migration
             $table->foreignId('action_analysis_cause_id')->nullable()->constrained('action_analysis_causes');
             $table->text('root_cause')->nullable();
             $table->text('containment_actions')->nullable();
-            $table->text('corrective_actions')->nullable();
             $table->foreignId('action_verification_method_id')->nullable()->constrained('action_verification_methods');
             $table->foreignId('verification_responsible_by_id')->nullable()->constrained('users');
 

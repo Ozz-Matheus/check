@@ -10,7 +10,30 @@ class Action extends Model
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'description',
+        'action_type_id',
+        'source_id',
+        'process_id',
+        'sub_process_id',
+        'registered_by_id',
+        'responsible_by_id',
+        'detection_date',
+        'action_analysis_cause_id',
+        'root_cause',
+        'containment_actions',
+        'action_verification_method_id',
+        'verification_responsible_by_id',
+        'expected_impact',
+        'limit_date',
+        'status_id',
+        'finished',
+        'cancellation_date',
+        'origin_type',
+        'origin_id',
+        'origin_label',
+    ];
 
     protected $casts = [
         'detection_date' => 'date',
@@ -20,6 +43,9 @@ class Action extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    // Carga ansiosa por defecto para evitar N+1
+    protected $with = ['origin', 'source'];
 
     /*
     |--------------------------------------------------------------------------
@@ -84,6 +110,11 @@ class Action extends Model
         return $this->belongsTo(Status::class);
     }
 
+    public function followUps()
+    {
+        return $this->hasMany(ActionFollowUp::class, 'action_id');
+    }
+
     public function tasks()
     {
         return $this->hasMany(ActionTask::class, 'action_id');
@@ -100,13 +131,11 @@ class Action extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function ActionSubtitle(): string
+    public function getSubtitleAttribute(): string
     {
-        // Usar el operador ternario para definir el valor de $origin
-        $origin = ($this->origin_type !== null && $this->origin_id !== null)
-            ? $this->origin_label.' : '.$this->origin_type::find($this->origin_id)?->title
-            : $this->origin_label.' : '.$this->source->title;
+        $label = $this->origin_label;
+        $title = $this->origin?->title ?? $this->source?->title ?? '—';
 
-        return $origin;
+        return "{$label} : {$title}";
     }
 }
