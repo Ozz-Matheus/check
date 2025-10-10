@@ -34,8 +34,8 @@
                                                     $hasRisks = $cell['count'] > 0;
                                                 @endphp
                                                 <td class="p-0.5">
-                                                    <div class="relative group h-16 transition-all duration-200 hover:scale-105 hover:shadow-lg cursor-pointer border-t border-gray-200 dark:border-white/10"
-                                                         style="background-color: {{ $cell['color'] }}">
+                                                    <div class=" bg-gray-50 dark:bg-white/5 relative group h-16 transition-all duration-200 hover:scale-105 hover:shadow-lg cursor-pointer border-t border-gray-200 dark:border-white/10"
+                                                         style="{{ $cell['color'] ? 'background-color: ' . $cell['color'] . ';' : '' }}">
                                                         @if($hasRisks)
                                                             <div class="flex items-center justify-center h-full">
                                                                 <div class="bg-gray-900/80 text-white  w-8 h-8 flex items-center justify-center font-bold text-sm ">

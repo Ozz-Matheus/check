@@ -50,7 +50,7 @@ class RiskHeatmapGrid extends Widget
                 }
 
                 $key = strtolower($levelTitle ?? '');
-                $color = $palette[$key] ?? '#ffffff'; // blanco
+                $color = $palette[$key] ?? null;
 
                 $cells[$prob->title][$impact->title] = [
                     'count' => $count,
