@@ -18,7 +18,7 @@ class RiskImpactSeeder extends Seeder
             'score' => 1,
         ]);
         RiskImpact::factory()->create([
-            'title' => 'Bajo',
+            'title' => 'Menor',
             'score' => 2,
         ]);
         RiskImpact::factory()->create([
@@ -26,7 +26,7 @@ class RiskImpactSeeder extends Seeder
             'score' => 3,
         ]);
         RiskImpact::factory()->create([
-            'title' => 'Alto',
+            'title' => 'Mayor',
             'score' => 4,
         ]);
         RiskImpact::factory()->create([

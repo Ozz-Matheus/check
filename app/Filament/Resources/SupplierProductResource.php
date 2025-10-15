@@ -52,7 +52,7 @@ class SupplierProductResource extends Resource
             ->schema([
                 Forms\Components\Select::make('supplier_id')
                     ->label(__('Supplier'))
-                    ->relationship('Supplier', 'title')
+                    ->relationship('Supplier', 'name')
                     ->native(false)
                     ->required(),
                 Forms\Components\TextInput::make('title')
@@ -71,7 +71,7 @@ class SupplierProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('supplier.title')
+                Tables\Columns\TextColumn::make('supplier.name')
                     ->label(__('Supplier')),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
@@ -100,7 +100,7 @@ class SupplierProductResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('supplier_id')
                     ->label(__('Supplier'))
-                    ->relationship('supplier', 'title')
+                    ->relationship('supplier', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload(),

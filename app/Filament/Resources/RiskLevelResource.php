@@ -62,6 +62,9 @@ class RiskLevelResource extends Resource
                     ->label(__('Max'))
                     ->required()
                     ->numeric(),
+                Forms\Components\ColorPicker::make('color')
+                    ->label(__('Color'))
+                    ->required(),
             ]);
     }
 
@@ -80,6 +83,8 @@ class RiskLevelResource extends Resource
                     ->label(__('Max'))
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('color')
+                    ->label(__('Color')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()

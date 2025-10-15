@@ -2,18 +2,39 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
-class Supplier extends Model
+class Supplier extends User
 {
-    /** @use HasFactory<\Database\Factories\SupplierFactory> */
-    use HasFactory;
+    protected $table = 'users';
 
-    protected $fillable = ['title', 'email'];
+    protected $guard_name = 'web';
 
-    public function supplierProducts()
+    /**
+     * Este método es CLAVE: Le dice a Laravel que cuando busque en model_has_roles
+     * use 'App\Models\User' en lugar de 'App\Models\Supplier'
+     */
+    public function getMorphClass()
     {
-        return $this->hasMany(SupplierProduct::class);
+        return User::class;
+    }
+
+    protected static function booted(): void
+    {
+        parent::booted();
+
+        // Scope global que filtra solo usuarios con rol 'supplier'
+        static::addGlobalScope('supplier', function (Builder $query) {
+            $query->whereHas('roles', function (Builder $q) {
+                $q->where('name', 'supplier');
+            });
+        });
+
+        // Al crear un nuevo Supplier, automáticamente asigna el rol
+        static::created(function (User $model) {
+            if (! $model->hasRole('supplier')) {
+                $model->assignRole('supplier');
+            }
+        });
     }
 }

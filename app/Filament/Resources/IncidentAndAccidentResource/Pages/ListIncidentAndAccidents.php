@@ -4,6 +4,7 @@ namespace App\Filament\Resources\IncidentAndAccidentResource\Pages;
 
 use App\Filament\Resources\IncidentAndAccidentResource;
 use App\Filament\Resources\IncidentAndAccidentResource\Widgets\IAndAStatsOverview;
+use App\Filament\Resources\IncidentAndAccidentResource\Widgets\NewIncidentsAndAccidentsChart;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -25,9 +26,10 @@ class ListIncidentAndAccidents extends ListRecords
         ];
     }
 
-    /* protected function getFooterWidgets(): array
+    protected function getFooterWidgets(): array
     {
         return [
+            NewIncidentsAndAccidentsChart::class,
         ];
-    } */
+    }
 }

@@ -50,15 +50,36 @@ class SupplierResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->label(__('Title'))
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label(__('Email'))
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make(__('User data'))
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label(__('Name'))
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->label(__('Email'))
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password')
+                            ->label(__('Password'))
+                            ->password()
+                            ->maxLength(255)
+                            ->nullable()
+                            ->dehydrated(fn ($state) => filled($state)) // solo lo manda si tiene valor
+                            ->required(fn (string $context) => $context === 'create')
+                            ->helperText(
+                                fn (string $context) => $context === 'edit'
+                                    ? __("Leave it blank if you don't want to change your password")
+                                    : null
+                            ),
+                        Forms\Components\Toggle::make('active')
+                            ->label(__('Active'))
+                            ->helperText(__('Enables or disables user access.'))
+                            ->required()
+                            ->default(true),
+                    ]),
             ]);
     }
 
@@ -66,20 +87,19 @@ class SupplierResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->label(__('Title'))
-                    ->limit(30)
-                    ->tooltip(fn ($record) => $record->title)
-                    ->copyable()
-                    ->copyMessage(__('Title copied'))
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label(__('Email'))
-                    ->limit(30)
-                    ->tooltip(fn ($record) => $record->email)
                     ->copyable()
                     ->copyMessage(__('Email copied'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->label(__('Email verified at'))
+                    ->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()
@@ -99,7 +119,7 @@ class SupplierResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

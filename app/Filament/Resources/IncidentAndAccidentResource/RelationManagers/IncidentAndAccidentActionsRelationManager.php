@@ -5,6 +5,7 @@ namespace App\Filament\Resources\IncidentAndAccidentResource\RelationManagers;
 use App\Filament\Resources\ActionResource;
 use App\Filament\Resources\IncidentAndAccidentResource;
 use App\Models\IncidentAndAccident;
+use App\Models\Status;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -96,9 +97,7 @@ class IncidentAndAccidentActionsRelationManager extends RelationManager
                     ->label(__('New action'))
                     ->button()
                     ->color('primary')
-                    ->visible(function () {
-                        return str($this->getPageClass())->contains('View');
-                    })
+                    ->visible(fn () => $this->getOwnerRecord()?->status_id !== Status::byContextAndTitle('incident_and_accident', 'finished')?->id)
                     ->url(function () {
 
                         $recordId = $this->getOwnerRecord()?->id;

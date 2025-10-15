@@ -7,6 +7,8 @@ use Filament\Widgets\ChartWidget;
 
 class RiskCategoriesChart extends ChartWidget
 {
+    protected static ?string $maxHeight = '300px';
+
     protected static ?string $pollingInterval = null;
 
     public function getHeading(): ?string
@@ -25,7 +27,7 @@ class RiskCategoriesChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => __('Risks'),
+                    'label' => __('Risks by category'),
                     'data' => $data->values()->toArray(),
                 ],
             ],
@@ -37,9 +39,4 @@ class RiskCategoriesChart extends ChartWidget
     {
         return 'bar';
     }
-
-    /* public function getDescription(): ?string
-    {
-        return "This chart shows the proportion of risks belonging to each defined category. It provides an immediate overview of where the organization's risks are concentrated.";
-    } */
 }

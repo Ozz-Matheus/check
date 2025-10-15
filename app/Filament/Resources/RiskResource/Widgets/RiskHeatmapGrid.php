@@ -21,11 +21,11 @@ class RiskHeatmapGrid extends Widget
         $levels = RiskLevel::all(['id', 'title']);
 
         $palette = [
-            'bajo' => config('filament-colors.success.rgba', 'rgba(34, 197, 94, 0.8)'),   // verde
-            'moderado' => config('filament-colors.warning.rgba', 'rgba(251, 191, 36, 0.8)'),  // amarillo
-            'alto' => config('filament-colors.primary.rgba', 'rgba(59, 130, 246, 0.8)'),  // azul
-            'crítico' => config('filament-colors.danger.rgba', 'rgba(239, 68, 68, 0.8)'),    // rojo
-            'critico' => config('filament-colors.danger.rgba', 'rgba(239, 68, 68, 0.8)'),    // fallback sin acento
+            'bajo' => config('filament-colors.success.hex'),   // verde
+            'medio' => config('filament-colors.yellow.hex'),  // amarillo
+            'alto' => config('filament-colors.warning.hex'),  // naranja
+            'muy alto' => config('filament-colors.danger.hex'),    // rojo
+            'default' => config('filament-colors.primary.hex'),    // fallback sin acento
         ];
 
         $cells = [];

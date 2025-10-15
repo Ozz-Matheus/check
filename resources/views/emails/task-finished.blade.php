@@ -18,7 +18,7 @@ Una tarea se ha finalizado
 </ul>
 
 <p>
-    <a href="{{ $task->action->url }}"
+    <a href="{{ route('filament.dashboard.resources.actions.view', ['record' => $task->action->id ]) }}"
        class="button">
         Ver más
     </a> 

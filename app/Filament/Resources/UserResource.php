@@ -72,7 +72,7 @@ class UserResource extends Resource
                             ->required(fn (string $context) => $context === 'create')
                             ->helperText(
                                 fn (string $context) => $context === 'edit'
-                                    ? "Leave it blank if you don't want to change your password."
+                                    ? __("Leave it blank if you don't want to change your password")
                                     : null
                             ),
                         Forms\Components\Toggle::make('active')
@@ -121,7 +121,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->label(__('Email'))
                     ->copyable()
-                    ->copyMessage(__('Email copied to clipboard'))
+                    ->copyMessage(__('Email copied'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label(__('Roles'))

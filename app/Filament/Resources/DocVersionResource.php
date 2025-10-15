@@ -102,7 +102,7 @@ class DocVersionResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('decidedBy.name')
-                    ->label(__('Decided By'))
+                    ->label(__('Decided by'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('decision_at')
@@ -259,7 +259,7 @@ class DocVersionResource extends Resource
                     ->action(fn ($records) => Excel::download(
                         new VersionExport($records->pluck('id')->toArray()),
                         'versions_'.now()->format('Y_m_d_His').'.xlsx'
-                    )),
+                    ))->deselectRecordsAfterCompletion(),
             ]);
     }
 

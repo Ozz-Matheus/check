@@ -9,24 +9,24 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
-class VersionExport implements FromCollection, WithHeadings, WithMapping, WithTitle
+class DocExportWithVersion implements FromCollection, WithHeadings, WithMapping, WithTitle
 {
-    protected array $versionIds;
+    protected array $docIds;
 
-    public function __construct(array $versionIds)
+    public function __construct(array $docIds)
     {
-        $this->versionIds = $versionIds;
+        $this->docIds = $docIds;
     }
 
     public function title(): string
     {
-        return '📚 Versiones seleccionadas';
+        return '📚 Versiones relacionadas';
     }
 
     public function collection(): Collection
     {
-        return DocVersion::with(['status', 'doc'])
-            ->whereIn('id', $this->versionIds)
+        return DocVersion::query()
+            ->whereIn('doc_id', $this->docIds)
             ->get();
     }
 

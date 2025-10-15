@@ -78,7 +78,7 @@ class SupplierIssueResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('supplier_id')
                             ->label(__('Supplier'))
-                            ->relationship('supplier', 'title')
+                            ->relationship('supplier', 'name')
                             ->afterStateUpdated(function (Set $set) {
                                 $set('product_id', null);
                                 $set('product_title', null);
@@ -110,6 +110,9 @@ class SupplierIssueResource extends Resource
                         Forms\Components\TextInput::make('amount')
                             ->label(__('Amount'))
                             ->required()
+                            ->extraAttributes([
+                                'onkeydown' => 'if(event.key === "e" || event.key === "E") event.preventDefault();',
+                            ])
                             ->numeric(),
                         Forms\Components\TextInput::make('supplier_lot')
                             ->label(__('Supplier lot'))
@@ -124,6 +127,9 @@ class SupplierIssueResource extends Resource
                         Forms\Components\TextInput::make('monetary_impact')
                             ->label(__('Monetary impact'))
                             ->numeric()
+                            ->extraAttributes([
+                                'onkeydown' => 'if(event.key === "e" || event.key === "E") event.preventDefault();',
+                            ])
                             ->prefix('$')
                             ->required(),
                         Forms\Components\Textarea::make('supplier_response')
@@ -172,7 +178,7 @@ class SupplierIssueResource extends Resource
                     ->label(__('Issue date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('supplier.title')
+                Tables\Columns\TextColumn::make('supplier.name')
                     ->label(__('Supplier')),
                 Tables\Columns\TextColumn::make('product.title')
                     ->label(__('Product'))
@@ -225,7 +231,7 @@ class SupplierIssueResource extends Resource
                     ->native(false),
                 Tables\Filters\SelectFilter::make('supplier_id')
                     ->label(__('Supplier'))
-                    ->relationship('supplier', 'title')
+                    ->relationship('supplier', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload(),

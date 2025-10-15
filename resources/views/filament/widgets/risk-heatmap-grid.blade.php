@@ -16,7 +16,7 @@
                                     <tr>
                                         <th class="w-32"></th>
                                         @foreach ($impacts as $impact)
-                                            <th class="p-3 text-center font-semibold text-gray-700 dark:text-gray-300 text-sm pb-2 min-w-[110px]">
+                                            <th class="p-3 text-center font-semibold text-gray-700 dark:text-white text-sm pb-2 min-w-[110px]">
                                                 {{ $impact->title }}
                                             </th>
                                         @endforeach
@@ -25,7 +25,7 @@
                                 <tbody>
                                     @foreach ($probs as $prob)
                                         <tr>
-                                            <th class="text-right px-3 font-semibold text-gray-700 dark:text-gray-300 text-sm whitespace-nowrap">
+                                            <th class="text-right px-3 font-semibold text-gray-700 dark:text-white text-sm whitespace-nowrap">
                                                 {{ $prob->title }}
                                             </th>
                                             @foreach ($impacts as $impact)
@@ -56,27 +56,24 @@
             </div>
 
             <!-- Leyenda -->
-            <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Niveles de Riesgo:</span>
+            @php
+                $riskLevels = [
+                    ['label' => 'Bajo', 'color' => config('filament-colors.success.hex')],
+                    ['label' => 'Medio', 'color' => config('filament-colors.yellow.hex')],
+                    ['label' => 'Alto', 'color' => config('filament-colors.warning.hex')],
+                    ['label' => 'Muy alto', 'color' => config('filament-colors.danger.hex')],
+                ];
+            @endphp
+            <div class="flex flex-wrap items-center justify-start gap-x-6 gap-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-sm font-medium text-gray-700 dark:text-white">Niveles de Riesgo:</span>
 
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-4 rounded-sm bg-[#22c55e]"></span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Bajo</span>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-4 rounded-sm bg-[#fbbf24]"></span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Moderado</span>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-4 rounded-sm bg-[#fb923c]"></span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Alto</span>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-4 rounded-sm bg-[#ef4444]"></span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Crítico</span>
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                    @foreach ($riskLevels as $level)
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-full" style="background-color: {{ $level['color'] }};"></span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-white">{{ $level['label'] }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>

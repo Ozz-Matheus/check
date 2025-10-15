@@ -359,7 +359,8 @@ class ActionResource extends Resource
                     ->action(fn ($records) => Excel::download(
                         new ActionExport($records->pluck('id')->toArray()),
                         'actions_improve_'.now()->format('Y_m_d_His').'.xlsx'
-                    )),
+                    ))
+                    ->deselectRecordsAfterCompletion(),
             ]);
     }
 

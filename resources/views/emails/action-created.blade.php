@@ -18,7 +18,7 @@ Una Acción ha sido Creada
 </ul>
 
 <p>
-    <a href="{{ $action->url }}"
+    <a href="{{ route('filament.dashboard.resources.actions.view', ['record' => $action->id ]) }}"
        class="button">
         Ver Acción
     </a> 

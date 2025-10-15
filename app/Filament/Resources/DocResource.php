@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Exports\DocExport;
+use App\Exports\DocsAndVersionsExport;
 use App\Filament\Resources\DocResource\Pages;
 use App\Models\Doc;
 use App\Models\DocType;
@@ -21,6 +22,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DocResource extends Resource
@@ -416,14 +418,36 @@ class DocResource extends Resource
                 ])->color('primary')->link()->label(false)->tooltip('Actions'),
 
             ])
+
             ->bulkActions([
-                BulkAction::make('export')
-                    ->label(__('Export selected'))
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->action(fn ($records) => Excel::download(
-                        new DocExport($records->pluck('id')->toArray()),
-                        'docs_'.now()->format('Y_m_d_His').'.xlsx'
-                    )),
+                Tables\Actions\BulkActionGroup::make([
+
+                    BulkAction::make('export')
+                        ->label(__('Export selected'))
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(fn ($records) => Excel::download(
+                            new DocExport($records->pluck('id')->toArray()),
+                            'docs_'.now()->format('Y_m_d_His').'.xlsx'
+                        ))
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('exportar_excel')
+                        ->label(__('Export selected (with versions)'))
+                        ->tooltip(__('Export selected (with versions)'))
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->action(function (Collection $records) {
+
+                            $docIds = $records->pluck('id')->all();
+
+                            return Excel::download(
+                                new DocsAndVersionsExport($docIds),
+                                'docs_y_versiones_'.now()->format('Y_m_d_His').'.xlsx'
+                            );
+
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                ]),
             ]);
     }
 

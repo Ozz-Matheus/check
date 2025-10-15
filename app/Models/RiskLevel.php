@@ -14,5 +14,6 @@ class RiskLevel extends Model
         'title',
         'min',
         'max',
+        'color',
     ];
 }

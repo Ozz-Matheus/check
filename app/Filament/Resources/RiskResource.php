@@ -196,13 +196,17 @@ class RiskResource extends Resource
                     Tables\Columns\TextColumn::make('inherentProbability.title')
                         ->label(__('Probability')),
                     Tables\Columns\TextColumn::make('inherentLevel.title')
-                        ->label(__('Level')),
+                        ->label(__('Level'))
+                        ->badge()
+                        ->color(fn ($record) => $record->inherentLevel->color),
                 ]),
                 Tables\Columns\ColumnGroup::make(__('Residual risk'), [
                     Tables\Columns\TextColumn::make('controlGeneralQualificationCalculated.title')
                         ->label(__('General qualification')),
                     Tables\Columns\TextColumn::make('residualLevelCalculated.title')
-                        ->label(__('Level')),
+                        ->label(__('Level'))
+                        ->badge()
+                        ->color(fn ($record) => $record->residualLevelCalculated->color),
                 ]),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))

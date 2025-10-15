@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('cause_id')->constrained('supplier_issue_causes');
             $table->text('description');
             $table->date('issue_date');
-            $table->foreignId('supplier_id')->constrained('suppliers');
+            $table->foreignId('supplier_id')->constrained('users');
             $table->foreignId('product_id')->constrained('supplier_products');
             $table->integer('amount');
             $table->string('supplier_lot');

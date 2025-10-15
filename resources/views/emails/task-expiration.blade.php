@@ -18,7 +18,7 @@ Tarea próxima a vencer
 </ul>
 
 <p>
-    <a href="{{ $task->action->url }}"
+    <a href="{{ route('filament.dashboard.resources.actions.view', ['record' => $task->action->id ]) }}"
        class="button">
         Ver detalles
     </a> 

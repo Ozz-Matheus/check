@@ -17,21 +17,25 @@ class RiskLevelSeeder extends Seeder
             'title' => 'Bajo',
             'min' => 1,
             'max' => 5,
+            'color' => 'success',
         ]);
         RiskLevel::factory()->create([
-            'title' => 'Moderado',
+            'title' => 'Medio',
             'min' => 6,
             'max' => 12,
+            'color' => 'yellow',
         ]);
         RiskLevel::factory()->create([
             'title' => 'Alto',
             'min' => 13,
             'max' => 19,
+            'color' => 'warning',
         ]);
         RiskLevel::factory()->create([
-            'title' => 'Crítico',
+            'title' => 'Muy alto',
             'min' => 20,
             'max' => 25,
+            'color' => 'danger',
         ]);
     }
 }

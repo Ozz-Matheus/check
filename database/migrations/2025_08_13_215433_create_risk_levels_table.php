@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->integer('min')->unique();
             $table->integer('max')->unique();
+            $table->string('color')->nullable();
             $table->timestamps();
         });
     }
