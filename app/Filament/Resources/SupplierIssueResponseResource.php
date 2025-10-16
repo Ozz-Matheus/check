@@ -35,7 +35,7 @@ class SupplierIssueResponseResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('supplier_issue_id')
+                Tables\Columns\TextColumn::make('supplierIssue.title')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('response_date')

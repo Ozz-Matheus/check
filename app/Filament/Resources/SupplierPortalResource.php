@@ -181,15 +181,20 @@ class SupplierPortalResource extends Resource
         ];
     }
 
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListSupplierPortals::route('/'),
-            'create' => Pages\CreateSupplierPortal::route('/create'),
+            // 'create' => Pages\CreateSupplierPortal::route('/create'),
             'view' => Pages\ViewSupplierPortal::route('/{record}'),
             // 'edit' => Pages\EditSupplierPortal::route('/{record}/edit'),
             // Respuesta de proveedor
-            'response.create' => \app\filament\resources\SupplierIssueResponseResource\Pages\CreateSupplierIssueResponse::route('/{record}/supplier-issue-responses/create'),
+            'response.create' => \App\Filament\Resources\SupplierIssueResponseResource\Pages\CreateSupplierIssueResponse::route('/{supplier_issue}/supplier-issue-responses/create'),
         ];
     }
 }

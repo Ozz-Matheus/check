@@ -16,7 +16,7 @@ class ViewSupplierPortal extends ViewRecord
             Action::make('answer')
                 ->label(__('Answer'))
                 ->url($this->getResource()::getUrl('response.create', [
-                    'record' => $this->getRecord()->id,
+                    'supplier_issue' => $this->getRecord()->id,
                 ]))
                 ->color('primary'),
             Action::make('back')
