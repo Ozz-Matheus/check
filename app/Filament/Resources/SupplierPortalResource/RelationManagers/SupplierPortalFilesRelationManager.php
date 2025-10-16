@@ -1,20 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\SupplierIssueResource\RelationManagers;
+namespace App\Filament\Resources\SupplierPortalResource\RelationManagers;
 
-use App\Filament\Resources\SupplierIssueResource;
-use App\Models\Status;
-use App\Services\FileService;
-use App\Traits\HasStandardFileUpload;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class SupplierIssueFilesRelationManager extends RelationManager
+class SupplierPortalFilesRelationManager extends RelationManager
 {
-    use HasStandardFileUpload;
-
     protected static string $relationship = 'files';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
@@ -45,28 +39,6 @@ class SupplierIssueFilesRelationManager extends RelationManager
             ->defaultSort('id', 'desc')
             ->filters([
                 //
-            ])
-            ->headerActions([
-                Tables\Actions\Action::make('create')
-                    ->label(__('New support files'))
-                    ->color('primary')
-                    ->form([
-                        static::baseFileUpload('path')
-                            ->label(__('Support follow-up files'))
-                            ->directory('supplier-issue/files')
-                            ->multiple()
-                            ->columnSpanFull(),
-                    ])
-                    // 📌 Falta la autorización
-                    ->visible($this->getOwnerRecord()->status_id === Status::byContextAndTitle('supplier_issue', 'open')?->id)
-                    ->action(function (array $data) {
-                        $owner = $this->getOwnerRecord();
-                        app(FileService::class)->createFiles($owner, $data);
-
-                        redirect(SupplierIssueResource::getUrl('view', [
-                            'record' => $this->getOwnerRecord()->id,
-                        ]));
-                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('file')

@@ -2,56 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SupplierIssueResource\Pages;
-use App\Filament\Resources\SupplierIssueResource\RelationManagers\SupplierIssueFilesRelationManager;
-use App\Models\SupplierIssue;
-use App\Models\SupplierProduct;
-use App\Traits\HasStandardFileUpload;
+use App\Filament\Resources\SupplierPortalResource\Pages;
+use App\Filament\Resources\SupplierPortalResource\RelationManagers\SupplierPortalFilesRelationManager;
+use App\Models\SupplierPortal;
+use App\Services\SupplierPortalService;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class SupplierIssueResource extends Resource
+class SupplierPortalResource extends Resource
 {
-    use HasStandardFileUpload;
+    protected static ?string $model = SupplierPortal::class;
 
-    protected static ?string $model = SupplierIssue::class;
-
-    protected static ?string $modelLabel = null;
-
-    protected static ?string $pluralModelLabel = null;
-
-    protected static ?string $navigationLabel = null;
-
-    protected static ?string $navigationGroup = null;
-
-    public static function getModelLabel(): string
-    {
-        return __('Supplier Issue');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('Supplier Issues');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Supplier Issues');
-    }
-
-    public static function getNavigationGroup(): string
-    {
-        return __('Supplier');
-    }
-
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
-
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -62,117 +27,54 @@ class SupplierIssueResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->label(__('Title'))
-                            ->required()
                             ->maxLength(255),
                         Forms\Components\Select::make('cause_id')
                             ->label(__('Cause'))
                             ->relationship('cause', 'title')
-                            ->native(false)
-                            ->required(),
+                            ->native(false),
                         Forms\Components\Textarea::make('description')
                             ->label(__('Description'))
-                            ->required()
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('issue_date')
                             ->label(__('Issue date'))
-                            ->maxDate(today())
-                            ->closeOnDateSelection()
-                            ->native(false)
-                            ->required(),
+                            ->native(false),
                         Forms\Components\Select::make('supplier_id')
                             ->label(__('Supplier'))
                             ->relationship('supplier', 'name')
-                            ->afterStateUpdated(function (Set $set) {
-                                $set('product_id', null);
-                                $set('product_title', null);
-                            })
-                            ->native(false)
-                            ->reactive()
-                            ->required(),
+                            ->native(false),
                         Forms\Components\Select::make('product_id')
                             ->label(__('Product code'))
-                            ->relationship(
-                                name: 'product',
-                                titleAttribute: 'product_code',
-                                modifyQueryUsing: fn ($query, Get $get) => $query->where('supplier_id', $get('supplier_id'))
-                            )
-                            ->reactive()
-                            ->afterStateUpdated(function (Set $set, $state) {
-                                $product = SupplierProduct::find($state);
-                                $set('product_title', $product?->title);
-                            })
-                            ->searchable()
-                            ->preload()
-                            ->required(),
+                            ->relationship('product', 'product_code')
+                            ->native(false),
                         Forms\Components\Textarea::make('product_title')
                             ->label(__('Product Title'))
                             ->formatStateUsing(fn ($record) => $record?->product?->title)
-                            ->disabled()
                             ->dehydrated(false)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('amount')
                             ->label(__('Amount'))
-                            ->required()
                             ->extraAttributes([
                                 'onkeydown' => 'if(event.key === "e" || event.key === "E") event.preventDefault();',
                             ])
                             ->numeric(),
                         Forms\Components\TextInput::make('supplier_lot')
                             ->label(__('Supplier lot'))
-                            ->required()
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('report_date')
                             ->label(__('Report date'))
-                            ->maxDate(today())
-                            ->closeOnDateSelection()
-                            ->native(false)
-                            ->required(),
-                        Forms\Components\TextInput::make('monetary_impact')
-                            ->label(__('Monetary impact'))
-                            ->numeric()
-                            ->extraAttributes([
-                                'onkeydown' => 'if(event.key === "e" || event.key === "E") event.preventDefault();',
-                            ])
-                            ->prefix('$')
-                            ->required(),
-                        static::baseFileUpload('path')
-                            ->label(__('Support files'))
-                            ->directory('supplier-issues/files')
-                            ->multiple()
-                            ->required()
-                            ->columnSpanFull()
-                            ->visibleOn('create'),
+                            ->native(false),
                         Forms\Components\TextInput::make('status_label')
                             ->label(__('Status'))
                             ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
-                            ->disabled()
-                            ->dehydrated(false)
-                            ->visible(fn (string $context) => $context === 'view'),
-                        Forms\Components\Textarea::make('supplier_response')
-                            ->label(__('Supplier response'))
-                            ->rows(3)
-                            ->visible(fn ($record) => filled($record?->supplier_response))
-                            ->readOnly(),
-                        Forms\Components\Textarea::make('supplier_actions')
-                            ->label(__('Supplier actions'))
-                            ->rows(3)
-                            ->visible(fn ($record) => filled($record?->supplier_actions))
-                            ->readOnly(),
-                        Forms\Components\DatePicker::make('response_date')
-                            ->label(__('Response date'))
-                            ->native(false)
-                            ->visible(fn ($record) => filled($record?->response_date))
-                            ->readOnly(),
+                            ->dehydrated(false),
                         Forms\Components\TextInput::make('effectiveness')
                             ->label(__('Effectiveness'))
-                            ->visible(fn ($record) => filled($record?->effectiveness))
-                            ->readOnly(),
+                            ->visible(fn ($record) => filled($record?->effectiveness)),
                         Forms\Components\Textarea::make('evaluation_comment')
                             ->label(__('Evaluation comment'))
-                            ->rows(3)
+                            // ->rows(3)
                             ->columnSpanFull()
-                            ->visible(fn ($record) => filled($record?->evaluation_comment))
-                            ->readOnly(),
+                            ->visible(fn ($record) => filled($record?->evaluation_comment)),
                     ]),
             ]);
     }
@@ -216,11 +118,6 @@ class SupplierIssueResource extends Resource
                     ->label(__('Report date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('monetary_impact')
-                    ->label(__('Monetary impact'))
-                    ->numeric()
-                    ->prefix('$')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
                     ->searchable()
@@ -239,24 +136,19 @@ class SupplierIssueResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->recordUrl(null)
             ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('cause_id')
                     ->label(__('Cause'))
                     ->relationship('cause', 'title')
                     ->native(false),
-                Tables\Filters\SelectFilter::make('supplier_id')
-                    ->label(__('Supplier'))
-                    ->relationship('supplier', 'name')
-                    ->multiple()
-                    ->searchable()
-                    ->preload(),
                 Tables\Filters\SelectFilter::make('status_id')
                     ->label(__('Status'))
                     ->relationship(
                         name: 'status',
                         titleAttribute: 'label',
-                        modifyQueryUsing: fn ($query) => $query->where('context', 'supplier_issue')->orderBy('id', 'asc'),
+                        modifyQueryUsing: fn ($query) => $query->where('context', 'supplier_issue')->where('title', '!=', 'open')->orderBy('id', 'asc'),
                     )
                     ->native(false),
             ])
@@ -266,7 +158,16 @@ class SupplierIssueResource extends Resource
                     ->label(__('Filter')),
             )
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('view_record')
+                    ->label(__('View'))
+                    ->color('gray')
+                    ->icon('heroicon-s-eye')
+                    ->action(function ($record, SupplierPortalService $supplierPortalService) {
+                        $supplierPortalService->changeSupplierPortalStatusToRead($record);
+                        $viewUrl = SupplierPortalResource::getUrl('view', ['record' => $record]);
+
+                        return redirect($viewUrl);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
@@ -276,19 +177,19 @@ class SupplierIssueResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-            SupplierIssueFilesRelationManager::class,
+            SupplierPortalFilesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSupplierIssues::route('/'),
-            'create' => Pages\CreateSupplierIssue::route('/create'),
-            'view' => Pages\ViewSupplierIssue::route('/{record}'),
-            // 'edit' => Pages\EditSupplierIssue::route('/{record}/edit'),
-            'supplier-issue-response.create' => \app\filament\resources\SupplierIssueResponseResource\Pages\CreateSupplierIssueResponse::route('/{record}/supplier-issue-response/create'),
+            'index' => Pages\ListSupplierPortals::route('/'),
+            'create' => Pages\CreateSupplierPortal::route('/create'),
+            'view' => Pages\ViewSupplierPortal::route('/{record}'),
+            // 'edit' => Pages\EditSupplierPortal::route('/{record}/edit'),
+            // Respuesta de proveedor
+            'response.create' => \app\filament\resources\SupplierIssueResponseResource\Pages\CreateSupplierIssueResponse::route('/{record}/supplier-issue-responses/create'),
         ];
     }
 }

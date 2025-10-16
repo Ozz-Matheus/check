@@ -12,10 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('audit_potential_causes_has_audit_controls', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('audit_potential_cause_id');
-            $table->foreignId('audit_control_id');
-            $table->timestamps();
+            $table->foreignId('audit_control_id')
+                ->constrained('audit_controls', 'id', indexName: 'fk_apc_audit_control')
+                ->cascadeOnDelete();
+
+            $table->foreignId('audit_potential_cause_id')
+                ->constrained('audit_potential_causes', 'id', indexName: 'fk_apc_potential_cause')
+                ->cascadeOnDelete();
+
+            $table->primary(['audit_potential_cause_id', 'audit_control_id'], 'pk_apc_has_controls');
         });
     }
 

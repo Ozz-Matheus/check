@@ -9,6 +9,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewSupplierIssue extends ViewRecord
@@ -18,7 +19,25 @@ class ViewSupplierIssue extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('qualification_effectiveness')
+            Action::make('send')
+                ->label(__('Send to supplier'))
+                // 📌 Falta la autorización
+                ->visible(fn ($record): bool => $record->status_id === Status::byContextAndTitle('supplier_issue', 'open')?->id)
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    $this->record->update([
+                        'status_id' => Status::byContextAndTitle('supplier_issue', 'sent')?->id,
+                    ]);
+
+                    Notification::make()
+                        ->title(__('Sent successfully'))
+                        ->success()
+                        ->send();
+
+                    $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record]));
+                }),
+
+            /* Action::make('qualification_effectiveness')
                 ->label(__('Qualify effectiveness'))
                 ->form([
                     Grid::make(2)->schema([
@@ -61,7 +80,7 @@ class ViewSupplierIssue extends ViewRecord
                     $this->redirect(static::getResource()::getUrl('view', [
                         'record' => $this->record,
                     ]));
-                }),
+                }), */
             Action::make('back')
                 ->label(__('Return'))
                 ->url($this->getResource()::getUrl('index'))

@@ -51,4 +51,9 @@ class SupplierIssue extends Model
     {
         return $this->morphMany(File::class, 'fileable');
     }
+
+    public function responses()
+    {
+        return $this->hasOne(SupplierIssueResponse::class, 'supplier_issue_id');
+    }
 }

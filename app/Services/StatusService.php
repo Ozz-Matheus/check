@@ -30,6 +30,19 @@ class StatusService
         });
     }
 
+    public function getSupplierIssueAndSupplierPortal(): array
+    {
+        return Cache::remember('statuses.supplier_issue', 3600, function () {
+            return [
+                'open' => Status::byContextAndTitle('supplier_issue', 'open')?->id,
+                'sent' => Status::byContextAndTitle('supplier_issue', 'sent')?->id,
+                'read' => Status::byContextAndTitle('supplier_issue', 'read')?->id,
+                'answered' => Status::byContextAndTitle('supplier_issue', 'answered')?->id,
+                'closed' => Status::byContextAndTitle('supplier_issue', 'closed')?->id,
+            ];
+        });
+    }
+
     public function getActionAndTaskStatuses(): array
     {
         return Cache::remember('statuses.action_task', 3600, function () {

@@ -31,10 +31,8 @@ class Supplier extends User
         });
 
         // Al crear un nuevo Supplier, automáticamente asigna el rol
-        static::created(function (User $model) {
-            if (! $model->hasRole('supplier')) {
-                $model->assignRole('supplier');
-            }
+        static::created(function (Supplier $model) {
+            $model->syncRoles(['supplier']);
         });
     }
 }

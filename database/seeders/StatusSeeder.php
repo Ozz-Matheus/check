@@ -98,36 +98,36 @@ class StatusSeeder extends Seeder
         ]);
         Status::factory()->create([
             'context' => 'supplier_issue',
+            'title' => 'sent',
+            'label' => 'Enviado',
+            'color' => 'warning',
+            'icon' => 'heroicon-o-paper-airplane',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'supplier_issue',
+            'title' => 'read',
+            'label' => 'Leido',
+            'color' => 'indigo',
+            'icon' => 'heroicon-o-check',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'supplier_issue',
+            'title' => 'answered',
+            'label' => 'Respondido',
+            'color' => 'warning',
+            'icon' => 'heroicon-o-chat-bubble-left-ellipsis',
+            'protected' => true,
+        ]);
+        Status::factory()->create([
+            'context' => 'supplier_issue',
             'title' => 'closed',
             'label' => 'Cerrado',
             'color' => 'success',
             'icon' => 'heroicon-o-check-circle',
             'protected' => true,
         ]);
-        /* Status::factory()->create([
-            'context' => 'supplier',
-            'title' => 'sent_to_supplier',
-            'label' => 'Enviado al proveedor',
-            'color' => 'warning',
-            'icon' => 'heroicon-o-paper-airplane',
-            'protected' => true,
-        ]);
-        Status::factory()->create([
-            'context' => 'supplier',
-            'title' => 'answered_by_supplier',
-            'label' => 'Respondido por proveedor',
-            'color' => 'success',
-            'icon' => 'heroicon-o-chat-bubble-left-ellipsis',
-            'protected' => true,
-        ]); */
-        /* Status::factory()->create([
-            'context' => 'supplier',
-            'title' => 'in_execution',
-            'label' => 'En ejecución',
-            'color' => 'indigo',
-            'icon' => 'heroicon-o-clock',
-            'protected' => true,
-        ]); */
         // --------- Context: incident and accident ---------
         Status::factory()->create([
             'context' => 'incident_and_accident',
