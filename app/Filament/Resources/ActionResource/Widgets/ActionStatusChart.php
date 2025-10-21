@@ -53,7 +53,7 @@ class ActionStatusChart extends ChartWidget
             // Assumes a colorName() method on Status model that returns 'primary', 'success', etc.
             $colorName = $status->colorName();
 
-            return config("filament-colors.{$colorName}.rgba", config('filament-colors.secondary.rgba'));
+            return config("filament-colors.{$colorName}.rgba", config('filament-colors.darkextra.rgba'));
         });
 
         return [

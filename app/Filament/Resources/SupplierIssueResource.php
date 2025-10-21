@@ -148,31 +148,6 @@ class SupplierIssueResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->visible(fn (string $context) => $context === 'view'),
-                        Forms\Components\Textarea::make('supplier_response')
-                            ->label(__('Supplier response'))
-                            ->rows(3)
-                            ->visible(fn ($record) => filled($record?->supplier_response))
-                            ->readOnly(),
-                        Forms\Components\Textarea::make('supplier_actions')
-                            ->label(__('Supplier actions'))
-                            ->rows(3)
-                            ->visible(fn ($record) => filled($record?->supplier_actions))
-                            ->readOnly(),
-                        Forms\Components\DatePicker::make('response_date')
-                            ->label(__('Response date'))
-                            ->native(false)
-                            ->visible(fn ($record) => filled($record?->response_date))
-                            ->readOnly(),
-                        Forms\Components\TextInput::make('effectiveness')
-                            ->label(__('Effectiveness'))
-                            ->visible(fn ($record) => filled($record?->effectiveness))
-                            ->readOnly(),
-                        Forms\Components\Textarea::make('evaluation_comment')
-                            ->label(__('Evaluation comment'))
-                            ->rows(3)
-                            ->columnSpanFull()
-                            ->visible(fn ($record) => filled($record?->evaluation_comment))
-                            ->readOnly(),
                     ]),
             ]);
     }
@@ -227,6 +202,16 @@ class SupplierIssueResource extends Resource
                     ->badge()
                     ->color(fn ($record) => $record->status->colorName())
                     ->icon(fn ($record) => $record->status->iconName())
+                    ->placeholder('-'),
+                Tables\Columns\TextColumn::make('responses.effectiveness')
+                    ->label(__('Effectiveness'))
+                    ->badge()
+                    ->color(fn (?string $state): string => match ($state) {
+                        'yes' => 'success',
+                        'no' => 'danger',
+                        'partial' => 'warning',
+                        default => 'gray',
+                    })
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
@@ -288,7 +273,8 @@ class SupplierIssueResource extends Resource
             'create' => Pages\CreateSupplierIssue::route('/create'),
             'view' => Pages\ViewSupplierIssue::route('/{record}'),
             // 'edit' => Pages\EditSupplierIssue::route('/{record}/edit'),
-            'supplier-issue-response.create' => \app\filament\resources\SupplierIssueResponseResource\Pages\CreateSupplierIssueResponse::route('/{record}/supplier-issue-response/create'),
+            'response.create' => \app\filament\resources\SupplierIssueResponseResource\Pages\CreateSupplierIssueResponse::route('/{supplier_issue}/supplier-issue-response/create'),
+            'response.view' => \app\filament\resources\SupplierIssueResponseResource\Pages\ViewSupplierIssueResponse::route('/{supplier_issue}/supplier-issue-response/{record}'),
         ];
     }
 }

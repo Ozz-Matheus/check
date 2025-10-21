@@ -6,7 +6,11 @@ use App\Models\AuditItem;
 use App\Models\RiskControl;
 use App\Observers\AuditItemObserver;
 use App\Observers\RiskControlObserver;
+use App\Services\TenantStorageInitializer;
+use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\PermissionRegistrar;
+use Stancl\Tenancy\Events\TenancyBootstrapped;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,8 +27,36 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
         RiskControl::observe(RiskControlObserver::class);
         AuditItem::observe(AuditItemObserver::class);
+
+        Filament::serving(function () {
+
+            if ($user = auth()->user()) {
+
+                $panelId = Filament::getCurrentPanel()->getId();
+                $cacheKey = "spatie.permission.cache.{$panelId}.user.{$user->getAuthIdentifier()}";
+
+                // Esto evita lecturas obsoletas del cache anterior
+                app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+                // Esto asegura un cache aislado por panel + user
+                app(PermissionRegistrar::class)->cacheKey = $cacheKey;
+            }
+
+        });
+
+        // Este bloque crea automáticamente el directorio para el tenant
+        \Event::listen(TenancyBootstrapped::class, function ($event) {
+
+            $tenantId = tenant()?->getTenantKey();
+
+            if (! $tenantId) {
+                return;
+            }
+
+            app(TenantStorageInitializer::class)->ensureStorageStructure($tenantId);
+        });
+
     }
 }

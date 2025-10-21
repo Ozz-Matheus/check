@@ -7,12 +7,10 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\UserMenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -21,9 +19,9 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use TomatoPHP\FilamentTenancy\FilamentTenancyAppPlugin;
+use TomatoPHP\FilamentTenancy\FilamentTenancyPlugin;
 
-class DashboardPanelProvider extends PanelProvider
+class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
@@ -39,11 +37,9 @@ class DashboardPanelProvider extends PanelProvider
         ]);
 
         return $panel
-            ->sidebarCollapsibleOnDesktop()
-            ->maxContentWidth(MaxWidth::Full)
             ->default()
-            ->id('dashboard')
-            ->path('dashboard')
+            ->id('admin')
+            ->path('admin')
             ->login()
             ->colors([
                 'primary' => Color::hex(config('filament-colors.primary.hex')),
@@ -52,14 +48,19 @@ class DashboardPanelProvider extends PanelProvider
             ->brandLogo(asset('images/fondo_claro.svg'))
             ->darkModeBrandLogo(asset('images/fondo_oscuro.svg'))
             ->brandLogoHeight('3rem')
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
+            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                Widgets\FilamentInfoWidget::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make(),
+                FilamentTenancyPlugin::make()->panel('dashboard'),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -72,40 +73,8 @@ class DashboardPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->plugins([
-                FilamentShieldPlugin::make(),
-                FilamentTenancyAppPlugin::make(),
-            ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->databaseNotifications()
-            ->userMenuItems([
-                // Subproceso
-                UserMenuItem::make()
-                    ->label(function () {
-                        return auth()->user()?->leaderOfSubProcess()?->title;
-                    })
-                    ->icon('heroicon-o-puzzle-piece') // ícono para subproceso
-                    ->url(null)
-                    ->sort(2)
-                    ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                        auth()->user()?->hasRole('super_admin') ||
-                        auth()->user()?->hasRole('admin')
-                    ),
-                // Proceso
-                UserMenuItem::make()
-                    ->label(function () {
-                        $subProcess = auth()->user()?->leaderOfSubProcess();
-
-                        return $subProcess?->process?->title;
-                    })
-                    ->icon('heroicon-o-rectangle-group') // ícono para proceso
-                    ->url(null)
-                    ->sort(1)
-                    ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                        auth()->user()?->hasRole('super_admin') ||
-                        auth()->user()?->hasRole('admin')
-                    ),
             ]);
     }
 }

@@ -30,7 +30,9 @@ class UserTaskList extends BaseWidget implements HasTable
         return [
             Tables\Columns\TextColumn::make('title')
                 ->label(__('Task'))
-                ->searchable(),
+                ->searchable()
+                ->limit(30)
+                ->tooltip(fn ($record) => $record->title),
 
             Tables\Columns\TextColumn::make('status.label')
                 ->label(__('Status'))

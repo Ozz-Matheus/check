@@ -48,7 +48,7 @@ class ActionEndingResource extends Resource
                             ->required(),
                         Forms\Components\Textarea::make('extemporaneous_reason')
                             ->label(__('Reason for extemporaneous closing'))
-                            ->visible(fn ($livewire, $record) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id || filled($record?->extemporaneous_reason))
+                            ->visible(fn ($livewire, $record) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id || $record?->limit_date < today() || filled($record?->extemporaneous_reason))
                             ->required(fn ($livewire) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id),
                         Forms\Components\DatePicker::make('real_closing_date')
                             ->label(__('Real closing date'))

@@ -23,12 +23,6 @@ return new class extends Migration
             $table->string('supplier_lot');
             $table->date('report_date');
             $table->bigInteger('monetary_impact');
-            $table->text('supplier_response')->nullable();
-            $table->text('supplier_actions')->nullable();
-            $table->date('response_date')->nullable();
-            $table->enum('effectiveness', ['yes', 'no', 'partial'])->nullable();
-            $table->text('evaluation_comment')->nullable();
-            $table->date('real_evaluation_date')->nullable();
             $table->foreignId('status_id')->constrained('statuses');
             $table->timestamps();
         });

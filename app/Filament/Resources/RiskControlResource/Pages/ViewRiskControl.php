@@ -32,7 +32,6 @@ class ViewRiskControl extends ViewRecord
                 ->url(fn ($record): string => RiskResource::getUrl('view', [
                     'record' => $record->risk_id,
                 ]))
-                ->button()
                 ->color('gray'),
         ];
     }

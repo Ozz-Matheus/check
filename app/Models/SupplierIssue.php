@@ -18,12 +18,6 @@ class SupplierIssue extends Model
         'supplier_lot',
         'report_date',
         'monetary_impact',
-        'supplier_response',
-        'supplier_actions',
-        'response_date',
-        'effectiveness',
-        'evaluation_comment',
-        'real_evaluation_date',
         'status_id',
     ];
 

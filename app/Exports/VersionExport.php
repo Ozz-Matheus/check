@@ -48,6 +48,7 @@ class VersionExport implements FromCollection, WithHeadings, WithMapping, WithTi
             $version->decision_at ?? '—',
             $version->sha256_hash ? __('Yes') : __('No'),
             $version->isLatestVersion() ? __('Yes') : __('No'),
+            $version->isCompliant() ? 'Yes' : 'No',
             $version->created_at,
             $version->updated_at,
         ];
@@ -71,6 +72,7 @@ class VersionExport implements FromCollection, WithHeadings, WithMapping, WithTi
             __('Decision at'),
             __('Signed'),
             __('Latest Version'),
+            __('Meets Requirements'),
             __('Created at'),
             __('Updated at'),
         ];

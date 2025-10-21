@@ -125,6 +125,16 @@ class SupplierPortalResource extends Resource
                     ->color(fn ($record) => $record->status->colorName())
                     ->icon(fn ($record) => $record->status->iconName())
                     ->placeholder('-'),
+                Tables\Columns\TextColumn::make('responses.effectiveness')
+                    ->label(__('Effectiveness'))
+                    ->badge()
+                    ->color(fn (?string $state): string => match ($state) {
+                        'yes' => 'success',
+                        'no' => 'danger',
+                        'partial' => 'warning',
+                        default => 'gray',
+                    })
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()
@@ -193,8 +203,10 @@ class SupplierPortalResource extends Resource
             // 'create' => Pages\CreateSupplierPortal::route('/create'),
             'view' => Pages\ViewSupplierPortal::route('/{record}'),
             // 'edit' => Pages\EditSupplierPortal::route('/{record}/edit'),
+
             // Respuesta de proveedor
             'response.create' => \App\Filament\Resources\SupplierIssueResponseResource\Pages\CreateSupplierIssueResponse::route('/{supplier_issue}/supplier-issue-responses/create'),
+            'response.view' => \App\filament\resources\SupplierIssueResponseResource\Pages\ViewSupplierIssueResponse::route('/{supplier_issue}/supplier-issue-response/{record}'),
         ];
     }
 }

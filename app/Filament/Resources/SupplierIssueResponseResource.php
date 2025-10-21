@@ -3,70 +3,66 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierIssueResponseResource\Pages;
+use App\Filament\Resources\SupplierIssueResponseResource\RelationManagers\SupplierIssueResponseFilesRelationManager;
 use App\Models\SupplierIssueResponse;
+use App\Traits\HasStandardFileUpload;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 
 class SupplierIssueResponseResource extends Resource
 {
-    protected static ?string $model = SupplierIssueResponse::class;
+    use HasStandardFileUpload;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $model = SupplierIssueResponse::class;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Textarea::make('supplier_response')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('supplier_actions')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\DatePicker::make('response_date')
-                    ->required(),
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('supplierIssue.title')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('response_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Forms\Components\Section::make(__('Suplier response data'))
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Textarea::make('supplier_response')
+                            ->label(__('Supplier response'))
+                            ->required()
+                            ->rows(3)
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('supplier_actions')
+                            ->required()
+                            ->rows(3)
+                            ->columnSpanFull(),
+                        Forms\Components\DatePicker::make('response_date')
+                            ->label(__('Response date'))
+                            ->native(false)
+                            ->visibleOn('view'),
+                        Forms\Components\TextInput::make('effectiveness')
+                            ->label(__('Effectiveness'))
+                            ->visible(fn ($record) => filled($record?->effectiveness)),
+                        Forms\Components\Textarea::make('evaluation_comment')
+                            ->label(__('Evaluation comment'))
+                            ->rows(3)
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => filled($record?->evaluation_comment)),
+                        Forms\Components\DatePicker::make('evaluation_date')
+                            ->label(__('Evaluation date'))
+                            ->native(false)
+                            ->visible(fn ($record) => filled($record?->evaluation_date)),
+                        static::baseFileUpload('path')
+                            ->label(__('Support files'))
+                            ->directory('supplier-issues-responses/files')
+                            ->multiple()
+                            ->required()
+                            ->columnSpanFull()
+                            ->visibleOn('create'),
+                    ]),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            SupplierIssueResponseFilesRelationManager::class,
         ];
     }
 
@@ -77,5 +73,10 @@ class SupplierIssueResponseResource extends Resource
             'create' => Pages\CreateSupplierIssueResponse::route('/create'),
             'edit' => Pages\EditSupplierIssueResponse::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
     }
 }

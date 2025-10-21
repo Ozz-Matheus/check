@@ -8,6 +8,11 @@ class SupplierPortal extends SupplierIssue
 {
     protected $table = 'supplier_issues';
 
+    public function getMorphClass()
+    {
+        return SupplierIssue::class;
+    }
+
     /**
      * The "booted" method of the model.
      */

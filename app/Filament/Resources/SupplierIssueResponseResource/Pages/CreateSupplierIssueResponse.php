@@ -2,33 +2,56 @@
 
 namespace App\Filament\Resources\SupplierIssueResponseResource\Pages;
 
+use App\Filament\Resources\SupplierIssueResource;
 use App\Filament\Resources\SupplierIssueResponseResource;
+use App\Models\Status;
 use App\Models\SupplierIssue;
+use App\Models\SupplierIssueResponse;
+use App\Services\FileService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSupplierIssueResponse extends CreateRecord
 {
     protected static string $resource = SupplierIssueResponseResource::class;
 
-    public ?int $supplierIssueId = null;
+    public ?int $supplier_issue_id = null;
+
+    public ?SupplierIssue $supplierIssueModel = null;
 
     public function mount(): void
     {
-
-        $supplierIssue = SupplierIssue::findOrFail(request()->route('supplier_issue'));
-
-        $this->supplierIssueId = $supplierIssue->id;
+        $this->supplier_issue_id = request()->route('supplier_issue');
+        $supplierIssueModel = SupplierIssue::findOrFail($this->supplier_issue_id);
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function handleRecordCreation(array $data): SupplierIssueResponse
     {
-        $data['s_i_id'] = $this->supplierIssueId;
+        $data['supplier_issue_id'] = $this->supplier_issue_id;
+        $data['response_date'] = today();
 
-        return $data;
+        $supplierResponse = SupplierIssueResponse::create($data);
+        $supplierResponse->supplierIssue()->update([
+            'status_id' => Status::byContextAndTitle('supplier_issue', 'answered')->id,
+        ]);
+
+        return $supplierResponse;
+    }
+
+    protected function afterCreate(): void
+    {
+        app(FileService::class)->createFiles($this->record, $this->form->getState());
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return SupplierIssueResource::getUrl('response.view', [
+            'supplier_issue' => $this->supplier_issue_id,
+            'record' => $this->record->id,
+        ]);
+    }
+
+    public static function canCreateAnother(): bool
+    {
+        return false;
     }
 }

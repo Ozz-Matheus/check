@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
             // Audit findings
             AuditFindingTypeSeeder::class,
             // Productos de los Proveedors
-            SupplierProductSeeder::class,
+            // * //SupplierProductSeeder::class,
             // Proveedor novedades
             SupplierIssueCauseSeeder::class,
             // Incidentes y accidentes
