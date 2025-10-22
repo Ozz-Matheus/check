@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
 
 class TenantStorageInitializer
@@ -20,7 +21,17 @@ class TenantStorageInitializer
 
         // Si el symlink no existe, lo crea
         if (! File::exists($publicPath)) {
-            symlink("{$tenantStoragePath}/app/public", $publicPath);
+
+            try {
+                resolve(Filesystem::class)->link(
+                    "{$tenantStoragePath}/app/public",
+                    $publicPath
+                );
+            } catch (\Throwable $e) {
+                // Si por alguna razón falla, lo ignora o loguea:
+                \Log::warning("No se pudo crear enlace simbólico para tenant {$tenantId}: {$e->getMessage()}");
+            }
+
         }
     }
 }

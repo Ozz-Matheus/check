@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class File extends Model
 {
@@ -49,7 +49,10 @@ class File extends Model
 
     public function url(): ?string
     {
-        return Storage::url($this->path);
+        $tenantId = tenant()->getTenantKey();
+        $relativePath = Str::after($this->path, 'app/public/');
+
+        return asset("tenant{$tenantId}/{$relativePath}");
     }
 
     /**
