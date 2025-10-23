@@ -12,8 +12,9 @@ class RolesSeeder extends Seeder
     public function run(): void
     {
         // Crear roles
-        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin']);
-        $panelRole = Role::firstOrCreate(['name' => 'panel_user']);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+        $panelRole = Role::firstOrCreate(['name' => 'panel_user', 'guard_name' => 'web']);
+        $adminRole = Role::firstOrCreate(['name' => 'administrador', 'guard_name' => 'web']);
 
         // Crear permisos base
         $permissions = [
@@ -23,23 +24,23 @@ class RolesSeeder extends Seeder
             'update_role',
         ];
 
-        // Crear y asegurar permisos
+        // Crear permisos si no existen
         $permissionModels = collect($permissions)->map(function ($name) {
-            return Permission::firstOrCreate(['name' => $name]);
+            return Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
         });
 
-        // Asignar permisos reales al rol SuperAdmin
-        $superAdminRole->syncPermissions($permissionModels->pluck('name')->toArray());
+        // Asignar permisos al rol SuperAdmin
+        $superAdminRole->givePermissionTo($permissionModels);
 
-        // Crear usuario admin
-        $SuperAdmin = User::firstOrCreate(
-            ['email' => 's@th.com'],
+        // Crear usuario SuperAdmin
+        $superAdmin = User::firstOrCreate(
+            ['email' => 's@ht.com'],
             [
-                'name' => 'Admin',
-                'password' => bcrypt('s@th.com'),
+                'name' => 'Super Admin',
+                'password' => bcrypt('s@ht.com'),
             ]
         );
-        $SuperAdmin->assignRole($superAdminRole);
 
+        $superAdmin->assignRole($superAdminRole);
     }
 }

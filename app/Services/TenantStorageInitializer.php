@@ -3,35 +3,40 @@
 namespace App\Services;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class TenantStorageInitializer
 {
+    protected Filesystem $filesystem;
+
+    public function __construct(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
     public function ensureStorageStructure(string $tenantId): void
     {
+        // Sanitiza el ID del tenant (solo letras, números, guiones y guion bajo)
         $tenantId = preg_replace('/[^a-zA-Z0-9_\-]/', '', $tenantId);
 
         $suffixBase = config('tenancy.filesystem.suffix_base');
         $tenantStoragePath = storage_path();
         $publicPath = public_path("{$suffixBase}{$tenantId}");
 
-        // Asegura carpetas necesarias
-        File::ensureDirectoryExists("{$tenantStoragePath}/app/public", 0777, true);
-        File::ensureDirectoryExists("{$tenantStoragePath}/framework/cache", 0777, true);
+        // Asegura directorios necesarios
+        $this->filesystem->ensureDirectoryExists("{$tenantStoragePath}/app/public", 0777, true);
+        $this->filesystem->ensureDirectoryExists("{$tenantStoragePath}/framework/cache", 0777, true);
 
-        // Si el symlink no existe, lo crea
-        if (! File::exists($publicPath)) {
-
+        // Crea enlace simbólico si no existe
+        if (! $this->filesystem->exists($publicPath)) {
             try {
-                resolve(Filesystem::class)->link(
+                $this->filesystem->link(
                     "{$tenantStoragePath}/app/public",
                     $publicPath
                 );
             } catch (\Throwable $e) {
-                // Si por alguna razón falla, lo ignora o loguea:
-                \Log::warning("No se pudo crear enlace simbólico para tenant {$tenantId}: {$e->getMessage()}");
+                Log::warning("No se pudo crear enlace simbólico para tenant {$tenantId}: {$e->getMessage()}");
             }
-
         }
     }
 }
