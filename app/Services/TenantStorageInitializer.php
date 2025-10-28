@@ -21,7 +21,12 @@ class TenantStorageInitializer
 
         $suffixBase = config('tenancy.filesystem.suffix_base');
         $tenantStoragePath = storage_path();
-        $publicPath = public_path("{$suffixBase}{$tenantId}");
+
+        $isHosting = str_contains(base_path(), '/home/customer/www/');
+
+        $publicPath = $isHosting
+            ? base_path("public_html/{$suffixBase}{$tenantId}")
+            : public_path("{$suffixBase}{$tenantId}");
 
         // Asegura directorios necesarios
         $this->filesystem->ensureDirectoryExists("{$tenantStoragePath}/app/public", 0777, true);

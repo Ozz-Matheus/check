@@ -44,7 +44,7 @@ class RiskProbabilityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 18;
+    protected static ?int $navigationSort = 19;
 
     public static function form(Form $form): Form
     {

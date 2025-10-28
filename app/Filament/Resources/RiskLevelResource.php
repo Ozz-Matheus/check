@@ -44,7 +44,7 @@ class RiskLevelResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 19;
+    protected static ?int $navigationSort = 20;
 
     public static function form(Form $form): Form
     {
@@ -62,9 +62,20 @@ class RiskLevelResource extends Resource
                     ->label(__('Max'))
                     ->required()
                     ->numeric(),
-                Forms\Components\ColorPicker::make('color')
+                Forms\Components\Select::make('color')
                     ->label(__('Color'))
-                    ->required(),
+                    ->options([
+                        'primary' => __('Primary'),
+                        'secondary' => __('Secondary'),
+                        'gray' => __('Gray'),
+                        'danger' => __('Danger'),
+                        'warning' => __('Warning'),
+                        'yellow' => __('Yellow'),
+                        'success' => __('Success'),
+                        'info' => __('Info'),
+                    ])
+                    ->required()
+                    ->native(false),
             ]);
     }
 

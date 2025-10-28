@@ -9,19 +9,6 @@ use App\Models\AuditProbability;
 
 class AuditControlService
 {
-    protected array $statusIds;
-
-    public function __construct(StatusService $statusService)
-    {
-        $this->statusIds = $statusService->getAuditStatuses();
-    }
-
-    // Comprueba si se puede ver el boton de crear tarea y seguimiento
-    public function canViewQualify(int $statusId): bool
-    {
-        return $statusId !== $this->statusIds['finished'];
-    }
-
     public function calculatedLevel(int $impact, int $probability)
     {
         $impactScore = AuditImpact::findOrFail($impact);

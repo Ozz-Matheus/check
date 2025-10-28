@@ -1,6 +1,6 @@
 <x-filament::page>
     <div class="space-y-4">
-        <h2 class="text-xl font-bold">{{ $file->name }}</h2>
+        {{-- <h2 class="text-xl font-bold">{{ $file->name }}</h2> --}}
         <p><strong>MIME:</strong> {{ $file->readable_mime_type }}</p>
         <p><strong>Size:</strong> {{ $file->readable_size }}</p>
 
@@ -39,13 +39,14 @@
         @endif
 
         <div class="pt-2">
-            <a
-                href="{{ $file->url() }}"
-                class="px-4 py-2 bg-primary-600 text-white rounded"
-                download="{{ $file->name }}"
+            <x-filament::button
+                :href="$file->url()"
+                tag="a"
+                icon="heroicon-m-arrow-down-tray"
+                :download="$file->name"
             >
-                {{ __('Download file') }}
-            </a>
+                {{ __('Download') }}
+            </x-filament::button>
         </div>
     </div>
 </x-filament::page>

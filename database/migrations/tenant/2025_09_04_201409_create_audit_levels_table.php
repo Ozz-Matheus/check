@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('min')->nullable()->unique();
             $table->integer('max')->nullable()->unique();
             $table->integer('score')->unique();
+            $table->string('color');
             $table->timestamps();
         });
     }

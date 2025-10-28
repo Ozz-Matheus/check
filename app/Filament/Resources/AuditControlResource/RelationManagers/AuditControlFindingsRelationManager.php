@@ -63,7 +63,6 @@ class AuditControlFindingsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\Action::make('create')
                     ->label(__('New finding'))
-                    ->button()
                     ->color('primary')
                     ->form([
                         Forms\Components\TextInput::make('title')

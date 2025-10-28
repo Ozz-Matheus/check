@@ -9,6 +9,11 @@ class AuditContext implements ActionOriginInterface
 {
     public function __construct(protected AuditFinding $model) {}
 
+    public function originClassificationCode(): string
+    {
+        return $this->model->auditControl->auditItem->internalAudit->classification_code;
+    }
+
     public function getLabel(): string
     {
         return __('Internal Audits');

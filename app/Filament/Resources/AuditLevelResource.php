@@ -44,7 +44,7 @@ class AuditLevelResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 31;
 
     public static function form(Form $form): Form
     {
@@ -66,6 +66,20 @@ class AuditLevelResource extends Resource
                     ->label(__('Score'))
                     ->required()
                     ->numeric(),
+                Forms\Components\Select::make('color')
+                    ->label(__('Color'))
+                    ->options([
+                        'primary' => __('Primary'),
+                        'secondary' => __('Secondary'),
+                        'gray' => __('Gray'),
+                        'danger' => __('Danger'),
+                        'warning' => __('Warning'),
+                        'yellow' => __('Yellow'),
+                        'success' => __('Success'),
+                        'info' => __('Info'),
+                    ])
+                    ->required()
+                    ->native(false),
             ]);
     }
 
@@ -88,6 +102,8 @@ class AuditLevelResource extends Resource
                     ->label(__('Score'))
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('color')
+                    ->label(__('Color')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()

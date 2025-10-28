@@ -44,7 +44,7 @@ class ActionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {
@@ -230,6 +230,15 @@ class ActionResource extends Resource
                             ->native(false)
                             ->closeOnDateSelection()
                             ->required(),
+                        Forms\Components\Select::make('priority_id')
+                            ->label(__('Priority'))
+                            ->relationship(
+                                name: 'priority',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
+                            )
+                            ->native(false)
+                            ->required(),
                         Forms\Components\TextInput::make('status_label')
                             ->label(__('Status'))
                             ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
@@ -248,6 +257,13 @@ class ActionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('origin_classification_code')
+                    ->label(__('Origin classification code'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->origin_classification_code)
+                    ->copyable()
+                    ->copyMessage(__('Origin classification code copied'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('origin_label')
                     ->label(__('Origin'))
                     ->searchable(),
@@ -266,11 +282,9 @@ class ActionResource extends Resource
                 Tables\Columns\TextColumn::make('subProcess.title')
                     ->label(__('Sub process')),
                 Tables\Columns\TextColumn::make('registeredBy.name')
-                    ->label(__('Registered by'))
-                    ->searchable(),
+                    ->label(__('Registered by')),
                 Tables\Columns\TextColumn::make('responsibleBy.name')
-                    ->label(__('Responsible'))
-                    ->searchable(),
+                    ->label(__('Responsible')),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
                     ->badge()
@@ -310,6 +324,13 @@ class ActionResource extends Resource
             ])
             ->defaultSort('id', 'desc')
             ->filters([
+                Tables\Filters\SelectFilter::make('origin_label')
+                    ->label(__('Origin'))
+                    ->options(fn () => Action::query()->distinct()->whereNotNull('origin_label')->pluck('origin_label', 'origin_label')->all())
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->native(false), // Opción para trabajar los filtros
                 Tables\Filters\SelectFilter::make('type_id')
                     ->label(__('Type'))
                     ->relationship('type', 'label')
@@ -323,6 +344,18 @@ class ActionResource extends Resource
                 Tables\Filters\SelectFilter::make('sub_process_id')
                     ->label(__('Sub Process'))
                     ->relationship('subProcess', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('registered_by_id')
+                    ->label(__('Registered'))
+                    ->relationship('registeredBy', 'name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('responsible_by_id')
+                    ->label(__('Responsible'))
+                    ->relationship('responsibleBy', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload(),
@@ -342,12 +375,28 @@ class ActionResource extends Resource
                         0 => __('No'),
                     ])
                     ->native(false),
+                Tables\Filters\SelectFilter::make('priority_id')
+                    ->label(__('Priority'))
+                    ->relationship(
+                        name: 'priority',
+                        titleAttribute: 'title',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc'),
+                    )
+                    ->multiple()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('source_id')
+                    ->label(__('Source'))
+                    ->relationship('source', 'title')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
             ])
             ->filtersTriggerAction(
                 fn ($action) => $action
                     ->button()
                     ->label(__('Filter')),
             )
+            ->filtersFormColumns(2)
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(),

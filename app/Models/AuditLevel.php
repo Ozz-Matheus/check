@@ -15,6 +15,7 @@ class AuditLevel extends Model
         'min',
         'max',
         'score',
+        'color',
     ];
 
     public function auditItem()

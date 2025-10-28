@@ -7,6 +7,7 @@ use App\Services\ExistingTenantCreatorService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use TomatoPHP\FilamentTenancy\Models\Tenant;
 
 class CreateExistingTenant extends CreateRecord
@@ -25,7 +26,9 @@ class CreateExistingTenant extends CreateRecord
                 ->send();
 
             // Lanzamos una excepción para detener la creación
-            throw new \Exception('This database is already assigned to another tenant.');
+            Log::info('This database is already assigned to another tenant.');
+
+            abort(403);
         }
 
         // Hashear contraseña y limpiar confirmación

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\AuditControlResource\RelationManagers;
 
 use App\Filament\Resources\InternalAuditResource;
 use App\Services\FileService;
+use App\Services\InternalAuditService;
 use App\Traits\HasStandardFileUpload;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -48,10 +49,9 @@ class AuditControlFilesRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\Action::make('create')
                     ->label(__('New control documentation'))
-                    ->button()
                     ->color('primary')
                     // 📌 Falta la autorización
-                    ->visible($this->getOwnerRecord()->qualified === false)
+                    ->visible(fn () => app(InternalAuditService::class)->actionsRestriction($this->getOwnerRecord()->auditItem->internalAudit->status_id))
                     ->form([
                         static::baseFileUpload('path')
                             ->label(__('Support files'))

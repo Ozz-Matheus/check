@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
+            $table->string('origin_classification_code');
+
             $table->nullableMorphs('origin');
             $table->string('origin_label')->nullable();
 
@@ -39,7 +41,7 @@ return new class extends Migration
             // Mejora
             $table->text('expected_impact')->nullable();
 
-            // $table->foreignId('priority_id')->constrained('priorities'); integrar
+            $table->foreignId('priority_id')->constrained('priorities');
             $table->date('limit_date')->nullable()->index();
             $table->foreignId('status_id')->constrained('statuses');
             $table->boolean('finished')->default(false);

@@ -16,14 +16,6 @@ class DocStatusesChart extends ChartWidget
 
     protected function getData(): array
     {
-        $statusColors = [
-            'approved' => config('filament-colors.success.rgba'),
-            'rejected' => config('filament-colors.danger.rgba'),
-            'pending' => config('filament-colors.primary.rgba'),
-            'draft' => config('filament-colors.warning.rgba'),
-            'without status' => config('filament-colors.secondary.rgba'),
-        ];
-
         // Obtener todos los registros con su último archivo y estado
         $records = Doc::with('latestVersion.status')->get();
 
@@ -38,22 +30,22 @@ class DocStatusesChart extends ChartWidget
         // Obtener los labels visibles para el gráfico (status->label o default capitalizado)
         $labels = $grouped->map(function ($group, $title) {
             return $group->first()->latestVersion?->status?->label ?? ucfirst($title);
-        });
+        })->values()->toArray();
 
-        // Obtener colores desde el array manual
-        $colors = $grouped->keys()->map(function ($title) use ($statusColors) {
-            return $statusColors[$title] ?? '#999999';
-        });
+        $colors = $grouped->map(function ($group) {
+            $colorName = $group->first()->latestVersion?->status?->color ?? 'gray';
+
+            return config("filament-colors.{$colorName}.rgba", 'rgba(156, 163, 175, 1)');
+        })->values()->toArray();
 
         return [
             'datasets' => [
                 [
-                    'label' => __('Document statuses'),
                     'data' => $counts->values()->toArray(),
-                    'backgroundColor' => $colors->values()->toArray(),
+                    'backgroundColor' => $colors,
                 ],
             ],
-            'labels' => $labels->values()->toArray(),
+            'labels' => $labels,
         ];
     }
 

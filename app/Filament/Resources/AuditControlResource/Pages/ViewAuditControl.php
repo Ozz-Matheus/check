@@ -6,6 +6,7 @@ use App\Filament\Resources\AuditControlResource;
 use App\Filament\Resources\InternalAuditResource;
 use App\Models\AuditLevel;
 use App\Services\AuditControlService;
+use App\Services\InternalAuditService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -27,7 +28,7 @@ class ViewAuditControl extends ViewRecord
                 ->button()
                 ->color('primary')
                 // 📌 Falta la autorización
-                ->visible(fn ($record) => app(AuditControlService::class)->canViewQualify($record->auditItem->internalAudit->status_id))
+                ->visible(fn ($record) => app(InternalAuditService::class)->actionsRestriction($record->auditItem->internalAudit->status_id))
                 // ->requiresConfirmation()
                 ->form([
                     Grid::make(2)

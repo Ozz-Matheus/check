@@ -23,6 +23,20 @@ class ExistingTenantCreatorService
         $tenant->is_active = $data['is_active'] ?? true;
         $tenant->saveQuietly();
 
+        // Update Data
+
+        DB::table('tenants')
+            ->where('id', $tenant->id)
+            ->update([
+                'data' => json_encode([
+                    'created_at' => $tenant->created_at?->toDateTimeString(),
+                    'updated_at' => $tenant->updated_at?->toDateTimeString(),
+                    'tenancy_db_name' => $tenant->id,
+                ]),
+            ]);
+
+        // End Update Data
+
         // 2️⃣ Asociar dominio
         Domain::create([
             'domain' => $data['domain'],
@@ -30,7 +44,7 @@ class ExistingTenantCreatorService
         ]);
 
         // 3️⃣ Configurar conexión dinámica
-        Config::set('database.connections.dynamic.database', $data['id']);
+        Config::set('database.connections.dynamic.database', $tenant->id);
         Config::set('database.default', 'dynamic');
         DB::purge('dynamic');
         DB::connection('dynamic')->getPdo();

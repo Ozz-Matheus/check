@@ -9,6 +9,11 @@ class RiskContext implements ActionOriginInterface
 {
     public function __construct(protected Risk $model) {}
 
+    public function originClassificationCode(): string
+    {
+        return $this->model->classification_code;
+    }
+
     public function getLabel(): string
     {
         return __('Risks');

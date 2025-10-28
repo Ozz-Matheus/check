@@ -168,7 +168,9 @@ class InternalAuditResource extends Resource
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('internalAuditQualification.title')
                     ->label(__('Qualification'))
-                    ->default(__('Unrated')),
+                    ->badge()
+                    ->color(fn ($record) => $record->internalAuditQualification?->color ?? 'gray')
+                    ->placeholder(__('Unrated')),
                 Tables\Columns\TextColumn::make('qualification_value')
                     ->label(__('Qualification Value'))
                     ->placeholder('-')

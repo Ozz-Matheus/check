@@ -44,7 +44,7 @@ class SupplierResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 37;
+    protected static ?int $navigationSort = 38;
 
     public static function form(Form $form): Form
     {

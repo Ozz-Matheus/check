@@ -44,7 +44,7 @@ class ActionAnalysisCauseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 35;
+    protected static ?int $navigationSort = 36;
 
     public static function form(Form $form): Form
     {

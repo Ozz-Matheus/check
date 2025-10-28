@@ -16,7 +16,30 @@ class SupplierPortalResource extends Resource
 {
     protected static ?string $model = SupplierPortal::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Supplier Portal');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Supplier Portals');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Supplier Portals');
+    }
+
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {

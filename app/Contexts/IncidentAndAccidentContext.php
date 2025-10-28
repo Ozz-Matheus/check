@@ -9,6 +9,11 @@ class IncidentAndAccidentContext implements ActionOriginInterface
 {
     public function __construct(protected IncidentAndAccident $model) {}
 
+    public function originClassificationCode(): string
+    {
+        return $this->model->classification_code;
+    }
+
     public function getLabel(): string
     {
         return __('Incident And Accidents');

@@ -44,7 +44,7 @@ class AuditControlClassificationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 27;
+    protected static ?int $navigationSort = 28;
 
     public static function form(Form $form): Form
     {

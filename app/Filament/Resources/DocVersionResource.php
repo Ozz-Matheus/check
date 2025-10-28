@@ -143,6 +143,14 @@ class DocVersionResource extends Resource
                     ->label(__('Filter')),
             )
             ->actions([
+                Action::make('file')
+                    ->label(__('View'))
+                    ->icon('heroicon-s-eye')
+                    ->color('gray')
+                    ->url(fn ($record) => route('filament.dashboard.pages.file-viewer', ['file' => $record->file]))
+                    ->visible(
+                        fn ($record) => auth()->user()->canAccessSubProcess($record->doc->sub_process_id)
+                    ),
                 ActionGroup::make([
                     // PENDING
                     Action::make('pending')
@@ -232,16 +240,6 @@ class DocVersionResource extends Resource
                             ) && $record->status_id === Status::byContextAndTitle('doc', 'pending')?->id
                                 && $record->isLatestVersion();
                         }),
-
-                    Action::make('file')
-                        ->label(__('Download'))
-                        ->icon('heroicon-o-document-arrow-down')
-                        ->color('primary')
-                        ->url(fn ($record) => route('filament.dashboard.pages.file-viewer', ['file' => $record->file]))
-                        ->openUrlInNewTab(true)
-                        ->visible(
-                            fn ($record) => auth()->user()->canAccessSubProcess($record->doc->sub_process_id)
-                        ),
                     DeleteAction::make()
                         ->visible(function ($record) {
                             $user = auth()->user();

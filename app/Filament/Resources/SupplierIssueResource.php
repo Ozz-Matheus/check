@@ -27,8 +27,6 @@ class SupplierIssueResource extends Resource
 
     protected static ?string $navigationLabel = null;
 
-    protected static ?string $navigationGroup = null;
-
     public static function getModelLabel(): string
     {
         return __('Supplier Issue');
@@ -44,14 +42,9 @@ class SupplierIssueResource extends Resource
         return __('Supplier Issues');
     }
 
-    public static function getNavigationGroup(): string
-    {
-        return __('Supplier');
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
-
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {

@@ -11,6 +11,7 @@ class Action extends Model
     use HasFactory;
 
     protected $fillable = [
+        'origin_classification_code',
         'title',
         'description',
         'action_type_id',
@@ -26,9 +27,11 @@ class Action extends Model
         'action_verification_method_id',
         'verification_responsible_by_id',
         'expected_impact',
+        'priority_id',
         'limit_date',
         'status_id',
         'finished',
+        'reason_for_cancellation',
         'cancellation_date',
         'origin_type',
         'origin_id',
@@ -104,6 +107,11 @@ class Action extends Model
         return $this->belongsTo(User::class, 'verification_responsible_by_id');
     }
     /* ** */
+
+    public function priority()
+    {
+        return $this->belongsTo(Priority::class, 'priority_id');
+    }
 
     public function status()
     {

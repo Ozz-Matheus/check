@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\InternalAuditResource\RelationManagers;
 
 use App\Filament\Resources\InternalAuditResource;
+use App\Services\InternalAuditService;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -39,8 +40,14 @@ class AuditItemsRelationManager extends RelationManager
                     ->label(__('Risk category')),
                 Tables\Columns\TextColumn::make('generalLevel.title')
                     ->label(__('General level'))
+                    ->badge()
+                    ->color(fn ($record) => $record->generalLevel->color)
                     ->placeholder('-'),
-
+                Tables\Columns\TextColumn::make('controls_count')
+                    ->label(__('Unqualified controls'))
+                    ->counts(['controls' => fn ($query) => $query->where('qualified', false)])
+                    ->badge()
+                    ->color(fn (int $state): string => $state > 0 ? 'warning' : 'success'),
             ])
             ->defaultSort('id', 'desc')
             ->recordUrl(function ($record) {
@@ -68,7 +75,7 @@ class AuditItemsRelationManager extends RelationManager
                     ->label(__('New audit item'))
                     ->color('primary')
                     // 📌 Falta la autorización
-                    // 📌 Falta la visibilidad
+                    ->visible(fn () => app(InternalAuditService::class)->actionsRestriction($this->getOwnerRecord()->status_id))
                     ->url(fn () => InternalAuditResource::getUrl('audit-item.create', [
                         'internalAudit' => $this->getOwnerRecord()->id,
                     ])),

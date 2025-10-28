@@ -4,6 +4,8 @@ namespace App\Contracts;
 
 interface ActionOriginInterface
 {
+    public function originClassificationCode(): string;
+
     public function getLabel(): string;
 
     public function getProcessId(): ?int;

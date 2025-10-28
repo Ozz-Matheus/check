@@ -6,11 +6,13 @@ use App\Models\AuditItem;
 use App\Models\RiskControl;
 use App\Observers\AuditItemObserver;
 use App\Observers\RiskControlObserver;
+use App\Observers\TenantObserver;
 use App\Services\TenantStorageInitializer;
 use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\PermissionRegistrar;
 use Stancl\Tenancy\Events\TenancyBootstrapped;
+use TomatoPHP\FilamentTenancy\Models\Tenant;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     {
         RiskControl::observe(RiskControlObserver::class);
         AuditItem::observe(AuditItemObserver::class);
+        Tenant::observe(TenantObserver::class);
 
         Filament::serving(function () {
 

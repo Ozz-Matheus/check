@@ -21,6 +21,11 @@ class FileViewer extends Page
 
     public ?Doc $doc = null;
 
+    public function getTitle(): string
+    {
+        return __('File Viewer');
+    }
+
     public function mount(): void
     {
         $this->file = File::findOrFail(request('file'));
@@ -59,6 +64,20 @@ class FileViewer extends Page
                 ->color('gray'),
 
         ];
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            DocResource::getUrl('index') => __('Documents'),
+            DocResource::getUrl('versions.index', ['doc' => $this->doc->id]) => __('Versions'),
+            false => __('File Viewer'),
+        ];
+    }
+
+    public function getSubheading(): ?string
+    {
+        return $this->file->name;
     }
 
     public static function shouldRegisterNavigation(): bool

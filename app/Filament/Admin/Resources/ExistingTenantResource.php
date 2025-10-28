@@ -29,8 +29,19 @@ class ExistingTenantResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $centralDb = config('database.connections.mysql.database');
+
+        $systemSchemas = [
+            'information_schema',
+            'performance_schema',
+            'mysql',
+            'sys',
+        ];
+
         $databases = collect(\DB::select('SHOW DATABASES'))
             ->pluck('Database')
+            ->reject(fn ($db) => in_array($db, $systemSchemas))
+            ->reject(fn ($db) => $db === $centralDb)
             ->values();
 
         return $form->schema([
@@ -41,6 +52,8 @@ class ExistingTenantResource extends Resource
             Forms\Components\Select::make('id')
                 ->label('Existing Database (Unique ID)')
                 ->options($databases->mapWithKeys(fn ($db) => [$db => $db]))
+                ->searchable()
+                ->preload()
                 ->required(),
 
             Forms\Components\TextInput::make('domain')

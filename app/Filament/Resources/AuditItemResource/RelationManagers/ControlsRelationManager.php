@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AuditItemResource\RelationManagers;
 
 use App\Filament\Resources\InternalAuditResource;
+use App\Services\InternalAuditService;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -48,6 +49,8 @@ class ControlsRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('level.title')
                     ->label(__('Level'))
+                    ->badge()
+                    ->color(fn ($record) => $record->level->color)
                     ->placeholder('-'),
             ])
             ->defaultSort('id', 'desc')
@@ -86,10 +89,9 @@ class ControlsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\Action::make('create')
                     ->label(__('New control'))
-                    ->button()
                     ->color('primary')
                     // 📌 Falta la autorización
-                    // 📌 Falta la visibilidad
+                    ->visible(fn () => app(InternalAuditService::class)->actionsRestriction($this->getOwnerRecord()->internalAudit->status_id))
                     ->url(fn () => InternalAuditResource::getUrl('control.create', [
                         'auditItem' => $this->getOwnerRecord()->id,
                     ])),

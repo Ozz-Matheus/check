@@ -25,9 +25,10 @@ class ResetAndSeed extends Command
         $this->info('🔥 Iniciando limpieza y reseteo del proyecto...');
 
         $commands = [
-            ['php', 'artisan', 'migrate:fresh', '--seed'],
+            ['php', 'artisan', 'migrate:fresh'],
+            ['php', 'artisan', 'db:seed', '--class=AdminSeeder'],
+            ['php', 'artisan', 'shield:generate', '--all', '--panel=admin'],
             ['php', 'artisan', 'shield:generate', '--all', '--panel=dashboard'],
-            ['php', 'artisan', 'db:seed', '--class=RolePermissionSeeder'],
             ['php', 'artisan', 'filament:optimize-clear'],
             ['php', 'artisan', 'view:clear'],
             ['php', 'artisan', 'route:clear'],
@@ -35,7 +36,6 @@ class ResetAndSeed extends Command
             ['php', 'artisan', 'cache:clear'],
             ['php', 'artisan', 'config:clear'],
             ['php', 'artisan', 'config:cache'],
-            ['vendor/bin/pint'],
         ];
 
         foreach ($commands as $command) {

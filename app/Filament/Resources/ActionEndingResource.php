@@ -48,7 +48,7 @@ class ActionEndingResource extends Resource
                             ->required(),
                         Forms\Components\Textarea::make('extemporaneous_reason')
                             ->label(__('Reason for extemporaneous closing'))
-                            ->visible(fn ($livewire, $record) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id || $record?->limit_date < today() || filled($record?->extemporaneous_reason))
+                            ->visible(fn ($livewire, $record) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id || $livewire->actionModel->limit_date < today() || filled($record?->extemporaneous_reason))
                             ->required(fn ($livewire) => $livewire->actionModel->status_id === Status::byContextAndTitle('action_and_task', 'overdue')?->id),
                         Forms\Components\DatePicker::make('real_closing_date')
                             ->label(__('Real closing date'))
@@ -57,7 +57,7 @@ class ActionEndingResource extends Resource
                             ->visible(fn ($record) => filled($record?->real_closing_date)),
                         Forms\Components\DatePicker::make('estimated_evaluation_date')
                             ->label(__('Estimated evaluation date'))
-                            ->minDate(now()->format('Y-m-d'))
+                            ->minDate(fn ($livewire) => $livewire->actionModel?->limit_date?->toDateString())
                             ->closeOnDateSelection()
                             ->native(false)
                             ->required(fn ($livewire) => $livewire->actionModel?->action_type_id === ActionType::where('name', 'corrective')->first()?->id)

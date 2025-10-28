@@ -44,7 +44,7 @@ class RiskControlQualificationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 23;
 
     public static function form(Form $form): Form
     {

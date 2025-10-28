@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Action;
+use App\Models\SubProcess;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Servicio para las acciones
@@ -14,6 +16,23 @@ class ActionService
     public function __construct(StatusService $statusService)
     {
         $this->statusIds = $statusService->getActionAndTaskStatuses();
+    }
+
+    public function generateCode($subProcessId): string
+    {
+        return DB::transaction(function () use ($subProcessId) {
+
+            $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
+
+            $count = Action::where('origin_type', null)
+                ->where('sub_process_id', $subProcessId)
+                ->lockForUpdate()
+                ->count();
+
+            $consecutive = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+
+            return "IND-{$subProcess->acronym}-{$consecutive}";
+        });
     }
 
     // Comprueba si se puede ver el boton de cancelar la accion
@@ -28,7 +47,7 @@ class ActionService
         return $action->update([
             'status_id' => $this->statusIds['canceled'],
             'reason_for_cancellation' => $data['reason_for_cancellation'],
-            'cancellation_date' => now()->format('Y-m-d'),
+            'cancellation_date' => today(),
         ]);
     }
 

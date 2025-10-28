@@ -6,12 +6,15 @@ use App\Factories\ActionOriginFactory;
 use App\Filament\Resources\ActionResource;
 use App\Models\Status;
 use App\Notifications\ActionCreatedNotice;
+use App\Services\ActionService;
 use App\Services\IncidentAndAccidentService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAction extends CreateRecord
 {
     protected static string $resource = ActionResource::class;
+
+    public ?string $originClassificationCode = null;
 
     public ?string $originType = null;
 
@@ -49,6 +52,7 @@ class CreateAction extends CreateRecord
 
             $factory = ActionOriginFactory::make($this->originType, $register);
 
+            $this->originClassificationCode = $factory?->originClassificationCode();
             $this->originLabel = $factory?->getLabel();
             $this->processId = $factory?->getProcessId();
             $this->subProcessId = $factory?->getSubProcessId();
@@ -58,12 +62,14 @@ class CreateAction extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         if ($this->originType && $this->originId) {
+            $data['origin_classification_code'] = $this->originClassificationCode;
             $data['origin_type'] = $this->originType;
             $data['origin_id'] = $this->originId;
             $data['origin_label'] = $this->originLabel;
             $data['process_id'] = $this->processId;
             $data['sub_process_id'] = $this->subProcessId;
         } else {
+            $data['origin_classification_code'] = app(ActionService::class)->generateCode($data['sub_process_id']);
             $data['origin_label'] = __('Independent');
         }
 

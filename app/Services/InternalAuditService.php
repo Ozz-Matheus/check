@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\DB;
  */
 class InternalAuditService
 {
+    protected array $statusIds;
+
+    public function __construct(StatusService $statusService)
+    {
+        $this->statusIds = $statusService->getAuditStatuses();
+    }
+
     // Generar código de auditoría interna
     public function generateCode($subProcessId): string
     {
@@ -27,6 +34,19 @@ class InternalAuditService
 
             return "AUD-{$subProcess->acronym}-{$consecutive}";
         });
+    }
+
+    public function actionsRestriction(int $statusId): bool
+    {
+        return $statusId !== $this->statusIds['finished'];
+    }
+
+    public function canViewFinish(InternalAudit $internalAudit)
+    {
+        return $internalAudit->qualification_value !== null
+                        && $this->actionsRestriction($internalAudit->status_id)
+                        && $internalAudit->auditItems()->whereNull('general_level_id')->doesntExist()
+                        && ! $internalAudit->auditItems()->whereHas('controls', fn ($query) => $query->where('qualified', false))->exists();
     }
 
     public function recalculateInternalAuditQualifications(InternalAudit $internalAudit)

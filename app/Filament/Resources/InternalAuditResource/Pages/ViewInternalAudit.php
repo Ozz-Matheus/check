@@ -4,6 +4,7 @@ namespace App\Filament\Resources\InternalAuditResource\Pages;
 
 use App\Filament\Resources\InternalAuditResource;
 use App\Models\Status;
+use App\Services\InternalAuditService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ViewRecord;
@@ -19,7 +20,7 @@ class ViewInternalAudit extends ViewRecord
                 ->label(__('Finish'))
                 ->color('success')
                 // 📌 Falta la autorización
-                ->visible($this->record->qualification_value !== null)
+                ->visible(fn () => app(InternalAuditService::class)->canViewFinish($this->record))
                 ->form([
                     Textarea::make('observations')
                         ->label(__('Observations'))

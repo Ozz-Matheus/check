@@ -12,7 +12,7 @@
                 <table class="container">
                     <tr>
                         <td class="header">
-                            <img src="{{ asset('images/record-manager-logo.svg') }}" alt="{{ config('app.name') }}" height="40">
+                            <img src="{{ asset('images/fondo_claro.svg') }}" alt="{{ config('app.name') }}" height="40">
                         </td>
                     </tr>
                     <tr>

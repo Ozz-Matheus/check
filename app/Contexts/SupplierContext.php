@@ -9,6 +9,11 @@ class SupplierContext implements ActionOriginInterface
 {
     public function __construct(protected SupplierIssue $model) {}
 
+    public function originClassificationCode(): string
+    {
+        return $this->model->classification_code;
+    }
+
     public function getLabel(): string
     {
         return __('Supplier issues');
