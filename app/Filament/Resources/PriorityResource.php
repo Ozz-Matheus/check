@@ -42,7 +42,7 @@ class PriorityResource extends Resource
         return __('Global Management');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
 
     protected static ?int $navigationSort = 10;
 

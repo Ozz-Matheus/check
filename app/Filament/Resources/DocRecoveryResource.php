@@ -43,7 +43,7 @@ class DocRecoveryResource extends Resource
         return __('Document Management');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
 
     protected static ?int $navigationSort = 14;
 

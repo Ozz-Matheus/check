@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\AuditExports\AuditReports;
 
 use App\Models\InternalAudit;
 
-class AuditExecutiveReportExport
+class AuditReport
 {
     public static function make($auditId)
     {

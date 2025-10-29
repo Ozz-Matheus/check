@@ -42,7 +42,7 @@ class ActionAnalysisCauseResource extends Resource
         return __('Action Management');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
 
     protected static ?int $navigationSort = 36;
 

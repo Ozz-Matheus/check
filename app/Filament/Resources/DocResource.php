@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Exports\DocExport;
-use App\Exports\DocsAndVersionsExport;
+use App\Exports\DocExports\DocExport;
+use App\Exports\DocExports\DocsAndVersionsExport;
 use App\Filament\Resources\DocResource\Pages;
 use App\Models\Doc;
 use App\Models\DocType;

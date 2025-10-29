@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InternalAuditResource\Widgets;
 use App\Filament\Resources\InternalAuditResource\Pages\ListInternalAudits;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class InternalAuditStatusesChart extends ChartWidget
 {
@@ -17,6 +18,11 @@ class InternalAuditStatusesChart extends ChartWidget
         return __('Internal audits by status');
     }
 
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('It is referenced to the list filters');
+    }
+
     protected function getTablePage(): string
     {
         return ListInternalAudits::class;
@@ -24,11 +30,14 @@ class InternalAuditStatusesChart extends ChartWidget
 
     protected function getData(): array
     {
-        $pagination = $this->getPageTableRecords()->perPage();
+        // $pagination = $this->getPageTableRecords()->perPage();
 
         // Obtener las auditorías internas en la visual de la lista con su estado relacionado y paginado
-        $query = $this->getPageTableQuery()->with('status')->paginate($pagination);
-        $audits = $query->getCollection();
+        /* $query = $this->getPageTableQuery()->with('status')->paginate($pagination);
+        $audits = $query->getCollection(); */
+        $query = $this->getPageTableQuery();
+
+        $audits = $query->with('status')->get();
 
         // Agrupar por el campo "title" del status
         $grouped = $audits->groupBy(function ($audit) {

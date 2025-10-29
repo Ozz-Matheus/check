@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources\DocResource\Widgets;
 
-use App\Models\Doc;
+use App\Filament\Resources\DocResource\Pages\ListDocs;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
 
 class DocTypesChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
     public function getHeading(): ?string
@@ -15,9 +19,21 @@ class DocTypesChart extends ChartWidget
         return __('Documents by type');
     }
 
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('It is referenced to the list filters');
+    }
+
+    protected function getTablePage(): string
+    {
+        return ListDocs::class;
+    }
+
     protected function getData(): array
     {
-        $data = Doc::reorder() // Remove any existing ordering from the table query
+        $query = $this->getPageTableQuery();
+
+        $data = $query->reorder() // Eliminar cualquier orden existente para el rendimiento
             ->join('doc_types', 'docs.doc_type_id', '=', 'doc_types.id')
             ->select('doc_types.label as type_label', DB::raw('count(*) as count'))
             ->groupBy('type_label')

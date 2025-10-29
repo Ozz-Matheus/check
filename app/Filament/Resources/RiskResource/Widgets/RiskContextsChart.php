@@ -2,47 +2,43 @@
 
 namespace App\Filament\Resources\RiskResource\Widgets;
 
-use App\Models\Risk;
-use App\Models\RiskStrategicContextType;
+use App\Filament\Resources\RiskResource\Pages\ListRisks;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class RiskContextsChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
     protected static ?string $pollingInterval = null;
-
-    public ?string $filter = 'all';
 
     public function getHeading(): ?string
     {
         return __('Risk distribution by strategic context');
     }
 
-    protected function getFilters(): ?array
+    public function getDescription(): string|Htmlable|null
     {
-        return [
-            'all' => __('All'),
-            'internal' => __('Internal'),
-            'external' => __('External'),
-        ];
+        return __('It is referenced to the list filters');
+    }
+
+    protected function getTablePage(): string
+    {
+        return ListRisks::class;
     }
 
     protected function getData(): array
     {
-        $query = Risk::query()
+        $query = $this->getPageTableQuery();
+
+        $data = $query->reorder()
             ->join('risk_strategic_contexts', 'risks.strategic_context_id', '=', 'risk_strategic_contexts.id')
             ->selectRaw('risk_strategic_contexts.title, count(risks.id) as count')
-            ->groupBy('risk_strategic_contexts.title');
-
-        if ($this->filter !== 'all') {
-            $contextTypeId = RiskStrategicContextType::where('name', $this->filter)->value('id');
-            if ($contextTypeId) {
-                $query->where('risk_strategic_contexts.strategic_context_type_id', $contextTypeId);
-            }
-        }
-
-        $data = $query->pluck('count', 'title');
+            ->groupBy('risk_strategic_contexts.title')
+            ->pluck('count', 'title');
 
         return [
             'datasets' => [

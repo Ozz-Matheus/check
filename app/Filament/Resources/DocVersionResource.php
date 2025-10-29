@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Exports\VersionExport;
+use App\Exports\DocExports\VersionExport;
 use App\Models\DocVersion;
 use App\Models\Status;
 use App\Traits\HasStandardFileUpload;

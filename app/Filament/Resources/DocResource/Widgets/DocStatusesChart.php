@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources\DocResource\Widgets;
 
-use App\Models\Doc;
+use App\Filament\Resources\DocResource\Pages\ListDocs;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class DocStatusesChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
     public function getHeading(): ?string
@@ -14,10 +18,22 @@ class DocStatusesChart extends ChartWidget
         return __('Documents by status');
     }
 
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('It is referenced to the list filters');
+    }
+
+    protected function getTablePage(): string
+    {
+        return ListDocs::class;
+    }
+
     protected function getData(): array
     {
-        // Obtener todos los registros con su último archivo y estado
-        $records = Doc::with('latestVersion.status')->get();
+        $query = $this->getPageTableQuery();
+
+        // Obtener todos los registros con su último archivo y estado (sin paginar para el widget)
+        $records = $query->with('latestVersion.status')->get();
 
         // Agrupar por el campo "title" del status
         $grouped = $records->groupBy(function ($record) {

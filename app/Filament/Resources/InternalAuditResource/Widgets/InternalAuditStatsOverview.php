@@ -8,6 +8,7 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\DB;
 
 class InternalAuditStatsOverview extends BaseWidget
 {
@@ -27,31 +28,33 @@ class InternalAuditStatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $pagination = $this->getPageTableRecords()->perPage();
-        $query = $this->getPageTableQuery()->paginate($pagination);
-        $totalInternalAudits = $query->count();
-        $averageRating = $query->avg('qualification_value');
+        $query = $this->getPageTableQuery();
+
+        // Combine count and average into a single, more efficient query.
+        $stats = $query
+            ->select(
+                DB::raw('count(*) as total'),
+                DB::raw('avg(qualification_value) as average')
+            )
+            ->first();
 
         $color = 'gray';
 
-        if (! is_null($averageRating)) {
-            $qualification = InternalAuditQualification::where('min', '<=', $averageRating)
-                ->where('max', '>=', $averageRating)
+        if (! is_null($stats->average)) {
+            $qualification = InternalAuditQualification::where('min', '<=', $stats->average)
+                ->where('max', '>=', $stats->average)
                 ->first();
 
             $color = $qualification?->color ?? 'gray';
         }
 
         return [
-            Stat::make(__('Total internal audits'), $totalInternalAudits)
-                ->description(__('Records in the system'))
-                ->descriptionIcon('heroicon-o-clipboard-document-list', IconPosition::Before),
-            /* Stat::make(__('Total internal audits'), $record)
-                ->description(__('Records in the system'))
-                ->descriptionIcon('heroicon-o-clipboard-document-list', IconPosition::Before), */
-            Stat::make(__('Average rating'), number_format($averageRating, 2).'%')
-                ->description(__('Average rating of the audits on the list'))
-                ->descriptionIcon('heroicon-o-receipt-percent', IconPosition::Before)
+            Stat::make(__('Internal audit count'), $stats->total)
+                ->description(__('Total records (variable to filters)'))
+                ->descriptionIcon('heroicon-m-clipboard-document-list', IconPosition::Before),
+            Stat::make(__('Average rating'), number_format($stats->average, 2).'%')
+                ->description(__('Average rating of all records (variable to filters)'))
+                ->descriptionIcon('heroicon-m-percent-badge', IconPosition::Before)
                 ->color($color),
         ];
     }

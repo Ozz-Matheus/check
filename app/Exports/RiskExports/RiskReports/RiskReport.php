@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\RiskExports\RiskReports;
 
 use App\Models\Process;
 use App\Models\Risk;
 use App\Models\RiskLevel;
 use App\Models\SubProcess;
 
-class RiskExecutiveReportExport
+class RiskReport
 {
     public static function make(array $data): array
     {

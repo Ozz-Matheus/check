@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InternalAuditResource\Widgets;
 use App\Filament\Resources\InternalAuditResource\Pages\ListInternalAudits;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class InternalAuditQualificationsChart extends ChartWidget
 {
@@ -17,6 +18,11 @@ class InternalAuditQualificationsChart extends ChartWidget
         return __('Internal audit qualifications');
     }
 
+    public function getDescription(): string|Htmlable|null
+    {
+        return __('It is referenced to the list filters');
+    }
+
     protected function getTablePage(): string
     {
         return ListInternalAudits::class;
@@ -24,11 +30,14 @@ class InternalAuditQualificationsChart extends ChartWidget
 
     protected function getData(): array
     {
-        $pagination = $this->getPageTableRecords()->perPage();
+        // $pagination = $this->getPageTableRecords()->perPage();
 
         // Obtener auditorías internas con sus calificaciones y paginado
-        $query = $this->getPageTableQuery()->with('internalAuditQualification')->paginate($pagination);
-        $audits = $query->getCollection();
+        /* $query = $this->getPageTableQuery()->with('internalAuditQualification')->paginate($pagination);
+        $audits = $query->getCollection(); */
+        $query = $this->getPageTableQuery();
+
+        $audits = $query->with('internalAuditQualification')->get();
 
         // Agrupar por título de clasificación
         $grouped = $audits->groupBy(function ($audit) {

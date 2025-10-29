@@ -8,6 +8,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use TomatoPHP\FilamentTenancy\Models\Tenant;
 
 class ExistingTenantResource extends Resource
@@ -45,47 +47,60 @@ class ExistingTenantResource extends Resource
             ->values();
 
         return $form->schema([
+
             Forms\Components\TextInput::make('name')
-                ->label('Name')
-                ->required(),
+                ->label(trans('filament-tenancy::messages.columns.name'))
+                ->required()
+                ->unique(table: 'tenants', ignoreRecord: true)->live(onBlur: true)
+                ->afterStateUpdated(function (Forms\Set $set, $state) {
+                    $set('domain', \Str::of($state)->slug()->toString());
+                }),
 
             Forms\Components\Select::make('id')
                 ->label('Existing Database (Unique ID)')
                 ->options($databases->mapWithKeys(fn ($db) => [$db => $db]))
                 ->searchable()
                 ->preload()
-                ->required(),
+                ->required()
+                ->unique(table: 'tenants', ignoreRecord: true),
 
             Forms\Components\TextInput::make('domain')
-                ->label('Domain')
-                ->required()
                 ->columnSpanFull()
+                ->label(trans('filament-tenancy::messages.columns.domain'))
+                ->required()
+                ->visible(fn ($context) => $context === 'create')
+                ->unique(table: 'domains', ignoreRecord: true)
                 ->prefix(request()->getScheme().'://')
                 ->suffix('.'.request()->getHost()),
 
             Forms\Components\TextInput::make('email')
-                ->label('Email')
-                ->email()
-                ->required(),
+                ->label(trans('filament-tenancy::messages.columns.email'))
+                ->required()
+                ->email(),
 
             Forms\Components\TextInput::make('phone')
-                ->label('Phone')
+                ->label(trans('filament-tenancy::messages.columns.phone'))
                 ->tel(),
 
             Forms\Components\TextInput::make('password')
+                ->label(trans('filament-tenancy::messages.columns.password'))
                 ->password()
                 ->revealable(filament()->arePasswordsRevealable())
-                ->confirmed()
-                ->required(),
+                ->rule(Password::default())
+                ->autocomplete('new-password')
+                ->dehydrated(fn ($state): bool => filled($state))
+                ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+                ->live(debounce: 500)
+                ->same('passwordConfirmation'),
 
-            Forms\Components\TextInput::make('password_confirmation')
+            Forms\Components\TextInput::make('passwordConfirmation')
+                ->label(trans('filament-tenancy::messages.columns.passwordConfirmation'))
                 ->password()
                 ->revealable(filament()->arePasswordsRevealable())
-                ->label('Confirm Password')
-                ->required(),
+                ->dehydrated(false),
 
             Forms\Components\Toggle::make('is_active')
-                ->label('Is Active')
+                ->label(trans('filament-tenancy::messages.columns.is_active'))
                 ->default(true),
         ]);
     }

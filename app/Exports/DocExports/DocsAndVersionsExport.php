@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\DocExports;
 
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
@@ -17,7 +17,7 @@ class DocsAndVersionsExport implements WithMultipleSheets
     {
         return [
             'Documentos' => new DocExport($this->docIds),
-            'Versiones' => new DocExportWithVersion($this->docIds),
+            'Versiones' => new VersionsRelatedToDoc($this->docIds),
         ];
     }
 }

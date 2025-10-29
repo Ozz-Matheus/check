@@ -23,7 +23,33 @@ class RoleResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
 
-    protected static ?string $navigationGroup = 'Roles Management';
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Role');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Roles');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Roles');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Role Management');
+    }
 
     protected static ?int $navigationSort = 41;
 
@@ -155,15 +181,15 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::getRoleModel();
     }
 
-    public static function getModelLabel(): string
-    {
-        return __('filament-shield::filament-shield.resource.label.role');
-    }
+    // public static function getModelLabel(): string
+    // {
+    //     return __('filament-shield::filament-shield.resource.label.role');
+    // }
 
-    public static function getPluralModelLabel(): string
-    {
-        return __('filament-shield::filament-shield.resource.label.roles');
-    }
+    // public static function getPluralModelLabel(): string
+    // {
+    //     return __('filament-shield::filament-shield.resource.label.roles');
+    // }
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -177,10 +203,10 @@ class RoleResource extends Resource implements HasShieldPermissions
     //         : '';
     // }
 
-    public static function getNavigationLabel(): string
-    {
-        return __('filament-shield::filament-shield.nav.role.label');
-    }
+    // public static function getNavigationLabel(): string
+    // {
+    //     return __('filament-shield::filament-shield.nav.role.label');
+    // }
 
     public static function getNavigationIcon(): string
     {

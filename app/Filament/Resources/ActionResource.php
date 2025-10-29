@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Exports\ActionExport;
+use App\Exports\ActionExports\ActionExport;
 use App\Filament\Resources\ActionResource\Pages;
 use App\Filament\Resources\ActionResource\RelationManagers\ActionFollowUpsRelationManager;
 use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationManager;
@@ -407,7 +407,7 @@ class ActionResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(fn ($records) => Excel::download(
                         new ActionExport($records->pluck('id')->toArray()),
-                        'actions_improve_'.now()->format('Y_m_d_His').'.xlsx'
+                        'actions_'.now()->format('Y_m_d_His').'.xlsx'
                     ))
                     ->deselectRecordsAfterCompletion(),
             ]);

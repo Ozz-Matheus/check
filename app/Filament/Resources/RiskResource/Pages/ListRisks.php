@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\RiskResource\Pages;
 
-use App\Exports\RiskExecutiveReportExport;
+use App\Exports\RiskExports\RiskReports\RiskReport;
 use App\Filament\Resources\RiskResource;
 use App\Filament\Resources\RiskResource\Widgets\RiskCategoriesChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskContextsChart;
@@ -14,10 +14,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 
 class ListRisks extends ListRecords
 {
+    use ExposesTableToWidgets;
+
     protected static string $resource = RiskResource::class;
 
     protected function getHeaderActions(): array
@@ -49,7 +52,7 @@ class ListRisks extends ListRecords
                 ->slideOver()
                 ->action(function (array $data) {
 
-                    $reportData = RiskExecutiveReportExport::make($data);
+                    $reportData = RiskReport::make($data);
 
                     if ($reportData['risks']->isEmpty()) {
                         Notification::make()

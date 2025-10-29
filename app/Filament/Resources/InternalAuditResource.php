@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Exports\AuditExecutiveReportExport;
+use App\Exports\AuditExports\AuditReports\AuditReport;
 use App\Filament\Resources\InternalAuditResource\Pages;
 use App\Filament\Resources\InternalAuditResource\RelationManagers\AuditItemsRelationManager;
 use App\Models\InternalAudit;
@@ -250,7 +250,7 @@ class InternalAuditResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(function ($record) {
 
-                        $reportData = AuditExecutiveReportExport::make($record->id);
+                        $reportData = AuditReport::make($record->id);
 
                         return response()->streamDownload(function () use ($reportData) {
                             echo Pdf::loadView('reports.audit-executive', $reportData)->output();

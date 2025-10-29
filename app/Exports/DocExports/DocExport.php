@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\DocExports;
 
 use App\Models\Doc;
 use Illuminate\Support\Collection;

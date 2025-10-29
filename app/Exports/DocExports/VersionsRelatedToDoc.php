@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\DocExports;
 
 use App\Models\DocVersion;
 use Illuminate\Support\Collection;
@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
-class DocExportWithVersion implements FromCollection, WithHeadings, WithMapping, WithTitle
+class VersionsRelatedToDoc implements FromCollection, WithHeadings, WithMapping, WithTitle
 {
     protected array $docIds;
 

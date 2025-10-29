@@ -6,7 +6,6 @@ use App\Filament\Admin\Resources\ExistingTenantResource;
 use App\Services\ExistingTenantCreatorService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use TomatoPHP\FilamentTenancy\Models\Tenant;
 
@@ -31,8 +30,7 @@ class CreateExistingTenant extends CreateRecord
             abort(403);
         }
 
-        // Hashear contraseña y limpiar confirmación
-        $data['password'] = Hash::make($data['password']);
+        // Limpiar confirmación
         unset($data['password_confirmation']);
 
         return $data;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\ActionExports;
 
 use App\Models\Action;
 use Illuminate\Support\Collection;
