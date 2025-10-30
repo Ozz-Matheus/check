@@ -6,9 +6,13 @@ use App\Services\DocService;
 use App\Support\AppNotifier;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Doc extends Model
+class Doc extends Model implements AuditableContract
 {
+    use AuditableTrait;
+
     //
     protected $fillable = [
         'classification_code',

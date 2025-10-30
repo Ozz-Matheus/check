@@ -2,61 +2,52 @@
 
 namespace App\Filament\Resources\SupplierIssueResource\Widgets;
 
-use App\Models\Supplier;
-use App\Models\SupplierIssue;
+use App\Filament\Resources\SupplierIssueResource\Pages\ListSupplierIssues;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class SupplierIssueCausesChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
-    public ?string $filter = 'all';
+    protected static ?string $pollingInterval = null;
 
     public function getHeading(): ?string
     {
         return __('Supplier issues by cause');
     }
 
-    protected function getFilters(): ?array
+    public function getDescription(): string|Htmlable|null
     {
-        $topSuppliers = SupplierIssue::query()
-            ->select('supplier_id', DB::raw('SUM(monetary_impact) as total_impact'))
-            ->whereNotNull('supplier_id')
-            ->groupBy('supplier_id')
-            ->orderByDesc('total_impact')
-            ->limit(5)
-            ->pluck('supplier_id');
+        return __('It is referenced to the list filters');
+    }
 
-        $suppliers = Supplier::whereIn('id', $topSuppliers)
-            ->pluck('name', 'id')
-            ->all();
-
-        return [
-            'all' => __('All'),
-        ] + $suppliers;
+    protected function getTablePage(): string
+    {
+        return ListSupplierIssues::class;
     }
 
     protected function getData(): array
     {
-        $data = SupplierIssue::query()
-            ->join('supplier_issue_causes', 'supplier_issues.cause_id', '=', 'supplier_issue_causes.id')
-            ->select('supplier_issue_causes.title as cause', DB::raw('count(*) as aggregate'))
-            ->groupBy('supplier_issue_causes.title')
-            ->orderByDesc('aggregate');
+        $query = $this->getPageTableQuery();
 
-        if ($this->filter !== 'all') {
-            $data->where('supplier_issues.supplier_id', $this->filter);
-        }
+        $data = $query->reorder()
+            ->join('supplier_issue_causes', 'supplier_issues.cause_id', '=', 'supplier_issue_causes.id')
+            ->selectRaw('supplier_issue_causes.title, count(supplier_issues.id) as count')
+            ->groupBy('supplier_issue_causes.title')
+            ->pluck('count', 'title');
 
         return [
             'datasets' => [
                 [
                     'label' => __('Supplier issue'),
-                    'data' => $data->pluck('aggregate')->all(),
+                    'data' => $data->values()->toArray(),
                 ],
             ],
-            'labels' => $data->pluck('cause')->all(),
+            'labels' => $data->keys()->toArray(),
         ];
     }
 

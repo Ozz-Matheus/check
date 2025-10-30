@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class DocVersion extends Model
+class DocVersion extends Model implements AuditableContract
 {
     /** @use HasFactory<\Database\Factories\DocVersionFactory> */
-    use HasFactory;
+    use AuditableTrait, HasFactory;
 
     protected $fillable = [
         'version',

@@ -6,10 +6,13 @@ use App\Filament\Resources\IncidentAndAccidentResource;
 use App\Filament\Resources\IncidentAndAccidentResource\Widgets\IAndAStatsOverview;
 use App\Filament\Resources\IncidentAndAccidentResource\Widgets\NewIncidentsAndAccidentsChart;
 use Filament\Actions;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 
 class ListIncidentAndAccidents extends ListRecords
 {
+    use ExposesTableToWidgets;
+
     protected static string $resource = IncidentAndAccidentResource::class;
 
     protected function getHeaderActions(): array

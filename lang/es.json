@@ -274,7 +274,6 @@
     "Max": "Máx",
     "Min": "Mín",
     "Monetary impact": "Impacto monetario",
-    "Monetary impact of this year": "Impacto monetario del presente año",
     "My tasks": "Mis tareas",
     "Name": "Nombre",
     "Name affected person": "Nombre de la persona afectada",
@@ -368,8 +367,6 @@
     "Risk description": "Descripción del riesgo",
     "Risk identification": "Identificación de riesgo",
     "Risks": "Riesgos",
-    "Roles": "Roles",
-    "Roles Management": "Gestión de Roles",
     "Root cause": "Causa raíz",
     "Score": "Puntaje",
     "Scope": "Alcance",
@@ -469,5 +466,10 @@
     "Roles": "Roles",
     "Role Management": "Gestión de Roles",
     "¿Reason for rejected?": "¿Motivo del rechazo?",
-    "¿Reason for restore?": "¿Motivo de la restauración?"
+    "¿Reason for restore?": "¿Motivo de la restauración?",
+
+    "Created": "Creado",
+    "Updated": "Actualizado",
+    "Deleted": "Eliminado",
+    "Restored": "Restaurado"
 }

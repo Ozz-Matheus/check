@@ -8,10 +8,13 @@ use App\Filament\Resources\SupplierIssueResource\Widgets\SupplierIssueCausesChar
 use App\Filament\Resources\SupplierIssueResource\Widgets\SupplierIssueMonetaryImpactChart;
 use App\Filament\Resources\SupplierIssueResource\Widgets\SupplierIssueStatsOverview;
 use Filament\Actions;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSupplierIssues extends ListRecords
 {
+    use ExposesTableToWidgets;
+
     protected static string $resource = SupplierIssueResource::class;
 
     protected function getHeaderActions(): array

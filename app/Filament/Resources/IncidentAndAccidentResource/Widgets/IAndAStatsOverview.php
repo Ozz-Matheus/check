@@ -2,30 +2,46 @@
 
 namespace App\Filament\Resources\IncidentAndAccidentResource\Widgets;
 
-use App\Models\IncidentAndAccident;
+use App\Filament\Resources\IncidentAndAccidentResource\Pages\ListIncidentAndAccidents;
 use Filament\Support\Enums\IconPosition;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class IAndAStatsOverview extends BaseWidget
 {
+    use InteractsWithPageTable;
+
+    protected static ?string $pollingInterval = null;
+
+    protected function getTablePage(): string
+    {
+        return ListIncidentAndAccidents::class;
+    }
+
     protected function getStats(): array
     {
-        $totalIAndA = IncidentAndAccident::count();
-        $incidents = IncidentAndAccident::where('event_type_id', 1)->count();
-        $accidents = IncidentAndAccident::where('event_type_id', 2)->count();
+        $query = $this->getPageTableQuery();
+
+        $stats = $query
+            ->selectRaw('
+                count(id) as total,
+                count(case when event_type_id = 1 then 1 end) as incidents,
+                count(case when event_type_id = 2 then 1 end) as accidents
+            ')
+            ->first();
 
         return [
-            Stat::make(__('Total incidents and accidents'), $totalIAndA)
-                ->description(__('Records in the system'))
-                ->descriptionIcon('heroicon-o-clipboard-document-list', IconPosition::Before),
-            Stat::make(__('Incidents'), $incidents)
+            Stat::make(__('Total incidents and accidents'), $stats->total ?? 0)
+                ->description(__('Total records (variable to filters)'))
+                ->descriptionIcon('heroicon-m-clipboard-document-list', IconPosition::Before),
+            Stat::make(__('Incidents'), $stats->incidents ?? 0)
                 ->description(__('Total number of incidents recorded'))
-                ->descriptionIcon('heroicon-o-exclamation-circle', IconPosition::Before)
+                ->descriptionIcon('heroicon-m-exclamation-circle', IconPosition::Before)
                 ->color('warning'),
-            Stat::make(__('Accidents'), $accidents)
+            Stat::make(__('Accidents'), $stats->accidents ?? 0)
                 ->description(__('Total number of accidents recorded'))
-                ->descriptionIcon('heroicon-o-exclamation-triangle', IconPosition::Before)
+                ->descriptionIcon('heroicon-m-exclamation-triangle', IconPosition::Before)
                 ->color('danger'),
         ];
     }

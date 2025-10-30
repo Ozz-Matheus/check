@@ -79,6 +79,8 @@ class SupplierIssueResource extends Resource
                                 $set('product_id', null);
                                 $set('product_title', null);
                             })
+                            ->searchable()
+                            ->preload()
                             ->native(false)
                             ->reactive()
                             ->required(),
