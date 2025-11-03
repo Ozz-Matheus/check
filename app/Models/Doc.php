@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\DocService;
 use App\Support\AppNotifier;
+use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use OwenIt\Auditing\Auditable as AuditableTrait;
@@ -11,7 +12,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 class Doc extends Model implements AuditableContract
 {
-    use AuditableTrait;
+    use AuditableTrait, BelongsToHeadquarter;
 
     //
     protected $fillable = [

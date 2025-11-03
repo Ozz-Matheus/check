@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             // Generales
+            HeadquarterSeeder::class,
             RolesSeeder::class,
             ProcessSeeder::class,
             SubProcessSeeder::class,

@@ -108,7 +108,9 @@ class UserResource extends Resource
                             ->helperText(__('Enables or disables user access.'))
                             ->required()
                             ->default(true),
-
+                        Forms\Components\Select::make('headquarter_id')
+                            ->label('Sede')
+                            ->relationship('headquarter', 'label'),
                     ]),
             ]);
     }
@@ -138,6 +140,9 @@ class UserResource extends Resource
                         'supplier' => 'warning',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('headquarter.label')
+                    ->label(__('Sede'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->label(__('Email verified at'))
                     ->date()
