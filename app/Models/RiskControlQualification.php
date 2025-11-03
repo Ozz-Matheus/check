@@ -13,7 +13,7 @@ class RiskControlQualification extends Model
     protected $fillable = [
         'context',
         'title',
-        'score',
+        'reduction_factor',
     ];
 
     public function risks()

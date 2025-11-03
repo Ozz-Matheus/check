@@ -57,10 +57,13 @@ class RiskControlQualificationResource extends Resource
                     ->label(__('Title'))
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('score')
-                    ->label(__('Score'))
+                Forms\Components\TextInput::make('reduction_factor')
+                    ->label(__('Reduction factor'))
                     ->required()
-                    ->numeric(),
+                    ->suffix('%')
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(100),
             ]);
     }
 
@@ -73,8 +76,9 @@ class RiskControlQualificationResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('score')
-                    ->label(__('Score'))
+                Tables\Columns\TextColumn::make('reduction_factor')
+                    ->label(__('Reduction Factor'))
+                    ->suffix('%')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

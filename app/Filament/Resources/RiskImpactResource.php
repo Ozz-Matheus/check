@@ -53,11 +53,15 @@ class RiskImpactResource extends Resource
                 Forms\Components\TextInput::make('title')
                     ->label(__('Title'))
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('score')
-                    ->label(__('Score'))
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('weight')
+                    ->label(__('Weight'))
+                    ->helperText('1 - 5')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(5),
             ]);
     }
 
@@ -68,8 +72,8 @@ class RiskImpactResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('score')
-                    ->label(__('Score'))
+                Tables\Columns\TextColumn::make('weight')
+                    ->label(__('Weight'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

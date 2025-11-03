@@ -16,32 +16,32 @@ class RiskControlQualificationSeeder extends Seeder
         RiskControlQualification::factory()->create([
             'context' => 'min',
             'title' => 'Ausencia de control/Incontrolable',
-            'score' => 0,
+            'reduction_factor' => 0,
         ]);
         RiskControlQualification::factory()->create([
             'context' => 'middle',
             'title' => 'Necesita mejorar',
-            'score' => 30,
+            'reduction_factor' => 20,
         ]);
         RiskControlQualification::factory()->create([
             'context' => 'middle',
             'title' => 'Parcialmente eficaz',
-            'score' => 50,
+            'reduction_factor' => 30,
         ]);
         RiskControlQualification::factory()->create([
             'context' => 'middle',
             'title' => 'Generalmente eficaz',
-            'score' => 75,
+            'reduction_factor' => 60,
         ]);
         RiskControlQualification::factory()->create([
             'context' => 'middle',
             'title' => 'Eficaz',
-            'score' => 90,
+            'reduction_factor' => 80,
         ]);
         RiskControlQualification::factory()->create([
             'context' => 'max',
             'title' => 'Altamente eficaz',
-            'score' => 95,
+            'reduction_factor' => 90,
         ]);
     }
 }

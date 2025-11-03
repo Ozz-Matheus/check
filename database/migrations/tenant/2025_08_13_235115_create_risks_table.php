@@ -26,8 +26,13 @@ return new class extends Migration
             $table->foreignId('inherent_impact_id')->constrained('risk_impacts');
             $table->foreignId('inherent_probability_id')->constrained('risk_probabilities');
             $table->foreignId('inherent_risk_level_id')->constrained('risk_levels');
-            $table->foreignId('risk_control_general_qualification_id')->constrained('risk_control_qualifications');
+
+            $table->foreignId('residual_impact_id')->constrained('risk_impacts');
+            $table->foreignId('residual_probability_id')->constrained('risk_probabilities');
             $table->foreignId('residual_risk_level_id')->constrained('risk_levels');
+
+            $table->foreignId('risk_control_general_qualification_id')->nullable()->constrained('risk_control_qualifications');
+            // $table->foreignId('residual_risk_level_id')->constrained('risk_levels');
             $table->timestamps();
         });
     }

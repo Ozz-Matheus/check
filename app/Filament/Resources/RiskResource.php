@@ -144,20 +144,30 @@ class RiskResource extends Resource
                             ]),
                         Forms\Components\Fieldset::make(__('Residual risk'))
                             ->schema([
-                                // Calculo automatico de la calificacion general del control
+                                Forms\Components\Select::make('residual_impact_id')
+                                    ->label(__('Residual impact'))
+                                    ->relationship('residualImpact', 'title')
+                                    ->disabled()
+                                    ->dehydrated(true)
+                                    ->required(),
+                                Forms\Components\Select::make('residual_probability_id')
+                                    ->label(__('Residual probability'))
+                                    ->relationship('residualProbability', 'title')
+                                    ->disabled()
+                                    ->dehydrated(true)
+                                    ->required(),
+                                Forms\Components\Select::make('residual_risk_level_id')
+                                    ->label(__('Residual risk level'))
+                                    ->relationship('residualLevel', 'title')
+                                    ->disabled()
+                                    ->dehydrated(true)
+                                    ->required(),
                                 Forms\Components\Select::make('risk_control_general_qualification_id')
                                     ->label(__('General Qualification'))
                                     ->relationship('controlGeneralQualificationCalculated', 'title')
                                     ->disabled()
                                     ->dehydrated(true)
                                     ->reactive()
-                                    ->required(),
-                                // Calculo automatico del nivel de riesgo residual
-                                Forms\Components\Select::make('residual_risk_level_id')
-                                    ->label(__('Residual risk level'))
-                                    ->relationship('residualLevelCalculated', 'title')
-                                    ->disabled()
-                                    ->dehydrated(true)
                                     ->required(),
                             ])->visible(fn (string $context) => $context === 'view'),
                     ]),
@@ -201,12 +211,16 @@ class RiskResource extends Resource
                         ->color(fn ($record) => $record->inherentLevel->color),
                 ]),
                 Tables\Columns\ColumnGroup::make(__('Residual risk'), [
-                    Tables\Columns\TextColumn::make('controlGeneralQualificationCalculated.title')
-                        ->label(__('General qualification')),
-                    Tables\Columns\TextColumn::make('residualLevelCalculated.title')
+                    Tables\Columns\TextColumn::make('residualImpact.title')
+                        ->label(__('Impact')),
+                    Tables\Columns\TextColumn::make('residualProbability.title')
+                        ->label(__('Probability')),
+                    Tables\Columns\TextColumn::make('residualLevel.title')
                         ->label(__('Level'))
                         ->badge()
-                        ->color(fn ($record) => $record->residualLevelCalculated->color),
+                        ->color(fn ($record) => $record->residualLevel->color),
+                    Tables\Columns\TextColumn::make('controlGeneralQualificationCalculated.title')
+                        ->label(__('General qualification')),
                 ]),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
@@ -292,7 +306,7 @@ class RiskResource extends Resource
                 Tables\Filters\SelectFilter::make('residual_risk_level_id')
                     ->label(__('Residual risk level'))
                     ->relationship(
-                        name: 'residualLevelCalculated',
+                        name: 'residualLevel',
                         titleAttribute: 'title',
                         modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc')
                     )

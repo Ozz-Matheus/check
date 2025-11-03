@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class UserResource extends Resource
 {
@@ -45,7 +46,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?int $navigationSort = 42;
+    protected static ?int $navigationSort = 43;
 
     public static function form(Form $form): Form
     {
@@ -75,26 +76,18 @@ class UserResource extends Resource
                                     ? __("Leave it blank if you don't want to change your password")
                                     : null
                             ),
-                        Forms\Components\Toggle::make('active')
-                            ->label(__('Active'))
-                            ->helperText(__('Enables or disables user access.'))
-                            ->required()
-                            ->default(true),
-                        Forms\Components\Select::make('roles')
+                        Forms\Components\CheckboxList::make('roles')
                             ->label(__('Roles'))
-                            ->relationship('roles', 'name')
-                            ->multiple()
-                            ->preload()
-                            ->searchable()
-                            ->options(function () {
-                                $roles = \Spatie\Permission\Models\Role::pluck('name', 'id');
-
-                                if (! auth()->user()->hasRole('super_admin')) {
-                                    $roles = $roles->reject(fn ($name) => $name === 'super_admin');
-                                }
-
-                                return $roles;
-                            }),
+                            ->relationship(
+                                name: 'roles',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn ($query) => $query
+                                    ->when(! auth()->user()->hasRole('super_admin'), fn ($q) => $q->where('name', '!=', 'super_admin'))
+                            )
+                            ->bulkToggleable()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => Str::headline($record->name))
+                            ->columnSpanFull()
+                            ->columns(3),
                         Forms\Components\CheckboxList::make('subProcesses')
                             ->relationship('subProcesses', 'title')
                             ->label(__('Assigned Sub Processes'))
@@ -102,11 +95,20 @@ class UserResource extends Resource
                                 return $record?->isLeaderOfSubProcess($value);
                             })
                             ->searchable()
+                            ->columnSpanFull()
+                            ->columns(2)
+                            ->bulkToggleable()
                             ->helperText(
                                 fn (string $context) => $context === 'edit'
                                     ? __('The user cannot be unlinked from the subprocess if he is linked to it as a leader.')
                                     : null
                             ),
+                        Forms\Components\Toggle::make('active')
+                            ->label(__('Active'))
+                            ->helperText(__('Enables or disables user access.'))
+                            ->required()
+                            ->default(true),
+
                     ]),
             ]);
     }
@@ -125,8 +127,17 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label(__('Roles'))
+                    ->formatStateUsing(fn ($state) => Str::headline($state))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'super_admin' => 'indigo',
+                        'admin' => 'success',
+                        'panel_user' => 'primary',
+                        'supplier' => 'warning',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->label(__('Email verified at'))
                     ->date()

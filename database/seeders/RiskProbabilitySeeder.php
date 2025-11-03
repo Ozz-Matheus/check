@@ -12,26 +12,12 @@ class RiskProbabilitySeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        RiskProbability::factory()->create([
-            'title' => 'Raro',
-            'score' => 1,
-        ]);
-        RiskProbability::factory()->create([
-            'title' => 'Improbable',
-            'score' => 2,
-        ]);
-        RiskProbability::factory()->create([
-            'title' => 'Posible',
-            'score' => 3,
-        ]);
-        RiskProbability::factory()->create([
-            'title' => 'Probable',
-            'score' => 4,
-        ]);
-        RiskProbability::factory()->create([
-            'title' => 'Casi Seguro',
-            'score' => 5,
+        RiskProbability::factory()->createMany([
+            ['title' => 'Raro', 'weight' => 1],
+            ['title' => 'Improbable', 'weight' => 2],
+            ['title' => 'Posible', 'weight' => 3],
+            ['title' => 'Probable', 'weight' => 4],
+            ['title' => 'Casi Seguro', 'weight' => 5],
         ]);
     }
 }

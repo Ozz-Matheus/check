@@ -18,7 +18,7 @@ class RiskReport
             'controls',
             'process',
             'subProcess',
-            'residualLevelCalculated',
+            'residualLevel',
         ])
             ->where('process_id', $data['process_id'])
             ->where('sub_process_id', $data['sub_process_id'])
@@ -29,7 +29,7 @@ class RiskReport
             ->mapWithKeys(fn ($title) => [strtolower($title) => 0]);
 
         // Cuenta los riesgos por su nivel residual.
-        $riskLevelCounts = $risks->countBy(fn ($risk) => strtolower($risk->residualLevelCalculated?->title));
+        $riskLevelCounts = $risks->countBy(fn ($risk) => strtolower($risk->residualLevel?->title));
 
         // Fusiona los recuentos en la matriz de todos los niveles.
         $totals = $allRiskLevels->merge($riskLevelCounts)->all();

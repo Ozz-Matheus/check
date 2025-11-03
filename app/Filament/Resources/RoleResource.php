@@ -51,7 +51,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         return __('Role Management');
     }
 
-    protected static ?int $navigationSort = 41;
+    protected static ?int $navigationSort = 42;
 
     public static function getPermissionPrefixes(): array
     {

@@ -45,8 +45,8 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex(config('filament-colors.primary.hex')),
             ])
             ->favicon(asset('images/favicon.png'))
-            ->brandLogo(asset('images/fondo_claro.svg'))
-            ->darkModeBrandLogo(asset('images/fondo_oscuro.svg'))
+            ->brandLogo(asset('images/logo_claro.svg'))
+            ->darkModeBrandLogo(asset('images/logo_oscuro.svg'))
             ->brandLogoHeight('3rem')
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')

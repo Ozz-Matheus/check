@@ -12,7 +12,7 @@ class RiskProbability extends Model
 
     protected $fillable = [
         'title',
-        'score',
+        'weight',
     ];
 
     public function risks()

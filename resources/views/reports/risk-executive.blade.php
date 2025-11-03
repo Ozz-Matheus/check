@@ -333,7 +333,7 @@
             <h2>Análisis Detallado de Riesgos</h2>
             @php
                 $groupedRisks = $risks->groupBy(function ($risk) {
-                    return $risk->residualLevelCalculated?->title ?? 'Sin Clasificar';
+                    return $risk->residualLevel?->title ?? 'Sin Clasificar';
                 });
                 $order = ['Crítico', 'Alto', 'Moderado', 'Bajo', 'Sin Clasificar'];
                 $sortedGroupedRisks = collect($order)->mapWithKeys(function ($level) use ($groupedRisks) {
@@ -346,7 +346,7 @@
                     <h3>Riesgos con Nivel Residual: <span class="text-risk-{{ \Illuminate\Support\Str::slug($level) }}">{{ $level }}</span> ({{ $levelRisks->count() }})</h3>
 
                     @foreach ($levelRisks as $risk)
-                        <div class="risk-block risk-{{ \Illuminate\Support\Str::slug($risk->residualLevelCalculated?->title ?? '') }}">
+                        <div class="risk-block risk-{{ \Illuminate\Support\Str::slug($risk->residualLevel?->title ?? '') }}">
                             <div class="risk-block-header">
                                 <h4>{{ $risk->classification_code }}: {{ $risk->risk_description }}</h4>
                             </div>
@@ -367,7 +367,7 @@
                                         <td style="text-align: center;">{{ $risk->inherentProbability?->title }}</td>
                                         <td style="text-align: center;">{{ $risk->inherentLevel?->title }}</td>
                                         <td style="text-align: center;">{{ $risk->controlGeneralQualificationCalculated?->title }}</td>
-                                        <td style="text-align: center; font-weight: bold;">{{ $risk->residualLevelCalculated?->title }}</td>
+                                        <td style="text-align: center; font-weight: bold;">{{ $risk->residualLevel?->title }}</td>
                                     </tr>
                                 </tbody>
                             </table>

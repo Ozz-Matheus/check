@@ -29,12 +29,12 @@ class SupplierPortalResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return __('Supplier Portals');
+        return __('Suppliers Portal');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Supplier Portals');
+        return __('Suppliers Portal');
     }
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';

@@ -20,7 +20,7 @@ class RiskStatsOverview extends BaseWidget
 
     protected function getColumns(): int
     {
-        return 2;
+        return 3;
     }
 
     protected function getTablePage(): string
@@ -38,30 +38,44 @@ class RiskStatsOverview extends BaseWidget
         $internalContextId = $contextTypeIds->get('internal');
         $externalContextId = $contextTypeIds->get('external');
 
-        $query = $this->getPageTableQuery();
+        $query = $this->getPageTableQuery()->reorder();
 
-        $stats = $query
+        $riskData = $query
+            ->join('risk_impacts as inherent_impact', 'risks.inherent_impact_id', '=', 'inherent_impact.id')
+            ->join('risk_probabilities as inherent_prob', 'risks.inherent_probability_id', '=', 'inherent_prob.id')
+            ->join('risk_impacts as residual_impact', 'risks.residual_impact_id', '=', 'residual_impact.id')
+            ->join('risk_probabilities as residual_prob', 'risks.residual_probability_id', '=', 'residual_prob.id')
             ->selectRaw('
-                count(id) as total,
-                sum(case when strategic_context_type_id = ? then 1 else 0 end) as internal,
-                sum(case when strategic_context_type_id = ? then 1 else 0 end) as external
+                count(risks.id) as total,
+                sum(case when risks.strategic_context_type_id = ? then 1 else 0 end) as internal,
+                sum(case when risks.strategic_context_type_id = ? then 1 else 0 end) as external,
+                sum(inherent_impact.weight * inherent_prob.weight) as total_inherent_risk,
+                sum(residual_impact.weight * residual_prob.weight) as total_residual_risk
             ', [$internalContextId, $externalContextId])
             ->first();
 
-        $internal = $stats->internal ?? 0;
-        $external = $stats->external ?? 0;
+        $internal = $riskData->internal ?? 0;
+        $external = $riskData->external ?? 0;
+
+        $totalInherentRisk = $riskData->total_inherent_risk ?? 0;
+        $totalResidualRisk = $riskData->total_residual_risk ?? 0;
+
+        $riskReduction = 0;
+        if ($totalInherentRisk > 0) {
+            $riskReduction = (($totalInherentRisk - $totalResidualRisk) / $totalInherentRisk) * 100;
+        }
 
         return [
-            Stat::make(__('Risk count'), $stats->total ?? 0)
+            Stat::make(__('Risk count'), $riskData->total ?? 0)
                 ->description(__('Total records (variable to filters)'))
                 ->descriptionIcon('heroicon-m-clipboard-document-list', IconPosition::Before),
             Stat::make(__('Internal and external risks'), "{$internal} - {$external}")
-                ->description(__('Total comparisons between types (variable to filters)'))
+                ->description(__('Total comparisons between types'))
                 ->descriptionIcon('heroicon-m-square-2-stack', IconPosition::Before),
-            /* Stat::make(__('Total external risks'), $stats->external ?? 0)
-                ->description(__('External risks in the system'))
-                ->descriptionIcon('heroicon-m-numbered-list', IconPosition::Before), */
-            // Añadir una estadística que muestre el cambio promedio del riesgo inherente al residual es una excelente manera de proporcionar una visión general rápida de la eficacia de la gestión de riesgos.
+            Stat::make(__('Risk reductions'), number_format($riskReduction, 2).'%')
+                ->description(__('Average reduction from inherent to residual risk'))
+                ->descriptionIcon('heroicon-m-arrow-trending-down', IconPosition::Before)
+                ->color($riskReduction >= 0 ? 'success' : 'danger'),
         ];
     }
 }

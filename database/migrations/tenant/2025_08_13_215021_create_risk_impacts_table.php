@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('risk_impacts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->integer('score');
+            $table->integer('weight');
             $table->timestamps();
         });
     }

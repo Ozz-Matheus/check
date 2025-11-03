@@ -12,30 +12,11 @@ class RiskLevelSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        RiskLevel::factory()->create([
-            'title' => 'Bajo',
-            'min' => 1,
-            'max' => 5,
-            'color' => 'success',
-        ]);
-        RiskLevel::factory()->create([
-            'title' => 'Medio',
-            'min' => 6,
-            'max' => 12,
-            'color' => 'yellow',
-        ]);
-        RiskLevel::factory()->create([
-            'title' => 'Alto',
-            'min' => 13,
-            'max' => 19,
-            'color' => 'warning',
-        ]);
-        RiskLevel::factory()->create([
-            'title' => 'Muy alto',
-            'min' => 20,
-            'max' => 25,
-            'color' => 'danger',
+        RiskLevel::factory()->createMany([
+            ['title' => 'Bajo',      'min' => 1,  'max' => 5,  'color' => 'success'],
+            ['title' => 'Medio',     'min' => 6,  'max' => 12, 'color' => 'yellow'],
+            ['title' => 'Alto',      'min' => 13, 'max' => 19, 'color' => 'warning'],
+            ['title' => 'Muy alto',  'min' => 20, 'max' => 25, 'color' => 'danger'],
         ]);
     }
 }

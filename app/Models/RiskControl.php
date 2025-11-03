@@ -9,6 +9,7 @@ class RiskControl extends Model
     //
     protected $fillable = [
         'risk_id',
+        'context_type',
         'title',
         'control_periodicity_id',
         'control_type_id',

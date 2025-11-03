@@ -14,7 +14,37 @@ class AuditResource extends Resource
 {
     protected static ?string $model = Audit::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Change');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Changes');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Changes');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Change Logs');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
+
+    protected static ?int $navigationSort = 41;
 
     public static function table(Table $table): Table
     {

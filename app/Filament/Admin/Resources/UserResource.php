@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class UserResource extends Resource
 {
@@ -51,26 +52,24 @@ class UserResource extends Resource
                                     ? __("Leave it blank if you don't want to change your password.")
                                     : null
                             ),
-                        // Forms\Components\Toggle::make('active')
-                        //     ->label(__('Active'))
-                        //     ->helperText(__('Enables or disables user access.'))
-                        //     ->required()
-                        //     ->default(true),
-                        Forms\Components\Select::make('roles')
+                        Forms\Components\CheckboxList::make('roles')
                             ->label(__('Roles'))
-                            ->relationship('roles', 'name')
-                            ->multiple()
-                            ->preload()
-                            ->searchable()
-                            ->options(function () {
-                                $roles = \Spatie\Permission\Models\Role::pluck('name', 'id');
+                            ->relationship(
+                                name: 'roles',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn ($query) => $query
+                                    ->when(! auth()->user()->hasRole('super_admin'), fn ($q) => $q->where('name', '!=', 'super_admin'))
+                            )
+                            ->bulkToggleable()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => Str::headline($record->name))
+                            ->columnSpanFull()
+                            ->columns(3),
+                        Forms\Components\Toggle::make('active')
+                            ->label(__('Active'))
+                            ->helperText(__('Enables or disables user access.'))
+                            ->required()
+                            ->default(true),
 
-                                if (! auth()->user()->hasRole('super_admin')) {
-                                    $roles = $roles->reject(fn ($name) => $name === 'super_admin');
-                                }
-
-                                return $roles;
-                            }),
                     ]),
             ]);
     }
@@ -89,8 +88,16 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label(__('Roles'))
+                    ->formatStateUsing(fn ($state) => Str::headline($state))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'super_admin' => 'indigo',
+                        'admin' => 'success',
+                        'panel_user' => 'primary',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->label(__('Email verified at'))
                     ->dateTime()

@@ -12,26 +12,12 @@ class RiskImpactSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        RiskImpact::factory()->create([
-            'title' => 'Insignificante',
-            'score' => 1,
-        ]);
-        RiskImpact::factory()->create([
-            'title' => 'Menor',
-            'score' => 2,
-        ]);
-        RiskImpact::factory()->create([
-            'title' => 'Moderado',
-            'score' => 3,
-        ]);
-        RiskImpact::factory()->create([
-            'title' => 'Mayor',
-            'score' => 4,
-        ]);
-        RiskImpact::factory()->create([
-            'title' => 'Crítico',
-            'score' => 5,
+        RiskImpact::factory()->createMany([
+            ['title' => 'Insignificante', 'weight' => 1],
+            ['title' => 'Menor', 'weight' => 2],
+            ['title' => 'Moderado', 'weight' => 3],
+            ['title' => 'Mayor', 'weight' => 4],
+            ['title' => 'Crítico', 'weight' => 5],
         ]);
     }
 }

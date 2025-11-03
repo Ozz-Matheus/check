@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('risk_control_qualifications', function (Blueprint $table) {
-            $table->id();
-            $table->enum('context', ['min', 'middle', 'max']);
-            $table->string('title');
-            $table->integer('reduction_factor');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('active')->default(true)->after('password');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('risk_control_qualifications');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('active');
+        });
     }
 };

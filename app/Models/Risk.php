@@ -18,11 +18,17 @@ class Risk extends Model
         'risk_category_id',
         // risk_potential_causes - uno a muchos
         'consequences',
+
         'inherent_impact_id',
         'inherent_probability_id',
         'inherent_risk_level_id',
-        'risk_control_general_qualification_id',
+
+        'residual_impact_id',
+        'residual_probability_id',
         'residual_risk_level_id',
+
+        'risk_control_general_qualification_id',
+        // 'residual_risk_level_id',
         // risk_controls - uno a muchos - RelationManager
     ];
 
@@ -71,14 +77,24 @@ class Risk extends Model
         return $this->belongsTo(RiskLevel::class, 'inherent_risk_level_id');
     }
 
+    public function residualImpact()
+    {
+        return $this->belongsTo(RiskImpact::class, 'residual_impact_id');
+    }
+
+    public function residualProbability()
+    {
+        return $this->belongsTo(RiskProbability::class, 'residual_probability_id');
+    }
+
+    public function residualLevel()
+    {
+        return $this->belongsTo(RiskLevel::class, 'residual_risk_level_id');
+    }
+
     public function controlGeneralQualificationCalculated()
     {
         return $this->belongsTo(RiskControlQualification::class, 'risk_control_general_qualification_id');
-    }
-
-    public function residualLevelCalculated()
-    {
-        return $this->belongsTo(RiskLevel::class, 'residual_risk_level_id');
     }
 
     public function controls()

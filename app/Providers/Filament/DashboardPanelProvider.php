@@ -49,8 +49,8 @@ class DashboardPanelProvider extends PanelProvider
                 'primary' => Color::hex(config('filament-colors.primary.hex')),
             ])
             ->favicon(asset('images/favicon.png'))
-            ->brandLogo(asset('images/fondo_claro.svg'))
-            ->darkModeBrandLogo(asset('images/fondo_oscuro.svg'))
+            ->brandLogo(asset('images/logo_claro.svg'))
+            ->darkModeBrandLogo(asset('images/logo_oscuro.svg'))
             ->brandLogoHeight('3rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

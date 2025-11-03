@@ -14,7 +14,7 @@
         @foreach($data as $key => $value)
             <div class="capitalize py-2">
                 <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $key }}:</span>
-                <span class="text-gray-600 dark:text-gray-300">
+                <span class="text-gray-700 dark:text-gray-200">
                     @if(is_array($value))
                         {{ json_encode($value, JSON_UNESCAPED_UNICODE) }}
                     @elseif(is_bool($value))

@@ -22,6 +22,8 @@ class ControlsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
+                Tables\Columns\TextColumn::make('context_type')
+                    ->label(__('Context type')),
                 Tables\Columns\TextColumn::make('potentialCauses.title')
                     ->label(__('Potential causes'))
                     ->limit(30)

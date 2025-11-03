@@ -14,8 +14,7 @@ class RiskControlObserver
      */
     public function created(RiskControl $riskControl): void
     {
-        //
-        $this->riskService->recalculateRiskControlQualifications($riskControl->risk);
+        $this->riskService->updateResidualRisk($riskControl->risk);
     }
 
     /**
@@ -23,8 +22,7 @@ class RiskControlObserver
      */
     public function updated(RiskControl $riskControl): void
     {
-        //
-        $this->riskService->recalculateRiskControlQualifications($riskControl->risk);
+        $this->riskService->updateResidualRisk($riskControl->risk);
     }
 
     /**
@@ -32,23 +30,6 @@ class RiskControlObserver
      */
     /* public function deleted(RiskControl $riskControl): void
     {
-        //
-        $this->riskService->recalculateRiskControlQualifications($riskControl->risk);
-    } */
-
-    /**
-     * Handle the RiskControl "restored" event.
-     */
-    /* public function restored(RiskControl $riskControl): void
-    {
-        //
-    } */
-
-    /**
-     * Handle the RiskControl "force deleted" event.
-     */
-    /* public function forceDeleted(RiskControl $riskControl): void
-    {
-        //
+        $this->riskService->updateResidualRisk($riskControl->risk);
     } */
 }

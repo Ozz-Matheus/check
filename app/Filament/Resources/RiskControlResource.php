@@ -34,6 +34,15 @@ class RiskControlResource extends Resource
                 Forms\Components\Section::make(__('Control data'))
                     ->columns(2)
                     ->schema([
+                        Forms\Components\Select::make('context_type')
+                            ->label(__('Context type'))
+                            ->options([
+                                'prevention' => __('Prevention'),
+                                'materialization' => __('Materialization'),
+                            ])
+                            ->required()
+                            ->native(false)
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('potentialCauses')
                             ->label(__('Potential causes'))
                             ->relationship(

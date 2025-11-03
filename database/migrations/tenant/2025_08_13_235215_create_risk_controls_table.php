@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('risk_controls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('risk_id')->constrained('risks');
+            $table->enum('context_type', ['prevention', 'materialization']);
             // $table->foreignId('potential_cause_id')->constrained('risk_potential_causes'); muchos a muchos
             $table->string('title');
             $table->foreignId('control_periodicity_id')->constrained('risk_control_periodicities');

@@ -12,7 +12,7 @@ class RiskImpact extends Model
 
     protected $fillable = [
         'title',
-        'score',
+        'weight',
     ];
 
     public function risks()
