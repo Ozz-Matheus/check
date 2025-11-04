@@ -4,8 +4,8 @@ namespace App\Filament\Resources\SupplierIssueResource\Pages;
 
 use App\Filament\Resources\SupplierIssueResource;
 use App\Models\Status;
+use App\Support\AppNotifier;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewSupplierIssue extends ViewRecord
@@ -25,10 +25,7 @@ class ViewSupplierIssue extends ViewRecord
                         'status_id' => Status::byContextAndTitle('supplier_issue', 'sent')?->id,
                     ]);
 
-                    Notification::make()
-                        ->title(__('Sent successfully'))
-                        ->success()
-                        ->send();
+                    AppNotifier::success(__('Sent successfully'));
 
                     $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record]));
                 }),

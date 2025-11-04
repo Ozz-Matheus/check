@@ -478,5 +478,9 @@
     "Created": "Creado",
     "Updated": "Actualizado",
     "Deleted": "Eliminado",
-    "Restored": "Restaurado"
+    "Restored": "Restaurado",
+
+    "Headquarter":"Sede",
+    "Headquarters":"Sedes",
+    "Headquarter Management": "Gestión de Sedes"
 }

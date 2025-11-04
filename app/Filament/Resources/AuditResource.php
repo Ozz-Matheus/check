@@ -3,16 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AuditResource\Pages;
-use Filament\Notifications\Notification;
+use App\Models\AuditLog;
+use App\Support\AppNotifier;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use OwenIt\Auditing\Models\Audit;
 
 class AuditResource extends Resource
 {
-    protected static ?string $model = Audit::class;
+    protected static ?string $model = AuditLog::class;
 
     protected static ?string $modelLabel = null;
 
@@ -114,11 +114,9 @@ class AuditResource extends Resource
         // Validar existencia y tipo de evento
         if (! $record || $audit->event !== 'updated') {
 
-            return Notification::make()
-                ->title('No se puede restaurar')
-                ->body('El registro no existe o el evento no es "updated".')
-                ->warning()
-                ->send();
+            AppNotifier::warning('No se puede restaurar', 'El registro no existe o el evento no es "updated".');
+
+            return;
         }
 
         // Obtener valores antiguos
@@ -130,11 +128,9 @@ class AuditResource extends Resource
 
         if (! is_array($restore)) {
 
-            return Notification::make()
-                ->title('Sin valores antiguos')
-                ->body('No hay datos válidos para restaurar.')
-                ->warning()
-                ->send();
+            AppNotifier::warning('Sin valores antiguos', 'No hay datos válidos para restaurar.');
+
+            return;
         }
 
         // Limpiar y restaurar
@@ -143,10 +139,7 @@ class AuditResource extends Resource
         $record->save();
 
         // Notificación de éxito
-        Notification::make()
-            ->title('Registro restaurado')
-            ->body('El registro fue restaurado a su estado anterior.')
-            ->success()
-            ->send();
+        AppNotifier::success('Registro restaurado', 'El registro fue restaurado a su estado anterior.');
+
     }
 }

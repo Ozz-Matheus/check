@@ -79,6 +79,11 @@ class SupplierResource extends Resource
                             ->helperText(__('Enables or disables user access.'))
                             ->required()
                             ->default(true),
+                        Forms\Components\Select::make('headquarter_id')
+                            ->label('Headquarters')
+                            ->relationship('headquarter', 'label')
+                            ->required(),
+
                     ]),
             ]);
     }

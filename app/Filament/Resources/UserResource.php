@@ -109,8 +109,9 @@ class UserResource extends Resource
                             ->required()
                             ->default(true),
                         Forms\Components\Select::make('headquarter_id')
-                            ->label('Sede')
-                            ->relationship('headquarter', 'label'),
+                            ->label(__('Headquarters'))
+                            ->relationship('headquarter', 'label')
+                            ->required(),
                     ]),
             ]);
     }

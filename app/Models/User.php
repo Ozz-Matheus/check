@@ -3,10 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\AppNotifier;
 use App\Traits\HasUserLogic;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Notifications\Notification;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -128,12 +128,11 @@ class User extends Authenticatable implements FilamentUser
         if (! $this->isActive()) {
             Auth::logout();
 
-            Notification::make()
-                ->title('Account deactivated')
-                ->body('Your account has been deactivated. Contact the administrator.')
-                ->danger()
-                ->persistent()
-                ->send();
+            AppNotifier::danger(
+                'Account deactivated',
+                'Your account has been deactivated. Contact the administrator.',
+                persistent: true
+            );
 
             return false;
         }

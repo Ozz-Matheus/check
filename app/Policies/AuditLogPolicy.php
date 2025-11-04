@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Corrective;
+use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CorrectivePolicy
+class AuditLogPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class CorrectivePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_corrective');
+        return $user->can('view_any_audit');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Corrective $corrective): bool
+    public function view(User $user, AuditLog $auditLog): bool
     {
-        return $user->can('view_corrective');
+        return $user->can('view_audit');
     }
 
     /**
@@ -31,23 +31,23 @@ class CorrectivePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_corrective');
+        return $user->can('create_audit');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Corrective $corrective): bool
+    public function update(User $user, AuditLog $auditLog): bool
     {
-        return $user->can('update_corrective');
+        return $user->can('update_audit');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Corrective $corrective): bool
+    public function delete(User $user, AuditLog $auditLog): bool
     {
-        return $user->can('delete_corrective');
+        return $user->can('delete_audit');
     }
 
     /**
@@ -55,15 +55,15 @@ class CorrectivePolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_corrective');
+        return $user->can('delete_any_audit');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Corrective $corrective): bool
+    public function forceDelete(User $user, AuditLog $auditLog): bool
     {
-        return $user->can('force_delete_corrective');
+        return $user->can('force_delete_audit');
     }
 
     /**
@@ -71,15 +71,15 @@ class CorrectivePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_corrective');
+        return $user->can('force_delete_any_audit');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Corrective $corrective): bool
+    public function restore(User $user, AuditLog $auditLog): bool
     {
-        return $user->can('restore_corrective');
+        return $user->can('restore_audit');
     }
 
     /**
@@ -87,15 +87,15 @@ class CorrectivePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_corrective');
+        return $user->can('restore_any_audit');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Corrective $corrective): bool
+    public function replicate(User $user, AuditLog $auditLog): bool
     {
-        return $user->can('replicate_corrective');
+        return $user->can('replicate_audit');
     }
 
     /**
@@ -103,6 +103,6 @@ class CorrectivePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_corrective');
+        return $user->can('reorder_audit');
     }
 }

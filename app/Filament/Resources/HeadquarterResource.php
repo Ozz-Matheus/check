@@ -3,24 +3,49 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\HeadquarterResource\Pages;
-use App\Filament\Resources\HeadquarterResource\RelationManagers;
 use App\Models\Headquarter;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Str;
-use Filament\Resources\Pages\CreateRecord;
-
 
 class HeadquarterResource extends Resource
 {
     protected static ?string $model = Headquarter::class;
 
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
+
+    protected static ?string $navigationLabel = null;
+
+    protected static ?string $navigationGroup = null;
+
+    public static function getModelLabel(): string
+    {
+        return __('Headquarter');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Headquarters');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Headquarters');
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Headquarter Management');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-cog-8-tooth';
+
+    protected static ?int $navigationSort = 44;
 
     public static function form(Form $form): Form
     {
@@ -52,11 +77,11 @@ class HeadquarterResource extends Resource
     {
         return $table
             ->columns([
-                 Tables\Columns\TextColumn::make('label')
-                ->label(__('Display name')),
-                 Tables\Columns\TextColumn::make('name')
-                ->label(__('Name'))
-                ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('label')
+                    ->label(__('Display name')),
+                Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

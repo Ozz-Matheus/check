@@ -12,7 +12,14 @@ class HeadquarterScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         if (auth()->check()) {
-            $builder->where($model->getTable().'.headquarter_id', auth()->user()->headquarter_id);
+
+            $user = auth()->user();
+
+            if (! $user->hasRole('super_admin') && ! $user->hasRole('admin')) {
+
+                $builder->where($model->getTable().'.headquarter_id', $user->headquarter_id);
+
+            }
         }
     }
 }
