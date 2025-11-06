@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sub_processes', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('acronym');
+            $table->string('acronym')->unique();
             $table->foreignId('process_id')->constrained()->onDelete('cascade');
             $table->foreignId('leader_by_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

@@ -12,6 +12,6 @@ class HeadquarterSeeder extends Seeder
      */
     public function run(): void
     {
-        Headquarter::firstOrCreate(['name' => 'main', 'label' => 'Main']);
+        Headquarter::firstOrCreate(['name' => 'Main', 'acronym' => 'MA']);
     }
 }

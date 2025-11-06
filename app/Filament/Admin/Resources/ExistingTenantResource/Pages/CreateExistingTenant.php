@@ -45,4 +45,9 @@ class CreateExistingTenant extends CreateRecord
     {
         return route('filament.admin.resources.tenants.index'); // Redirige al recurso oficial
     }
+
+    public static function canCreateAnother(): bool
+    {
+        return false;
+    }
 }

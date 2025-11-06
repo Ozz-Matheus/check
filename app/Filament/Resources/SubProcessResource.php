@@ -58,10 +58,14 @@ class SubProcessResource extends Resource
                     ->required(fn (string $context) => $context === 'create'),
                 Forms\Components\TextInput::make('acronym')
                     ->label(__('Acronym'))
+                    ->alpha()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true)
                     ->disabled(fn (string $context) => $context === 'edit')
-                    ->required(fn (string $context) => $context === 'create'),
+                    ->required(fn (string $context) => $context === 'create')
+                    ->dehydrateStateUsing(fn (?string $state) => mb_strtoupper($state ?? '', 'UTF-8')
+                    )
+                    ->extraInputAttributes(['style' => 'text-transform: uppercase']),
                 Forms\Components\Select::make('process_id')
                     ->label(__('Process'))
                     ->relationship('process', 'title')

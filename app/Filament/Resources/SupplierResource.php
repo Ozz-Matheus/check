@@ -80,8 +80,8 @@ class SupplierResource extends Resource
                             ->required()
                             ->default(true),
                         Forms\Components\Select::make('headquarter_id')
-                            ->label('Headquarters')
-                            ->relationship('headquarter', 'label')
+                            ->label(__('Headquarters'))
+                            ->relationship('headquarter', 'name')
                             ->required(),
 
                     ]),

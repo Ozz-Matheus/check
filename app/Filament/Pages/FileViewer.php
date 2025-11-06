@@ -47,7 +47,11 @@ class FileViewer extends Page
 
                 if (! $hasAccess && ! $user->canAccessSubProcess($this->doc->sub_process_id)) {
 
-                    AppNotifier::error(__('You do not have permission to view this document.'));
+                    AppNotifier::error(
+                        __('Document'),
+                        __('You do not have permission to view this document.'),
+                        true
+                    );
                     abort(403);
                 }
             }

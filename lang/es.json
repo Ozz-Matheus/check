@@ -474,7 +474,7 @@
     "Role Management": "Gestión de Roles",
     "¿Reason for rejected?": "¿Motivo del rechazo?",
     "¿Reason for restore?": "¿Motivo de la restauración?",
-
+    "Acronym": "Acrónimo",
     "Created": "Creado",
     "Updated": "Actualizado",
     "Deleted": "Eliminado",
@@ -482,5 +482,7 @@
 
     "Headquarter":"Sede",
     "Headquarters":"Sedes",
-    "Headquarter Management": "Gestión de Sedes"
+    "Headquarter Management": "Gestión de Sedes",
+    "Reassign users to another headquarter before deleting this site.":"Reasigna los usuarios a otra sede antes de eliminar este sitio.",
+    "This Headquarter has assigned users and cannot be deleted." : "Esta sede tiene usuarios asignados y no se puede eliminar."
 }

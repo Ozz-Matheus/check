@@ -6,7 +6,6 @@ use App\Filament\Resources\HeadquarterResource\Pages;
 use App\Models\Headquarter;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -51,25 +50,25 @@ class HeadquarterResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('label')
-                    ->label(__('Display name'))
+                Forms\Components\TextInput::make('name')
+                    ->label(__('Name'))
                     ->required()
                     ->unique(table: 'headquarters', ignoreRecord: true)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function (Forms\Set $set, $state, Forms\Get $get, $component) {
-                        if ($component->getLivewire() instanceof CreateRecord) {
-                            $set('name', \Str::of($state)->slug()->toString());
-                        }
-                    })
                     ->maxLength(255)
                     ->placeholder('Ej. Colombia')
                     ->helperText('Este nombre se usará para mostrar la sede en el sistema.'),
 
-                Forms\Components\TextInput::make('name')
-                    ->label(__('Name'))
-                    ->required()
+                Forms\Components\TextInput::make('acronym')
+                    ->label(__('Acronym'))
+                    ->alpha()
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true)
                     ->disabled(fn (string $context) => $context === 'edit')
-                    ->columnSpanFull(),
+                    ->required(fn (string $context) => $context === 'create')
+                    ->dehydrateStateUsing(fn (?string $state) => mb_strtoupper($state ?? '', 'UTF-8')
+                    )
+                    ->extraInputAttributes(['style' => 'text-transform: uppercase']),
+
             ]);
     }
 
@@ -77,11 +76,11 @@ class HeadquarterResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('label')
-                    ->label(__('Display name')),
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('Name'))
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label(__('Name')),
+                Tables\Columns\TextColumn::make('acronym')
+                    ->label(__('Acronym'))
+                    ->searchable(),
             ])
             ->filters([
                 //

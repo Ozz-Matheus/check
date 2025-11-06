@@ -128,10 +128,10 @@ class User extends Authenticatable implements FilamentUser
         if (! $this->isActive()) {
             Auth::logout();
 
-            AppNotifier::danger(
+            AppNotifier::error(
                 'Account deactivated',
                 'Your account has been deactivated. Contact the administrator.',
-                persistent: true
+                true
             );
 
             return false;

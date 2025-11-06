@@ -110,7 +110,7 @@ class UserResource extends Resource
                             ->default(true),
                         Forms\Components\Select::make('headquarter_id')
                             ->label(__('Headquarters'))
-                            ->relationship('headquarter', 'label')
+                            ->relationship('headquarter', 'name')
                             ->required(),
                     ]),
             ]);
@@ -141,8 +141,9 @@ class UserResource extends Resource
                         'supplier' => 'warning',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('headquarter.label')
-                    ->label(__('Sede'))
+                Tables\Columns\TextColumn::make('headquarter.name')
+                    ->label(__('Headquarters'))
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->label(__('Email verified at'))

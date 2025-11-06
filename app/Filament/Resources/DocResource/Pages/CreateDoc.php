@@ -29,7 +29,9 @@ class CreateDoc extends CreateRecord
             $this->halt();
         }
 
-        $data['classification_code'] = app(DocService::class)->generateCode($data['doc_type_id'], $data['sub_process_id']);
+        $headquarterId = $user->headquarter_id;
+
+        $data['classification_code'] = app(DocService::class)->generateCode($data['doc_type_id'], $data['sub_process_id'], $headquarterId);
         $data['created_by_id'] = $user->id;
 
         return $data;
