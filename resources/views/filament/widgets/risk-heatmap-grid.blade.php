@@ -3,7 +3,9 @@
         <div class="space-y-6">
             <!-- Header -->
             <div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Mapa de Calor de Riesgos</h2>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+                    {{ $title ?? null }}
+                </h2>
             </div>
 
             <!-- Heatmap Grid -->

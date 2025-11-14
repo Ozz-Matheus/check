@@ -60,6 +60,8 @@ class RiskHeatmapGrid extends Widget
             }
         }
 
-        return compact('cells', 'impacts', 'probs');
+        $title =  'Mapa de Calor de Riesgos';
+
+        return compact('title', 'cells', 'impacts', 'probs');
     }
 }

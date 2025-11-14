@@ -21,11 +21,11 @@ class ResidualRiskHeatmapGrid extends Widget
         $levels = RiskLevel::all(['id', 'title']);
 
         $palette = [
-            'bajo'      => config('filament-colors.success.hex'),   // verde
-            'medio'     => config('filament-colors.yellow.hex'),    // amarillo
-            'alto'      => config('filament-colors.warning.hex'),   // naranja
-            'muy alto'  => config('filament-colors.danger.hex'),    // rojo
-            'default'   => config('filament-colors.primary.hex'),   // fallback
+            'bajo' => config('filament-colors.success.hex'),   // verde
+            'medio' => config('filament-colors.yellow.hex'),  // amarillo
+            'alto' => config('filament-colors.warning.hex'),  // naranja
+            'muy alto' => config('filament-colors.danger.hex'),    // rojo
+            'default' => config('filament-colors.primary.hex'),    // fallback sin acento
         ];
 
         $cells = [];
@@ -60,6 +60,11 @@ class ResidualRiskHeatmapGrid extends Widget
             }
         }
 
-        return compact('cells', 'impacts', 'probs');
+        return [
+            'title'   => 'Mapa de Calor de Riesgos Residual',
+            'cells'   => $cells,
+            'impacts' => $impacts,
+            'probs'   => $probs,
+        ];
     }
 }
