@@ -29,6 +29,9 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'active',
+        'headquarter_id',
+        'view_all_headquarters',
+        'interact_with_all_headquarters',
     ];
 
     /**
@@ -52,6 +55,8 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'active' => 'boolean',
+            'view_all_headquarters' => 'boolean',
+            'interact_with_all_headquarters' => 'boolean',
         ];
     }
 

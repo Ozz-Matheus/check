@@ -27,6 +27,7 @@ class Doc extends Model implements AuditableContract
         'disposition_method_id',
         'display_restriction',
         'created_by_id',
+        'headquarter_id',
     ];
 
     protected $casts = [

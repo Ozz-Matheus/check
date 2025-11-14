@@ -7,6 +7,7 @@ use App\Filament\Resources\RiskResource;
 use App\Filament\Resources\RiskResource\Widgets\RiskCategoriesChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskContextsChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskHeatmapGrid;
+use App\Filament\Resources\RiskResource\Widgets\ResidualRiskHeatmapGrid;
 use App\Filament\Resources\RiskResource\Widgets\RiskStatsOverview;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
@@ -86,6 +87,7 @@ class ListRisks extends ListRecords
             RiskCategoriesChart::class,
             RiskContextsChart::class,
             RiskHeatmapGrid::class,
+            ResidualRiskHeatmapGrid::class,
         ];
     }
 }

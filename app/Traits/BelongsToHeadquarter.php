@@ -15,7 +15,7 @@ class HeadquarterScope implements Scope
 
             $user = auth()->user();
 
-            if (! $user->hasRole('super_admin') && ! $user->hasRole('admin')) {
+            if (! $user->hasRole('super_admin') && (bool) $user->view_all_headquarters === false) {
 
                 $builder->where($model->getTable().'.headquarter_id', $user->headquarter_id);
 

@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('headquarter_id')->after('id')->default(1)->constrained()->cascadeOnDelete();
+            $table->foreignId('headquarter_id')->after('id')->default(1)->constrained()->restrictOnDelete();
+            $table->boolean('view_all_headquarters')->default(false);
+            $table->boolean('interact_with_all_headquarters')->default(false);
         });
     }
 
@@ -24,6 +26,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['headquarter_id']);
             $table->dropColumn('headquarter_id');
+            $table->dropColumn('view_all_headquarters');
+            $table->dropColumn('interact_with_all_headquarters');
         });
     }
 };

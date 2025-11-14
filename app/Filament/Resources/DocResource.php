@@ -63,6 +63,13 @@ class DocResource extends Resource
                 Forms\Components\Section::make(__('Doc data'))
                     ->columns(2)
                     ->schema([
+                        Forms\Components\Select::make('headquarter_id')
+                            ->label(__('Headquarter'))
+                            ->relationship('headquarter', 'name')
+                            ->native(false)
+                            ->columns(1)
+                            ->required(fn () => auth()->user()->interact_with_all_headquarters === (bool) true)
+                            ->visible(fn () => auth()->user()->interact_with_all_headquarters === (bool) true),
                         Forms\Components\TextInput::make('title')
                             ->label(__('Title'))
                             ->required()
@@ -220,6 +227,10 @@ class DocResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->label(__('Created by'))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('headquarter.name')
+                    ->label(__('Headquarters'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')

@@ -108,9 +108,16 @@ class UserResource extends Resource
                             ->helperText(__('Enables or disables user access.'))
                             ->required()
                             ->default(true),
+                        Forms\Components\Toggle::make('view_all_headquarters')
+                            ->label(__('View all headquarters'))
+                            ->helperText(__('It allows the user to view the content of all headquarters.')),
+                        Forms\Components\Toggle::make('interact_with_all_headquarters')
+                            ->label(__('Interact with all headquarters'))
+                            ->helperText(__('It allows the user to interact with the content of all headquarters.')),
                         Forms\Components\Select::make('headquarter_id')
                             ->label(__('Headquarters'))
                             ->relationship('headquarter', 'name')
+                            ->native(false)
                             ->required(),
                     ]),
             ]);

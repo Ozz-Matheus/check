@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('docs', function (Blueprint $table) {
             $table->foreignId('headquarter_id')
                 ->constrained()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
         });
     }
 
@@ -24,7 +24,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('docs', function (Blueprint $table) {
-            //
+            $table->dropForeign(['headquarter_id']);
+            $table->dropColumn('headquarter_id');
         });
     }
 };

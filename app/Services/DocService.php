@@ -15,6 +15,9 @@ class DocService
      */
     public function generateCode($docTypeId, $subProcessId, $headquarterId): string
     {
+
+        $headquarterId = $headquarterId ?? auth()->user()->headquarter_id;
+
         return DB::transaction(function () use ($docTypeId, $subProcessId, $headquarterId) {
             $type = DocType::lockForUpdate()->findOrFail($docTypeId);
             $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
