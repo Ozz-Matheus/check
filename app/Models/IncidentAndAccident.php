@@ -13,10 +13,14 @@ class IncidentAndAccident extends Model
         'description',
         'name_affected_person',
         'event_type_id',
-        'process_id',
-        'sub_process_id',
+        'affected_process_id',
+        'affected_sub_process_id',
+        /* 'process_id',
+        'sub_process_id', */
         'event_date',
         'event_site',
+        'responsible_management_process_id',
+        'responsible_management_sub_process_id',
         'observations',
         'priority_id',
         'status_id',
@@ -28,7 +32,27 @@ class IncidentAndAccident extends Model
         return $this->belongsTo(IAndAEventType::class, 'event_type_id');
     }
 
-    public function process()
+    public function affectedProcess()
+    {
+        return $this->belongsTo(Process::class, 'affected_process_id');
+    }
+
+    public function affectedSubProcess()
+    {
+        return $this->belongsTo(SubProcess::class, 'affected_sub_process_id');
+    }
+
+    public function responsibleManagementProcess()
+    {
+        return $this->belongsTo(Process::class, 'responsible_management_process_id');
+    }
+
+    public function responsibleManagementSubProcess()
+    {
+        return $this->belongsTo(SubProcess::class, 'responsible_management_sub_process_id');
+    }
+
+    /* public function process()
     {
         return $this->belongsTo(Process::class, 'process_id');
     }
@@ -36,7 +60,7 @@ class IncidentAndAccident extends Model
     public function subProcess()
     {
         return $this->belongsTo(SubProcess::class, 'sub_process_id');
-    }
+    } */
 
     public function priority()
     {

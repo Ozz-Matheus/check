@@ -14,8 +14,12 @@ class RolesSeeder extends Seeder
         // Crear roles
         $superAdminRole = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $riskRole = Role::firstOrCreate(['name' => 'risk', 'guard_name' => 'web']);
+        $auditRole = Role::firstOrCreate(['name' => 'audit', 'guard_name' => 'web']);
+        $incidentAndAccidentRole = Role::firstOrCreate(['name' => 'incident_and_accident', 'guard_name' => 'web']);
+        $supplierIssueRole = Role::firstOrCreate(['name' => 'supplier_issue', 'guard_name' => 'web']);
+        $supplierPanelRole = Role::firstOrCreate(['name' => 'supplier', 'guard_name' => 'web']);
         $panelRole = Role::firstOrCreate(['name' => 'panel_user', 'guard_name' => 'web']);
-        $supplierRole = Role::firstOrCreate(['name' => 'supplier', 'guard_name' => 'web']);
 
         // Crear permisos base
         $permissions = [

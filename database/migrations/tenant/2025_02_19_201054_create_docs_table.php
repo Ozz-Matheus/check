@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('docs', function (Blueprint $table) {
             $table->id();
             $table->string('classification_code')->unique();
-            $table->string('title')->unique();
+            $table->string('title');
             $table->foreignId('process_id')->constrained();
             $table->foreignId('sub_process_id')->constrained();
             $table->foreignId('doc_type_id')->constrained();

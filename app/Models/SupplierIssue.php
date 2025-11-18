@@ -11,13 +11,14 @@ class SupplierIssue extends Model
         'title',
         'cause_id',
         'description',
-        'issue_date',
+        'entry_date',
+        'report_date',
         'supplier_id',
         'product_id',
         'amount',
         'supplier_lot',
-        'report_date',
         'monetary_impact',
+        'responsible_by_id',
         'status_id',
     ];
 
@@ -34,6 +35,11 @@ class SupplierIssue extends Model
     public function product()
     {
         return $this->belongsTo(SupplierProduct::class, 'product_id');
+    }
+
+    public function responsibleBy()
+    {
+        return $this->belongsTo(User::class, 'responsible_by_id');
     }
 
     public function status()

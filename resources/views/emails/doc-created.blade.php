@@ -1,25 +1,42 @@
 @extends('emails.layout.theme')
 
 @section('title')
-Un documento ha sido creado
+    Nuevo Documento Creado
 @endsection
 
 @section('content')
-<p>Hola {{ $user->name }},</p>
+    <p>Hola <strong>{{ $user->name }}</strong>,</p>
 
-<p>Se ha creado un nuevo documento </p>
-<p>en el sistema {{ config('app.name') }} :</p>
+    <p>Te informamos que se ha creado un nuevo documento en {{ config('app.name') }}.</p>
 
-<ul>
-    <li><strong>Título:</strong> {{ $doc->title }}</li>
-    <li><strong>Creado por:</strong> {{ $doc->createdBy->name ?? 'Sistema' }}</li>
-    <li><strong>Fecha:</strong> {{ $doc->created_at->format('d/m/Y') }}</li>
-</ul>
+    <div class="info-card">
+        <ul>
+            <li>
+                <strong>Título:</strong>
+                <span>{{ $doc->title }}</span>
+            </li>
+            <li>
+                <strong>Creado por:</strong>
+                <span>{{ $doc->createdBy->name ?? 'Sistema' }}</span>
+            </li>
+            <li>
+                <strong>Fecha:</strong>
+                <span>{{ $doc->created_at->format('d/m/Y H:i') }}</span>
+            </li>
+        </ul>
+    </div>
 
-<p>
-    <a href="{{ route('filament.dashboard.resources.docs.versions.index', ['doc' => $doc->id ]) }}"
-       class="button">
-        Ver Documento
-    </a>
-</p>
+    <p style="margin-top: 28px;">
+        Para revisar el documento y gestionar sus versiones, haz clic en el siguiente botón:
+    </p>
+
+    <p style="text-align: center;">
+        <a href="{{ route('filament.dashboard.resources.docs.versions.index', ['doc' => $doc->id]) }}" class="button">
+            Ver Documento
+        </a>
+    </p>
+
+    <em>
+        📄 Este registro ya está disponible y listo para comenzar a gestionar.
+    </em>
 @endsection

@@ -29,6 +29,7 @@ class SupplierIssueResponseResource extends Resource
                             ->rows(3)
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('supplier_actions')
+                            ->label(__('Supplier actions'))
                             ->required()
                             ->rows(3)
                             ->columnSpanFull(),

@@ -66,9 +66,22 @@ class SupplierIssueResource extends Resource
                             ->label(__('Description'))
                             ->required()
                             ->columnSpanFull(),
-                        Forms\Components\DatePicker::make('issue_date')
-                            ->label(__('Issue date'))
+                        Forms\Components\DatePicker::make('entry_date')
+                            ->label(__('Entry date'))
                             ->maxDate(today())
+                            ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                if ($get('report_date') < $state) {
+                                    $set('report_date', null);
+                                }
+                            })
+                            ->closeOnDateSelection()
+                            ->reactive()
+                            ->native(false)
+                            ->required(),
+                        Forms\Components\DatePicker::make('report_date')
+                            ->label(__('Report date'))
+                            ->maxDate(today())
+                            ->minDate(fn (Get $get) => $get('entry_date'))
                             ->closeOnDateSelection()
                             ->native(false)
                             ->required(),
@@ -116,12 +129,6 @@ class SupplierIssueResource extends Resource
                             ->label(__('Supplier lot'))
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\DatePicker::make('report_date')
-                            ->label(__('Report date'))
-                            ->maxDate(today())
-                            ->closeOnDateSelection()
-                            ->native(false)
-                            ->required(),
                         Forms\Components\TextInput::make('monetary_impact')
                             ->label(__('Monetary impact'))
                             ->numeric()
@@ -129,6 +136,14 @@ class SupplierIssueResource extends Resource
                                 'onkeydown' => 'if(event.key === "e" || event.key === "E") event.preventDefault();',
                             ])
                             ->prefix('$')
+                            ->required(),
+                        Forms\Components\Select::make('responsible_by_id')
+                            ->label(__('Responsible'))
+                            ->relationship(
+                                name: 'responsibleBy',
+                                titleAttribute: 'name'
+                            )
+                            ->native(false)
                             ->required(),
                         static::baseFileUpload('path')
                             ->label(__('Support files'))
@@ -158,12 +173,12 @@ class SupplierIssueResource extends Resource
                     ->copyable()
                     ->copyMessage(__('Title copied'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('cause.title')
-                    ->label(__('Cause')),
-                Tables\Columns\TextColumn::make('issue_date')
-                    ->label(__('Issue date'))
+                Tables\Columns\TextColumn::make('report_date')
+                    ->label(__('Report date'))
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('cause.title')
+                    ->label(__('Cause')),
                 Tables\Columns\TextColumn::make('supplier.name')
                     ->label(__('Supplier')),
                 Tables\Columns\TextColumn::make('product.title')
@@ -182,10 +197,6 @@ class SupplierIssueResource extends Resource
                     ->copyable()
                     ->copyMessage(__('Supplier lot copied'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('report_date')
-                    ->label(__('Report date'))
-                    ->date()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('monetary_impact')
                     ->label(__('Monetary impact'))
                     ->numeric()

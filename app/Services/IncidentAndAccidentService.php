@@ -25,7 +25,7 @@ class IncidentAndAccidentService
             $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
 
             $count = IncidentAndAccident::where('event_type_id', $eventTypeId)
-                ->where('sub_process_id', $subProcessId)
+                ->where('affected_sub_process_id', $subProcessId)
                 ->lockForUpdate()
                 ->count();
 

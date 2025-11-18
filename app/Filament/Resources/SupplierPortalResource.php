@@ -58,8 +58,11 @@ class SupplierPortalResource extends Resource
                         Forms\Components\Textarea::make('description')
                             ->label(__('Description'))
                             ->columnSpanFull(),
-                        Forms\Components\DatePicker::make('issue_date')
-                            ->label(__('Issue date'))
+                        Forms\Components\DatePicker::make('entry_date')
+                            ->label(__('Entry date'))
+                            ->native(false),
+                        Forms\Components\DatePicker::make('report_date')
+                            ->label(__('Report date'))
                             ->native(false),
                         Forms\Components\Select::make('supplier_id')
                             ->label(__('Supplier'))
@@ -83,9 +86,6 @@ class SupplierPortalResource extends Resource
                         Forms\Components\TextInput::make('supplier_lot')
                             ->label(__('Supplier lot'))
                             ->maxLength(255),
-                        Forms\Components\DatePicker::make('report_date')
-                            ->label(__('Report date'))
-                            ->native(false),
                         Forms\Components\TextInput::make('status_label')
                             ->label(__('Status'))
                             ->formatStateUsing(fn ($record) => $record?->status?->label ?? 'Sin estado')
@@ -113,12 +113,12 @@ class SupplierPortalResource extends Resource
                     ->copyable()
                     ->copyMessage(__('Title copied'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('cause.title')
-                    ->label(__('Cause')),
-                Tables\Columns\TextColumn::make('issue_date')
-                    ->label(__('Issue date'))
+                Tables\Columns\TextColumn::make('report_date')
+                    ->label(__('Report date'))
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('cause.title')
+                    ->label(__('Cause')),
                 Tables\Columns\TextColumn::make('supplier.name')
                     ->label(__('Supplier')),
                 Tables\Columns\TextColumn::make('product.title')
@@ -137,10 +137,6 @@ class SupplierPortalResource extends Resource
                     ->copyable()
                     ->copyMessage(__('Supplier lot copied'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('report_date')
-                    ->label(__('Report date'))
-                    ->date()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('status.label')
                     ->label(__('Status'))
                     ->searchable()

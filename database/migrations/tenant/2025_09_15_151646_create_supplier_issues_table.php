@@ -16,13 +16,14 @@ return new class extends Migration
             $table->string('title');
             $table->foreignId('cause_id')->constrained('supplier_issue_causes');
             $table->text('description');
-            $table->date('issue_date');
+            $table->date('entry_date');
+            $table->date('report_date');
             $table->foreignId('supplier_id')->constrained('users');
             $table->foreignId('product_id')->constrained('supplier_products');
             $table->integer('amount');
             $table->string('supplier_lot');
-            $table->date('report_date');
             $table->bigInteger('monetary_impact');
+            $table->foreignId('responsible_by_id')->constrained('users');
             $table->foreignId('status_id')->constrained('statuses');
             $table->timestamps();
         });

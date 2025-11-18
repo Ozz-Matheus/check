@@ -14,8 +14,8 @@ class ViewSupplierPortal extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('answer')
-                ->label(__('Answer'))
+            Action::make('reply')
+                ->label(__('Reply'))
                 // 📌 Falta autorización
                 ->visible(fn ($record) => $record->status_id === Status::byContextAndTitle('supplier_issue', 'read')->id)
                 ->url(fn ($record) => $this->getResource()::getUrl('response.create', [

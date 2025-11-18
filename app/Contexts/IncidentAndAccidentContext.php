@@ -21,12 +21,12 @@ class IncidentAndAccidentContext implements ActionOriginInterface
 
     public function getProcessId(): ?int
     {
-        return $this->model->process_id;
+        return $this->model->responsible_management_process_id;
     }
 
     public function getSubProcessId(): ?int
     {
-        return $this->model->sub_process_id;
+        return $this->model->responsible_management_sub_process_id;
     }
 
     public function getBreadcrumbs(): array

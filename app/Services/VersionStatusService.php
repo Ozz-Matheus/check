@@ -26,7 +26,7 @@ class VersionStatusService
     public function pending(DocVersion $docVersion): void
     {
         $status = Status::byContextAndTitle('doc', 'pending');
-        $changeReason = 'Pending from version '.$docVersion->version;
+        $changeReason = __('Pending version ').$docVersion->version;
 
         $this->updateVersionStatus($docVersion, $status, $changeReason);
     }
@@ -34,7 +34,7 @@ class VersionStatusService
     public function rejected(DocVersion $docVersion): void
     {
         $status = Status::byContextAndTitle('doc', 'rejected');
-        $reasonMessage = 'Rejected from version '.$docVersion->version;
+        $reasonMessage = __('Rejected version ').$docVersion->version;
         $changeReason = Str::limit(strip_tags(request()->query('change_reason', $reasonMessage)), 255);
         $extra = [
             'decided_by_id' => auth()->id(),
@@ -48,7 +48,7 @@ class VersionStatusService
     {
         $data = [
             'doc_id' => $docVersion->doc_id,
-            'change_reason' => 'Approved from version '.$docVersion->version,
+            'change_reason' => __('Approved version ').$docVersion->version,
             'created_by_id' => $docVersion->created_by_id,
         ];
 
@@ -71,7 +71,7 @@ class VersionStatusService
             'doc_id' => $docVersion->doc_id,
             'sub_process_id' => $docVersion->doc->sub_process_id,
             'comment' => Str::limit(strip_tags(request()->query('comment', $docVersion->comment)), 255),
-            'change_reason' => 'Restored from version '.$docVersion->version,
+            'change_reason' => __('Restored version ').$docVersion->version,
             'sha256_hash' => $sha256_hash,
         ];
 

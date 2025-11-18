@@ -66,20 +66,20 @@ class IncidentAndAccidentResource extends Resource
                             ->relationship('eventType', 'title')
                             ->native(false)
                             ->required(),
-                        Forms\Components\Select::make('process_id')
-                            ->label(__('Process'))
-                            ->relationship('process', 'title')
-                            ->afterStateUpdated(fn (Set $set) => $set('sub_process_id', null))
+                        Forms\Components\Select::make('affected_process_id')
+                            ->label(__('Affected process'))
+                            ->relationship('affectedProcess', 'title')
+                            ->afterStateUpdated(fn (Set $set) => $set('affected_sub_process_id', null))
                             ->searchable()
                             ->preload()
                             ->reactive()
                             ->required(),
-                        Forms\Components\Select::make('sub_process_id')
-                            ->label(__('Sub process'))
+                        Forms\Components\Select::make('affected_sub_process_id')
+                            ->label(__('Affected sub process'))
                             ->relationship(
-                                name: 'subProcess',
+                                name: 'affectedSubProcess',
                                 titleAttribute: 'title',
-                                modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('process_id'))
+                                modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('affected_process_id'))
                             )
                             ->searchable()
                             ->preload()
@@ -93,6 +93,24 @@ class IncidentAndAccidentResource extends Resource
                             ->label(__('Event site'))
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\Select::make('responsible_management_process_id')
+                            ->label(__('Responsible management process'))
+                            ->relationship('responsibleManagementProcess', 'title')
+                            ->afterStateUpdated(fn (Set $set) => $set('responsible_management_sub_process_id', null))
+                            ->searchable()
+                            ->preload()
+                            ->reactive()
+                            ->required(),
+                        Forms\Components\Select::make('responsible_management_sub_process_id')
+                            ->label(__('Responsible management sub process'))
+                            ->relationship(
+                                name: 'responsibleManagementSubProcess',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: fn ($query, Get $get) => $query->where('process_id', $get('responsible_management_process_id'))
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required(),
                         Forms\Components\Select::make('priority_id')
                             ->label(__('Priority'))
                             ->relationship(
@@ -141,10 +159,10 @@ class IncidentAndAccidentResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('eventType.title')
                     ->label(__('Event type')),
-                Tables\Columns\TextColumn::make('process.title')
-                    ->label(__('Process')),
-                Tables\Columns\TextColumn::make('subProcess.title')
-                    ->label(__('Sub process')),
+                Tables\Columns\TextColumn::make('affectedProcess.title')
+                    ->label(__('Affected process')),
+                Tables\Columns\TextColumn::make('affectedSubProcess.title')
+                    ->label(__('Affected sub process')),
                 Tables\Columns\TextColumn::make('priority.title')
                     ->label(__('Priority')),
                 Tables\Columns\TextColumn::make('status.label')
@@ -175,15 +193,15 @@ class IncidentAndAccidentResource extends Resource
                     ->label(__('Event type'))
                     ->relationship('eventType', 'title')
                     ->native(false),
-                Tables\Filters\SelectFilter::make('process_id')
-                    ->label(__('Process'))
-                    ->relationship('process', 'title')
+                Tables\Filters\SelectFilter::make('affected_process_id')
+                    ->label(__('Affected process'))
+                    ->relationship('affectedProcess', 'title')
                     ->multiple()
                     ->searchable()
                     ->preload(),
-                Tables\Filters\SelectFilter::make('sub_process_id')
-                    ->label(__('Sub process'))
-                    ->relationship('subProcess', 'title')
+                Tables\Filters\SelectFilter::make('affected_sub_process_id')
+                    ->label(__('Affected sub process'))
+                    ->relationship('affectedSubProcess', 'title')
                     ->multiple()
                     ->searchable()
                     ->preload(),

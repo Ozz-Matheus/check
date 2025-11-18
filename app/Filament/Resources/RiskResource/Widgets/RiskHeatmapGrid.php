@@ -2,23 +2,30 @@
 
 namespace App\Filament\Resources\RiskResource\Widgets;
 
-use App\Models\Risk;
+use App\Filament\Resources\RiskResource\Pages\ListRisks;
 use App\Models\RiskImpact;
 use App\Models\RiskLevel;
 use App\Models\RiskProbability;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\Widget;
 
 class RiskHeatmapGrid extends Widget
 {
+    use InteractsWithPageTable;
+
     protected static string $view = 'filament.widgets.risk-heatmap-grid';
 
-    protected int|string|array $columnSpan = 'full';
+    // protected int|string|array $columnSpan = 'full';
+
+    protected function getTablePage(): string
+    {
+        return ListRisks::class;
+    }
 
     public function getViewData(): array
     {
         $impacts = RiskImpact::orderBy('id')->get();
         $probs = RiskProbability::orderBy('id', 'desc')->get();
-        $levels = RiskLevel::all(['id', 'title']);
 
         $palette = [
             'bajo' => config('filament-colors.success.hex'),   // verde
@@ -30,19 +37,21 @@ class RiskHeatmapGrid extends Widget
 
         $cells = [];
 
+        $baseQuery = $this->getPageTableQuery();
+
         foreach ($probs as $prob) {
             foreach ($impacts as $impact) {
-                $count = Risk::query()
+                $query = (clone $baseQuery)
                     ->where('inherent_impact_id', $impact->id)
-                    ->where('inherent_probability_id', $prob->id)
-                    ->count();
+                    ->where('inherent_probability_id', $prob->id);
+
+                $count = (clone $query)->count();
 
                 $levelTitle = null;
 
                 if ($count > 0) {
-                    $levelId = Risk::where('inherent_impact_id', $impact->id)
-                        ->where('inherent_probability_id', $prob->id)
-                        ->value('inherent_risk_level_id');
+                    $risk = (clone $query)->first();
+                    $levelId = $risk?->inherent_risk_level_id;
 
                     $levelTitle = $levelId
                         ? RiskLevel::find($levelId)?->title
@@ -60,7 +69,7 @@ class RiskHeatmapGrid extends Widget
             }
         }
 
-        $title =  'Mapa de Calor de Riesgos';
+        $title = 'Mapa de Calor de Riesgos Inherentes';
 
         return compact('title', 'cells', 'impacts', 'probs');
     }

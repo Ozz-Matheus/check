@@ -1,35 +1,62 @@
 @extends('emails.layout.theme')
 
 @section('title')
-Un documento ha cambiado de estado
+    Cambio de Estado del Documento
 @endsection
 
 @section('content')
-<p>Hola {{ $user->name }},</p>
+    <p>Hola <strong>{{ $user->name }}</strong>,</p>
 
-<p>El estado de un documento ha cambiado </p>
-<p>en el sistema {{ config('app.name') }} :</p>
+    <p>Te informamos que el estado de un documento ha sido actualizado en {{ config('app.name') }}.</p>
 
-<ul>
-    <li>
-        <strong>Título:</strong> {{ $version->file?->name }}
-    </li>
-    <li>
-        <strong>Ha cambiado a :</strong> {{ ucfirst( strtolower( $status->label ) ) }}
-    </li>
-    <li>
-        <strong>Creado por :</strong> {{ $version->createdBy?->name }}
-    </li>
-    @if($changeReason)
-        <li><strong>Información importante sobre el estado :</strong> {{ $changeReason }}</li>
+    <div class="info-card">
+        <ul>
+            <li>
+                <strong>Código de clasificación:</strong>
+                <span>{{ $version->doc?->classification_code }}</span>
+            </li>
+            <li>
+                <strong>Documento:</strong>
+                <span>{{ $version->file?->name }}</span>
+            </li>
+            <li>
+                <strong>Nuevo Estado:</strong>
+                <span>
+                    <span class="status-badge {{ $status->color }}">
+                        {{ ucfirst(strtolower($status->label)) }}
+                    </span>
+                </span>
+            </li>
+            <li>
+                <strong>Subido por:</strong>
+                <span>{{ $version->createdBy?->name }}</span>
+            </li>
+            <li>
+                <strong>Fecha:</strong>
+                <span>{{ $version->created_at->format('d/m/Y H:i') }}</span>
+            </li>
+        </ul>
+    </div>
+
+    @if ($changeReason)
+        <div class="alert">
+            <strong>Información Importante</strong>
+            {{ $changeReason }}
+        </div>
     @endif
-    <li><strong>Fecha:</strong> {{ $version->created_at->format('d/m/Y') }}</li>
-</ul>
 
-<p>
-    <a href="{{ route('filament.dashboard.resources.docs.versions.index', ['doc' => $version->doc->id ]) }}"
-       class="button">
-        Ver detalles
-    </a>
-</p>
+    <p style="margin-top: 28px;">
+        Para revisar todos los detalles y gestionar este documento, haz clic en el siguiente botón:
+    </p>
+
+    <p style="text-align: center;">
+        <a href="{{ route('filament.dashboard.resources.docs.versions.index', ['doc' => $version->doc->id]) }}"
+            class="button">
+            Ver Detalles del Documento
+        </a>
+    </p>
+
+    <em>
+        💡 Puedes acceder a este documento en cualquier momento desde tu panel de control.
+    </em>
 @endsection
