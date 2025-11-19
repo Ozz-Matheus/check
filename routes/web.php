@@ -14,8 +14,6 @@ Route::get('clear', function () {
     Artisan::call('cache:clear');
     Artisan::call('config:cache');
 
-    ### Prueba
-
     return redirect('/#clear');
 
 })->name('clear');

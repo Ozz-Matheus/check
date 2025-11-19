@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\ActionResource\RelationManagers;
 
+use App\Exports\ActionExports\TaskExport;
 use App\Filament\Resources\ActionResource;
 use App\Services\ActionService;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ActionTasksRelationManager extends RelationManager
 {
@@ -104,6 +106,16 @@ class ActionTasksRelationManager extends RelationManager
                         'action' => $this->getOwnerRecord()->id,
                         'record' => $record->id,
                     ])),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkAction::make('export')
+                    ->label(__('Export selected'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(fn ($records) => Excel::download(
+                        new TaskExport($records->pluck('id')->toArray()),
+                        'tasks_'.now()->format('Y_m_d_His').'.xlsx'
+                    ))
+                    ->deselectRecordsAfterCompletion(),
             ]);
     }
 }

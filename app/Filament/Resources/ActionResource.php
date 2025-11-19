@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Exports\ActionExports\ActionExport;
+use App\Exports\ActionExports\RelationshipsOfTheActions;
 use App\Filament\Resources\ActionResource\Pages;
 use App\Filament\Resources\ActionResource\RelationManagers\ActionFollowUpsRelationManager;
 use App\Filament\Resources\ActionResource\RelationManagers\ActionTasksRelationManager;
@@ -14,7 +15,9 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ActionResource extends Resource
@@ -402,14 +405,33 @@ class ActionResource extends Resource
                 // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkAction::make('export')
-                    ->label(__('Export selected'))
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->action(fn ($records) => Excel::download(
-                        new ActionExport($records->pluck('id')->toArray()),
-                        'actions_'.now()->format('Y_m_d_His').'.xlsx'
-                    ))
-                    ->deselectRecordsAfterCompletion(),
+                Tables\Actions\BulkActionGroup::make([
+
+                    BulkAction::make('export')
+                        ->label(__('Export base'))
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(fn ($records) => Excel::download(
+                            new ActionExport($records->pluck('id')->toArray()),
+                            'actions_'.now()->format('Y_m_d_His').'.xlsx'
+                        ))
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('exportar_excel')
+                        ->label(__('Export with relationships'))
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->action(function (Collection $records) {
+
+                            $actionIds = $records->pluck('id')->all();
+
+                            return Excel::download(
+                                new RelationshipsOfTheActions($actionIds),
+                                'actions_y_relaciones_'.now()->format('Y_m_d_His').'.xlsx'
+                            );
+
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                ]),
             ]);
     }
 

@@ -7,14 +7,20 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
-class ActionExport implements FromCollection, WithHeadings, WithMapping
+class ActionExport implements FromCollection, WithHeadings, WithMapping, WithTitle
 {
     protected array $actionIds;
 
     public function __construct(array $actionIds)
     {
         $this->actionIds = $actionIds;
+    }
+
+    public function title(): string
+    {
+        return '✅ Acciones seleccionados';
     }
 
     public function collection(): Collection

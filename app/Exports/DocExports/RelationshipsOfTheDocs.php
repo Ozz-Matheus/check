@@ -4,7 +4,7 @@ namespace App\Exports\DocExports;
 
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class DocsAndVersionsExport implements WithMultipleSheets
+class RelationshipsOfTheDocs implements WithMultipleSheets
 {
     protected array $docIds;
 
