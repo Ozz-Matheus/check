@@ -32,8 +32,8 @@ class CreateActionEnding extends CreateRecord
             'real_impact' => $data['real_impact'],
             'result' => $data['result'],
             'extemporaneous_reason' => $data['extemporaneous_reason'] ?? null,
-            'real_closing_date' => now()->format('Y-m-d'),
             'finished' => true,
+            'finished_date' => today(),
             'estimated_evaluation_date' => $data['estimated_evaluation_date'] ?? null,
         ]);
 

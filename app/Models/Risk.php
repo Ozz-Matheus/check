@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Risk extends Model
+class Risk extends Model implements AuditableContract
 {
+    use AuditableTrait, BelongsToHeadquarter;
+
     //
     protected $fillable = [
         'classification_code',
@@ -16,7 +21,6 @@ class Risk extends Model
         'strategic_context_id',
         'description',
         'risk_category_id',
-        // risk_potential_causes - uno a muchos
         'consequences',
 
         'inherent_impact_id',
@@ -28,8 +32,7 @@ class Risk extends Model
         'residual_risk_level_id',
 
         'risk_control_general_qualification_id',
-        // 'residual_risk_level_id',
-        // risk_controls - uno a muchos - RelationManager
+        'headquarter_id',
     ];
 
     public function process()

@@ -12,6 +12,8 @@ interface ActionOriginInterface
 
     public function getSubProcessId(): ?int;
 
+    public function getHeadquarterId(): ?int;
+
     public function getRedirectUrl(): string;
 
     public function getBreadcrumbs(): array;

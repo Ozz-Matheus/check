@@ -56,7 +56,8 @@
         </a>
     </p>
 
-    <em>
-        💡 Puedes acceder a este documento en cualquier momento desde tu panel de control.
-    </em>
+    <div class="alert-box">
+        <img width="24" height="24" src="{{ asset('images/email-icons/version.png') }}" alt="Icono de Documento">
+        <span>Accede a este documento cuando quieras desde tu panel de control.</span>
+    </div>
 @endsection

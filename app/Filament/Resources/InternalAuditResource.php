@@ -52,6 +52,13 @@ class InternalAuditResource extends Resource
                 Forms\Components\Section::make(__('Internal audit data'))
                     ->columns(2)
                     ->schema([
+                        Forms\Components\Select::make('headquarter_id')
+                            ->label(__('Headquarter'))
+                            ->relationship('headquarter', 'name')
+                            ->native(false)
+                            ->columns(1)
+                            ->required(fn () => auth()->user()->interact_with_all_headquarters === (bool) true)
+                            ->visible(fn () => auth()->user()->interact_with_all_headquarters === (bool) true),
                         Forms\Components\TextInput::make('title')
                             ->label(__('Title'))
                             ->required()
@@ -183,6 +190,10 @@ class InternalAuditResource extends Resource
                     ->label(__('Evaluated by'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('headquarter.name')
+                    ->label(__('Headquarters'))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->date()
@@ -213,7 +224,8 @@ class InternalAuditResource extends Resource
                     ->relationship(
                         name: 'priority',
                         titleAttribute: 'title',
-                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc'), )
+                        modifyQueryUsing: fn ($query) => $query->orderBy('id', 'asc'),
+                    )
                     ->multiple()
                     ->searchable()
                     ->preload(),
@@ -237,6 +249,11 @@ class InternalAuditResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload(),
+                Tables\Filters\SelectFilter::make('headquarter_id')
+                    ->label(__('Headquarters'))
+                    ->relationship('headquarter', 'name')
+                    ->native(false)
+                    ->visible(fn () => auth()->user()->view_all_headquarters === (bool) true),
             ])
             ->filtersTriggerAction(
                 fn ($action) => $action

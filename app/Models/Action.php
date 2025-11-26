@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Action extends Model
+class Action extends Model implements AuditableContract
 {
+    use AuditableTrait, BelongsToHeadquarter;
+
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory;
 
@@ -30,12 +35,12 @@ class Action extends Model
         'priority_id',
         'limit_date',
         'status_id',
-        'finished',
         'reason_for_cancellation',
         'cancellation_date',
         'origin_type',
         'origin_id',
         'origin_label',
+        'headquarter_id',
     ];
 
     protected $casts = [

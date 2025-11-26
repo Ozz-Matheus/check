@@ -2,55 +2,49 @@
 
 namespace App\Filament\Resources\ActionResource\Widgets;
 
-use App\Models\Action;
-use App\Models\ActionType;
+use App\Filament\Resources\ActionResource\Pages\ListActions;
 use App\Models\Status;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Illuminate\Support\Facades\DB;
 
 class ActionStatusChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
-    public ?string $filter = 'all';
+    protected static ?string $pollingInterval = null;
+
+    protected function getTablePage(): string
+    {
+        return ListActions::class;
+    }
 
     public function getHeading(): ?string
     {
         return __('Actions by status');
     }
 
-    protected function getFilters(): ?array
-    {
-        return [
-            'all' => __('All'),
-            'improve' => __('Improve'),
-            'corrective' => __('Corrective'),
-        ];
-    }
-
     protected function getData(): array
     {
-        $activeFilter = $this->filter;
+        // Obtenemos la query de la tabla con TODOS los filtros aplicados
+        $query = $this->getPageTableQuery();
 
-        $data = Action::query()
-            ->when($activeFilter !== 'all', function ($query) use ($activeFilter) {
-                $actionTypeId = cache()->rememberForever(
-                    "action_type_id_{$activeFilter}",
-                    fn () => ActionType::where('name', $activeFilter)->value('id')
-                );
-
-                return $query->where('action_type_id', $actionTypeId);
-            })
+        // Clonamos la query y removemos ordenamiento para evitar conflictos con GROUP BY
+        $data = (clone $query)
+            ->reorder() // Elimina todos los ORDER BY
             ->select('status_id', DB::raw('count(*) as count'))
-            ->groupBy('status_id') // Group by status
+            ->groupBy('status_id')
             ->pluck('count', 'status_id');
 
+        // Obtenemos los statuses correspondientes
         $statuses = Status::whereIn('id', $data->keys())->get();
 
+        // Preparamos los datos del chart
         $chartData = $statuses->map(fn (Status $status) => $data[$status->id]);
         $chartLabels = $statuses->pluck('label');
         $chartColors = $statuses->map(function (Status $status) {
-            // Assumes a colorName() method on Status model that returns 'primary', 'success', etc.
             $colorName = $status->colorName();
 
             return config("filament-colors.{$colorName}.rgba", config('filament-colors.darkextra.rgba'));

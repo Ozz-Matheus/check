@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Headquarter;
 use App\Models\InternalAudit;
 use App\Models\InternalAuditQualification;
 use App\Models\SubProcess;
@@ -20,19 +21,23 @@ class InternalAuditService
     }
 
     // Generar código de auditoría interna
-    public function generateCode($subProcessId): string
+    public function generateCode($subProcessId, $headquarterId): string
     {
-        return DB::transaction(function () use ($subProcessId) {
+        $headquarterId = $headquarterId ?? auth()->user()->headquarter_id;
+
+        return DB::transaction(function () use ($subProcessId, $headquarterId) {
 
             $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
+            $headquarter = Headquarter::lockForUpdate()->findOrFail($headquarterId);
 
             $count = InternalAudit::where('sub_process_id', $subProcessId)
+                ->where('headquarter_id', $headquarterId)
                 ->lockForUpdate()
                 ->count();
 
             $consecutive = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
 
-            return "AUD-{$subProcess->acronym}-{$consecutive}";
+            return "AUD-{$subProcess->acronym}-{$consecutive}-{$headquarter->acronym}";
         });
     }
 
@@ -44,9 +49,9 @@ class InternalAuditService
     public function canViewFinish(InternalAudit $internalAudit)
     {
         return $internalAudit->qualification_value !== null
-                        && $this->actionsRestriction($internalAudit->status_id)
-                        && $internalAudit->auditItems()->whereNull('general_level_id')->doesntExist()
-                        && ! $internalAudit->auditItems()->whereHas('controls', fn ($query) => $query->where('qualified', false))->exists();
+            && $this->actionsRestriction($internalAudit->status_id)
+            && $internalAudit->auditItems()->whereNull('general_level_id')->doesntExist()
+            && ! $internalAudit->auditItems()->whereHas('controls', fn ($query) => $query->where('qualified', false))->exists();
     }
 
     public function recalculateInternalAuditQualifications(InternalAudit $internalAudit)

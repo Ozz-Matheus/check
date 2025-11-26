@@ -82,10 +82,11 @@ class UserResource extends Resource
                                 name: 'roles',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: fn ($query) => $query
+                                    ->whereHas('permissions')
                                     ->when(! auth()->user()->hasRole('super_admin'), fn ($q) => $q->where('name', '!=', 'super_admin'))
                             )
                             ->bulkToggleable()
-                            ->getOptionLabelFromRecordUsing(fn ($record) => Str::headline($record->name))
+                            ->getOptionLabelFromRecordUsing(fn ($record) => __(Str::headline($record->name)))
                             ->columnSpanFull()
                             ->columns(3),
                         Forms\Components\CheckboxList::make('subProcesses')

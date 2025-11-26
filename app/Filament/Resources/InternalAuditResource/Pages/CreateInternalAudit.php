@@ -13,7 +13,7 @@ class CreateInternalAudit extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['classification_code'] = app(InternalAuditService::class)->generateCode($data['sub_process_id']);
+        $data['classification_code'] = app(InternalAuditService::class)->generateCode($data['sub_process_id'], $data['headquarter_id'] ?? null);
         $data['created_by_id'] = auth()->id();
         $data['status_id'] = Status::byContextAndTitle('internal_audit', 'planned')?->id;
 

@@ -53,6 +53,13 @@ class SupplierIssueResource extends Resource
                 Forms\Components\Section::make(__('Suplier issue data'))
                     ->columns(2)
                     ->schema([
+                        Forms\Components\Select::make('headquarter_id')
+                            ->label(__('Headquarter'))
+                            ->relationship('headquarter', 'name')
+                            ->native(false)
+                            ->columns(1)
+                            ->required(fn () => auth()->user()->interact_with_all_headquarters === (bool) true)
+                            ->visible(fn () => auth()->user()->interact_with_all_headquarters === (bool) true),
                         Forms\Components\TextInput::make('title')
                             ->label(__('Title'))
                             ->required()
@@ -141,7 +148,8 @@ class SupplierIssueResource extends Resource
                             ->label(__('Responsible'))
                             ->relationship(
                                 name: 'responsibleBy',
-                                titleAttribute: 'name'
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('name', 'supplier_issue'))
                             )
                             ->native(false)
                             ->required(),
@@ -219,6 +227,10 @@ class SupplierIssueResource extends Resource
                         default => 'gray',
                     })
                     ->placeholder('-'),
+                Tables\Columns\TextColumn::make('headquarter.name')
+                    ->label(__('Headquarters'))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()
@@ -250,6 +262,11 @@ class SupplierIssueResource extends Resource
                         modifyQueryUsing: fn ($query) => $query->where('context', 'supplier_issue')->orderBy('id', 'asc'),
                     )
                     ->native(false),
+                Tables\Filters\SelectFilter::make('headquarter_id')
+                    ->label(__('Headquarters'))
+                    ->relationship('headquarter', 'name')
+                    ->native(false)
+                    ->visible(fn () => auth()->user()->view_all_headquarters === (bool) true),
             ])
             ->filtersTriggerAction(
                 fn ($action) => $action

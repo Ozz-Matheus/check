@@ -29,6 +29,11 @@ class RiskContext implements ActionOriginInterface
         return $this->model->sub_process_id;
     }
 
+    public function getHeadquarterId(): ?int
+    {
+        return $this->model->headquarter_id;
+    }
+
     public function getBreadcrumbs(): array
     {
         return [

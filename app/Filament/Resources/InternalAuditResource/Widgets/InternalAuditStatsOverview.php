@@ -16,6 +16,8 @@ class InternalAuditStatsOverview extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    protected static ?string $pollingInterval = null;
+
     protected function getColumns(): int
     {
         return 2;

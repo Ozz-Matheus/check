@@ -17,7 +17,8 @@ return new class extends Migration
             $table->text('real_impact');
             $table->text('result');
             $table->text('extemporaneous_reason')->nullable();
-            $table->date('real_closing_date')->nullable();
+            $table->boolean('finished')->default(false);
+            $table->date('finished_date')->nullable();
             $table->date('estimated_evaluation_date')->nullable();
             $table->enum('effectiveness', ['yes', 'no', 'partial'])->nullable();
             $table->text('evaluation_comment')->nullable();

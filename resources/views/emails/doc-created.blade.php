@@ -36,7 +36,8 @@
         </a>
     </p>
 
-    <em>
-        📄 Este registro ya está disponible y listo para comenzar a gestionar.
-    </em>
+    <div class="alert-box">
+        <img width="24" height="24" src="{{ asset('images/email-icons/doc.png?01') }}" alt="Icono de Documento">
+        <span>Este registro ya está disponible y listo para comenzar a gestionar.</span>
+    </div>
 @endsection

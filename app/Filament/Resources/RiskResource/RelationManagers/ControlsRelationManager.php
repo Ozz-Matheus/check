@@ -23,7 +23,8 @@ class ControlsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('context_type')
-                    ->label(__('Context type')),
+                    ->label(__('Context type'))
+                    ->formatStateUsing(fn ($state): string => __(ucfirst($state->value ?? $state))),
                 Tables\Columns\TextColumn::make('potentialCauses.title')
                     ->label(__('Potential causes'))
                     ->limit(30)

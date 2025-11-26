@@ -13,6 +13,8 @@ class InternalAuditQualificationsChart extends ChartWidget
 
     protected static ?string $maxHeight = '300px';
 
+    protected static ?string $pollingInterval = null;
+
     public function getHeading(): ?string
     {
         return __('Internal audit qualifications');

@@ -2,13 +2,15 @@
 
 namespace App\Filament\Resources\IncidentAndAccidentResource\Widgets;
 
-use App\Models\IncidentAndAccident;
+use App\Filament\Resources\IncidentAndAccidentResource\Pages\ListIncidentAndAccidents;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 
 class NewIncidentsAndAccidentsChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
     protected string|int|array $columnSpan = 'full';
@@ -16,6 +18,11 @@ class NewIncidentsAndAccidentsChart extends ChartWidget
     protected static ?string $pollingInterval = null;
 
     public ?string $filter = 'week';
+
+    protected function getTablePage(): string
+    {
+        return ListIncidentAndAccidents::class;
+    }
 
     public function getHeading(): ?string
     {
@@ -33,43 +40,55 @@ class NewIncidentsAndAccidentsChart extends ChartWidget
 
     protected function getData(): array
     {
+        $query = $this->getPageTableQuery();
+
         $activeFilter = $this->filter;
         $endDate = now();
 
         switch ($activeFilter) {
             case 'week':
                 $startDate = $endDate->copy()->subDays(6)->startOfDay();
-                $dateColumn = DB::raw('DATE(created_at) as date');
                 $periodUnit = 'day';
                 $periodFormat = 'M j';
                 break;
             case 'month':
                 $startDate = $endDate->copy()->subDays(29)->startOfDay();
-                $dateColumn = DB::raw('DATE(created_at) as date');
                 $periodUnit = 'day';
                 $periodFormat = 'M j';
                 break;
             default: // 'year'
                 $startDate = $endDate->copy()->subYear()->startOfMonth();
-                $dateColumn = DB::raw("DATE_FORMAT(created_at, '%Y-%m') as date");
                 $periodUnit = 'month';
                 $periodFormat = 'M Y';
                 break;
         }
 
-        $query = IncidentAndAccident::query()
+        // Obtener los registros filtrados por la tabla (incluye scope de sede)
+        $records = $query
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('date', 'event_type_id')
-            ->orderBy('date')
-            ->get([
-                $dateColumn,
-                'event_type_id',
-                DB::raw('count(*) as aggregate'),
-            ]);
+            ->get();
 
-        $incidentsData = $query->where('event_type_id', 1)->keyBy('date');
-        $accidentsData = $query->where('event_type_id', 2)->keyBy('date');
+        // Agrupar incidentes por fecha
+        $incidentsData = $records
+            ->where('event_type_id', 1)
+            ->groupBy(function ($record) use ($periodUnit) {
+                return $periodUnit === 'day'
+                    ? $record->created_at->format('Y-m-d')
+                    : $record->created_at->format('Y-m');
+            })
+            ->map->count();
 
+        // Agrupar accidentes por fecha
+        $accidentsData = $records
+            ->where('event_type_id', 2)
+            ->groupBy(function ($record) use ($periodUnit) {
+                return $periodUnit === 'day'
+                    ? $record->created_at->format('Y-m-d')
+                    : $record->created_at->format('Y-m');
+            })
+            ->map->count();
+
+        // Crear el período completo
         $period = CarbonPeriod::create($startDate, '1 '.$periodUnit, $endDate);
 
         $labels = [];
@@ -79,8 +98,8 @@ class NewIncidentsAndAccidentsChart extends ChartWidget
         foreach ($period as $date) {
             $formattedDate = $date->format($periodUnit === 'day' ? 'Y-m-d' : 'Y-m');
             $labels[] = $date->format($periodFormat);
-            $incidents[] = $incidentsData->get($formattedDate)?->aggregate ?? 0;
-            $accidents[] = $accidentsData->get($formattedDate)?->aggregate ?? 0;
+            $incidents[] = $incidentsData->get($formattedDate, 0);
+            $accidents[] = $accidentsData->get($formattedDate, 0);
         }
 
         return [

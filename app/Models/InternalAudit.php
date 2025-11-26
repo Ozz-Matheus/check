@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class InternalAudit extends Model
+class InternalAudit extends Model implements AuditableContract
 {
+    use AuditableTrait, BelongsToHeadquarter;
+
     //
     protected $fillable = [
         'classification_code',
@@ -22,6 +27,7 @@ class InternalAudit extends Model
         'observations',
         'created_by_id',
         'evaluated_by_id',
+        'headquarter_id',
     ];
 
     public function process()

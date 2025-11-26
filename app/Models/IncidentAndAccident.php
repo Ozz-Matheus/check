@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class IncidentAndAccident extends Model
+class IncidentAndAccident extends Model implements AuditableContract
 {
+    use AuditableTrait, BelongsToHeadquarter;
+
     //
     protected $fillable = [
         'classification_code',
@@ -25,6 +30,7 @@ class IncidentAndAccident extends Model
         'priority_id',
         'status_id',
         'created_by_id',
+        'headquarter_id',
     ];
 
     public function eventType()

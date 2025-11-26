@@ -109,7 +109,7 @@ class ActionTasksRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('export')
-                    ->label(__('Export selected'))
+                    ->label(__('Export base'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(fn ($records) => Excel::download(
                         new TaskExport($records->pluck('id')->toArray()),

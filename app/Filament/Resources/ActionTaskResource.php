@@ -49,14 +49,13 @@ class ActionTaskResource extends Resource
                             ->relationship(
                                 'responsibleBy',
                                 'name',
-                                modifyQueryUsing: fn ($query, $livewire) => $query->whereHas(
-                                    'subProcesses',
-                                    fn ($q) => $q->where('sub_process_id', $livewire->actionModel->sub_process_id)
-                                )
+                                modifyQueryUsing: fn ($query, $livewire) => $query
+                                    ->where('headquarter_id', $livewire->actionModel->headquarter_id)
+                                    ->whereHas(
+                                        'subProcesses',
+                                        fn ($q) => $q->where('sub_process_id', $livewire->actionModel->sub_process_id)
+                                    )
                             )
-                            /* ->options(fn ($livewire) => method_exists($livewire, 'getResponsibleUserOptions')
-                                ? $livewire->getResponsibleUserOptions()
-                                : []) */
                             ->preload()
                             ->searchable()
                             ->required(),

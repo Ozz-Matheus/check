@@ -2,15 +2,17 @@
 
 namespace App\Filament\Resources\SupplierIssueResource\Widgets;
 
+use App\Filament\Resources\SupplierIssueResource\Pages\ListSupplierIssues;
 use App\Models\Supplier;
-use App\Models\SupplierIssue;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 
 class GreaterMonetaryImpactOfSuppliersChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
     protected string|int|array $columnSpan = 'full';
@@ -18,6 +20,11 @@ class GreaterMonetaryImpactOfSuppliersChart extends ChartWidget
     protected static ?string $pollingInterval = null;
 
     public ?string $filter = 'week';
+
+    protected function getTablePage(): string
+    {
+        return ListSupplierIssues::class;
+    }
 
     public function getHeading(): ?string
     {
@@ -35,50 +42,50 @@ class GreaterMonetaryImpactOfSuppliersChart extends ChartWidget
 
     protected function getData(): array
     {
+        $query = $this->getPageTableQuery();
+
         $activeFilter = $this->filter;
         $endDate = now();
 
         switch ($activeFilter) {
             case 'week':
                 $startDate = $endDate->copy()->subDays(6)->startOfDay();
-                $dateColumn = DB::raw('DATE(created_at) as date');
                 $periodUnit = 'day';
                 $periodFormat = 'M j';
                 break;
             case 'month':
                 $startDate = $endDate->copy()->subDays(29)->startOfDay();
-                $dateColumn = DB::raw('DATE(created_at) as date');
                 $periodUnit = 'day';
                 $periodFormat = 'M j';
                 break;
             default: // 'year'
                 $startDate = $endDate->copy()->subYear()->startOfMonth();
-                $dateColumn = DB::raw("DATE_FORMAT(created_at, '%Y-%m') as date");
                 $periodUnit = 'month';
                 $periodFormat = 'M Y';
                 break;
         }
 
-        $topSuppliers = SupplierIssue::query()
-            ->select('supplier_id', DB::raw('SUM(monetary_impact) as total_impact'))
+        // Obtener todos los registros filtrados por la tabla (incluye scope de sede)
+        $allRecords = $query->get();
+
+        // Calcular los top 5 proveedores por impacto monetario total
+        $topSuppliers = $allRecords
             ->groupBy('supplier_id')
-            ->orderByDesc('total_impact')
-            ->limit(5)
-            ->pluck('supplier_id');
+            ->map(fn ($issues) => $issues->sum('monetary_impact'))
+            ->sortDesc()
+            ->take(5);
 
-        $suppliers = Supplier::whereIn('id', $topSuppliers)->pluck('name', 'id');
+        $topSupplierIds = $topSuppliers->keys();
 
-        $query = SupplierIssue::query()
-            ->whereIn('supplier_id', $topSuppliers)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('date', 'supplier_id')
-            ->orderBy('date')
-            ->get([
-                $dateColumn,
-                'supplier_id',
-                DB::raw('sum(monetary_impact) as aggregate'),
-            ]);
+        // Obtener nombres de los proveedores
+        $suppliers = Supplier::whereIn('id', $topSupplierIds)->pluck('name', 'id');
 
+        // Filtrar registros por proveedores top y rango de fechas
+        $filteredRecords = $allRecords
+            ->whereIn('supplier_id', $topSupplierIds)
+            ->whereBetween('created_at', [$startDate, $endDate]);
+
+        // Crear el período completo
         $period = CarbonPeriod::create($startDate, '1 '.$periodUnit, $endDate);
         $labels = collect($period)->map(fn (Carbon $date) => $date->format($periodFormat));
 
@@ -90,16 +97,24 @@ class GreaterMonetaryImpactOfSuppliersChart extends ChartWidget
             '#A133FF', // A rich purple
         ];
 
-        $datasets = $suppliers->map(function ($name, $id) use ($query, $period, $periodUnit, $colors) {
-            $supplierData = $query->where('supplier_id', $id)->keyBy('date');
-            static $colorIndex = 0;
+        $colorIndex = 0;
+        $datasets = $suppliers->map(function ($name, $id) use ($filteredRecords, $period, $periodUnit, $colors, &$colorIndex) {
+            // Agrupar por fecha y sumar impacto monetario para este proveedor
+            $supplierData = $filteredRecords
+                ->where('supplier_id', $id)
+                ->groupBy(function ($record) use ($periodUnit) {
+                    return $periodUnit === 'day'
+                        ? $record->created_at->format('Y-m-d')
+                        : $record->created_at->format('Y-m');
+                })
+                ->map(fn ($records) => $records->sum('monetary_impact'));
 
             return [
                 'label' => $name,
                 'data' => collect($period)->map(function (Carbon $date) use ($supplierData, $periodUnit) {
                     $formattedDate = $date->format($periodUnit === 'day' ? 'Y-m-d' : 'Y-m');
 
-                    return $supplierData->get($formattedDate)?->aggregate ?? 0;
+                    return $supplierData->get($formattedDate, 0);
                 })->all(),
                 'borderColor' => $colors[$colorIndex++ % count($colors)],
             ];

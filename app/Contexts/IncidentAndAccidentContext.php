@@ -29,6 +29,11 @@ class IncidentAndAccidentContext implements ActionOriginInterface
         return $this->model->responsible_management_sub_process_id;
     }
 
+    public function getHeadquarterId(): ?int
+    {
+        return $this->model->headquarter_id;
+    }
+
     public function getBreadcrumbs(): array
     {
         return [

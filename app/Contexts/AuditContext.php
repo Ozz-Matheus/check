@@ -29,6 +29,11 @@ class AuditContext implements ActionOriginInterface
         return $this->model->auditControl->auditItem->internalAudit->sub_process_id;
     }
 
+    public function getHeadquarterId(): ?int
+    {
+        return $this->model->auditControl->auditItem->internalAudit->headquarter_id;
+    }
+
     public function getBreadcrumbs(): array
     {
         return [

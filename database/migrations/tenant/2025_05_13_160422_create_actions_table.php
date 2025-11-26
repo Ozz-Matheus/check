@@ -44,7 +44,9 @@ return new class extends Migration
             $table->foreignId('priority_id')->constrained('priorities');
             $table->date('limit_date')->nullable()->index();
             $table->foreignId('status_id')->constrained('statuses');
-            $table->boolean('finished')->default(false);
+            $table->foreignId('headquarter_id')
+                ->constrained()
+                ->restrictOnDelete();
 
             $table->text('reason_for_cancellation')->nullable();
             $table->date('cancellation_date')->nullable();

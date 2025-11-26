@@ -36,6 +36,9 @@ return new class extends Migration
             $table->foreignId('priority_id')->constrained('priorities');
             $table->foreignId('status_id')->constrained('statuses');
             $table->foreignId('created_by_id')->constrained('users');
+            $table->foreignId('headquarter_id')
+                ->constrained()
+                ->restrictOnDelete();
             $table->timestamps();
         });
     }

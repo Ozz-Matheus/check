@@ -2,13 +2,15 @@
 
 namespace App\Filament\Resources\DocResource\Widgets;
 
-use App\Models\DocVersion;
+use App\Filament\Resources\DocResource\Pages\ListDocs;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 
 class NewDocumentVersionsChart extends ChartWidget
 {
+    use InteractsWithPageTable;
+
     protected static ?string $maxHeight = '300px';
 
     protected string|int|array $columnSpan = 'full';
@@ -16,6 +18,11 @@ class NewDocumentVersionsChart extends ChartWidget
     protected static ?string $pollingInterval = null;
 
     public ?string $filter = 'week';
+
+    protected function getTablePage(): string
+    {
+        return ListDocs::class;
+    }
 
     public function getHeading(): ?string
     {
@@ -33,46 +40,50 @@ class NewDocumentVersionsChart extends ChartWidget
 
     protected function getData(): array
     {
+        $query = $this->getPageTableQuery();
+
         $activeFilter = $this->filter;
         $endDate = now();
 
         switch ($activeFilter) {
             case 'week':
                 $startDate = $endDate->copy()->subDays(6)->startOfDay();
-                $dateColumn = DB::raw('DATE(created_at) as date');
                 $periodUnit = 'day';
                 $periodFormat = 'M j';
                 break;
             case 'month':
                 $startDate = $endDate->copy()->subDays(29)->startOfDay();
-                $dateColumn = DB::raw('DATE(created_at) as date');
                 $periodUnit = 'day';
                 $periodFormat = 'M j';
                 break;
             default: // 'year'
                 $startDate = $endDate->copy()->subYear()->startOfMonth();
-                $dateColumn = DB::raw("DATE_FORMAT(created_at, '%Y-%m') as date");
                 $periodUnit = 'month';
                 $periodFormat = 'M Y';
                 break;
         }
 
-        $dbData = DocVersion::query()
+        // Obtener las versiones filtradas por la tabla (incluye scope de sede)
+        $versions = $query
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get([
-                $dateColumn,
-                DB::raw('count(*) as aggregate'),
-            ])->keyBy('date');
+            ->get();
 
+        // Agrupar por fecha
+        $groupedData = $versions->groupBy(function ($version) use ($periodUnit) {
+            return $periodUnit === 'day'
+                ? $version->created_at->format('Y-m-d')
+                : $version->created_at->format('Y-m');
+        })->map->count();
+
+        // Crear el período completo
         $period = CarbonPeriod::create($startDate, '1 '.$periodUnit, $endDate);
 
-        $data = collect($period)->mapWithKeys(function ($date) use ($dbData, $periodFormat, $periodUnit) {
+        // Mapear datos con todas las fechas del período
+        $data = collect($period)->mapWithKeys(function ($date) use ($groupedData, $periodFormat, $periodUnit) {
             $formattedDate = $date->format($periodUnit === 'day' ? 'Y-m-d' : 'Y-m');
             $label = $date->format($periodFormat);
 
-            return [$label => $dbData->get($formattedDate)?->aggregate ?? 0];
+            return [$label => $groupedData->get($formattedDate, 0)];
         });
 
         return [

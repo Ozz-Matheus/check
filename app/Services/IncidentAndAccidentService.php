@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Action;
+use App\Models\Headquarter;
 use App\Models\IAndAEventType;
 use App\Models\IncidentAndAccident;
 use App\Models\SubProcess;
@@ -17,21 +18,25 @@ class IncidentAndAccidentService
         $this->statusIds = $statusService->getIncidentAndAccidentStatuses();
     }
 
-    public function generateCode($eventTypeId, $subProcessId): string
+    public function generateCode($eventTypeId, $subProcessId, $headquarterId): string
     {
-        return DB::transaction(function () use ($eventTypeId, $subProcessId) {
+        $headquarterId = $headquarterId ?? auth()->user()->headquarter_id;
+
+        return DB::transaction(function () use ($eventTypeId, $subProcessId, $headquarterId) {
 
             $type = IAndAEventType::lockForUpdate()->findOrFail($eventTypeId);
             $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
+            $headquarter = Headquarter::lockForUpdate()->findOrFail($headquarterId);
 
             $count = IncidentAndAccident::where('event_type_id', $eventTypeId)
                 ->where('affected_sub_process_id', $subProcessId)
+                ->where('headquarter_id', $headquarterId)
                 ->lockForUpdate()
                 ->count();
 
             $consecutive = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
 
-            return "{$type->acronym}-{$subProcess->acronym}-{$consecutive}";
+            return "{$type->acronym}-{$subProcess->acronym}-{$consecutive}-{$headquarter->acronym}";
         });
     }
 

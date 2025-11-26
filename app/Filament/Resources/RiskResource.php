@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Exports\RiskExports\RiskExport;
 use App\Filament\Resources\RiskResource\Pages;
 use App\Filament\Resources\RiskResource\RelationManagers\ControlsRelationManager;
 use App\Filament\Resources\RiskResource\RelationManagers\RiskActionsRelationManager;
@@ -14,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RiskResource extends Resource
 {
@@ -51,6 +53,13 @@ class RiskResource extends Resource
                 Forms\Components\Section::make(__('Risk identification'))
                     ->columns(2)
                     ->schema([
+                        Forms\Components\Select::make('headquarter_id')
+                            ->label(__('Headquarter'))
+                            ->relationship('headquarter', 'name')
+                            ->native(false)
+                            ->columns(1)
+                            ->required(fn () => auth()->user()->interact_with_all_headquarters === (bool) true)
+                            ->visible(fn () => auth()->user()->interact_with_all_headquarters === (bool) true),
                         Forms\Components\TextInput::make('title')
                             ->label(__('Title'))
                             ->required()
@@ -222,6 +231,10 @@ class RiskResource extends Resource
                     Tables\Columns\TextColumn::make('controlGeneralQualificationCalculated.title')
                         ->label(__('General qualification')),
                 ]),
+                Tables\Columns\TextColumn::make('headquarter.name')
+                    ->label(__('Headquarters'))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->dateTime()
@@ -313,6 +326,11 @@ class RiskResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload(),
+                Tables\Filters\SelectFilter::make('headquarter_id')
+                    ->label(__('Headquarters'))
+                    ->relationship('headquarter', 'name')
+                    ->native(false)
+                    ->visible(fn () => auth()->user()->view_all_headquarters === (bool) true),
             ], layout: FiltersLayout::Modal)
             ->filtersTriggerAction(
                 fn ($action) => $action
@@ -324,7 +342,14 @@ class RiskResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+                Tables\Actions\BulkAction::make('export')
+                    ->label(__('Export base'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(fn ($records) => Excel::download(
+                        new RiskExport($records->pluck('id')->toArray()),
+                        'risk_'.now()->format('Y_m_d_His').'.xlsx'
+                    ))
+                    ->deselectRecordsAfterCompletion(),
             ]);
     }
 

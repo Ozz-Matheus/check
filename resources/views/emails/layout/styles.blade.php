@@ -10,7 +10,7 @@
     }
 
     h1 {
-        font-size: 28px;
+        font-size: 24px;
         font-weight: 700;
         margin: 0 0 24px 0;
         color: #1a202c;
@@ -44,7 +44,7 @@
         padding: 32px 40px;
         text-align: center;
         position: relative;
-        border-bottom: 3px solid #2463eb;
+        border-bottom: 3px solid #3575dd;
     }
 
     .header::after {
@@ -64,7 +64,7 @@
 
     /* Contenido */
     .content {
-        padding: 40px;
+        padding: 20px;
         font-size: 15px;
         color: #374151;
         background: #ffffff;
@@ -72,15 +72,17 @@
 
     .content h1 {
         color: #1a202c;
-        border-bottom: 3px solid #2463eb;
+        border-bottom: 3px solid #3575dd;
         padding-bottom: 16px;
         margin-bottom: 28px;
+        text-align: center;
+        text-transform: uppercase;
     }
 
     /* Card de información */
     .info-card {
         background: #f8fafc;
-        border-left: 4px solid #2463eb;
+        border-left: 4px solid #3575dd;
         border-radius: 8px;
         padding: 24px;
         margin: 24px 0;
@@ -122,22 +124,15 @@
     a.button {
         display: inline-block;
         padding: 14px 32px;
-        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        background: #3575dd;
         color: #ffffff !important;
         text-decoration: none;
         border-radius: 8px;
         font-weight: 600;
         font-size: 15px;
         text-align: center;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        transition: all 0.3s ease;
         margin: 24px 0 8px 0;
         border: none;
-    }
-
-    a.button:hover {
-        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-        transform: translateY(-2px);
     }
 
     /* Badge de estado */
@@ -213,7 +208,7 @@
     }
 
     .footer-links a {
-        color: #2463eb;
+        color: #3575dd;
         text-decoration: none;
         margin: 0 12px;
         font-weight: 500;
@@ -237,8 +232,8 @@
     }
 
     /* Elementos de énfasis */
-    em {
-        display: block;
+    .alert-box {
+        display: flex;
         font-style: normal;
         background: #eff6ff;
         padding: 12px 16px;
@@ -246,6 +241,13 @@
         color: #1e40af;
         font-size: 14px;
         margin: 16px 0;
+    }
+
+    .alert-box span{
+        display: inline-block;
+        margin-left: 6px;
+        margin-right: 6px;
+        line-height: 1.9;
     }
 
     /* Responsive */

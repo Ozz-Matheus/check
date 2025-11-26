@@ -15,15 +15,8 @@
                     <!-- Header -->
                     <tr>
                         <td class="header">
-                            @if(file_exists(public_path('images/logo.jpg')))
-                                <img src="{{ asset('images/logo.jpg') }}" 
-                                     alt="{{ config('app.name') }}" 
-                                     height="50">
-                            @else
-                                <h2 style="color: #1a202c; margin: 0; font-size: 24px; font-weight: 700;">
-                                    {{ config('app.name') }}
-                                </h2>
-                            @endif
+                            <img src="{{ asset('images/logo.jpg') }}"
+                                 alt="Logo de {{ config('app.name') }}">
                         </td>
                     </tr>
 
@@ -52,11 +45,13 @@
                                 Este mensaje fue generado automáticamente por nuestro sistema.<br>
                                 Por favor, no responda directamente a este correo.
                             </p>
-
-                            
                             <div class="footer-links">
-                                <a href="#">Ir al Dashboard</a>
-                                <a href="#">Centro de Ayuda</a>
+                                <a href="{{ route('filament.dashboard.pages.dashboard') }}" target="_blank">
+                                    Ir al Dashboard
+                                </a>
+                                <a href="mailto:soporte@holdingtec.app" target="_blank">
+                                    Centro de Ayuda
+                                </a>
                             </div>
                             
                             <p style="margin-top: 16px; font-size: 12px; color: #9ca3af;">

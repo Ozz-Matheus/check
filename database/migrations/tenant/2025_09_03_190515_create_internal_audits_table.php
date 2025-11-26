@@ -27,6 +27,9 @@ return new class extends Migration
             $table->text('observations')->nullable();
             $table->foreignId('created_by_id')->constrained('users');
             $table->foreignId('evaluated_by_id')->nullable()->constrained('users');
+            $table->foreignId('headquarter_id')
+                ->constrained()
+                ->restrictOnDelete();
             $table->timestamps();
         });
     }

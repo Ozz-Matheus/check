@@ -25,6 +25,9 @@ return new class extends Migration
             $table->bigInteger('monetary_impact');
             $table->foreignId('responsible_by_id')->constrained('users');
             $table->foreignId('status_id')->constrained('statuses');
+            $table->foreignId('headquarter_id')
+                ->constrained()
+                ->restrictOnDelete();
             $table->timestamps();
         });
     }

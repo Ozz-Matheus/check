@@ -120,7 +120,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('name')
                     ->weight('font-medium')
                     ->label(__('filament-shield::filament-shield.column.name'))
-                    ->formatStateUsing(fn ($state): string => Str::headline($state))
+                    ->formatStateUsing(fn ($state): string => __(Str::headline($state)))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('guard_name')
                     ->badge()

@@ -32,7 +32,9 @@ return new class extends Migration
             $table->foreignId('residual_risk_level_id')->constrained('risk_levels');
 
             $table->foreignId('risk_control_general_qualification_id')->nullable()->constrained('risk_control_qualifications');
-            // $table->foreignId('residual_risk_level_id')->constrained('risk_levels');
+            $table->foreignId('headquarter_id')
+                ->constrained()
+                ->restrictOnDelete();
             $table->timestamps();
         });
     }

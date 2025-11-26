@@ -41,6 +41,7 @@ class RiskReport
         ])
             ->where('process_id', $data['process_id'])
             ->where('sub_process_id', $data['sub_process_id'])
+            ->where('headquarter_id', $data['headquarter_id'] ?? auth()->user()->headquarter_id)
             ->orderBy('residual_risk_level_id', 'desc')
             ->get();
 

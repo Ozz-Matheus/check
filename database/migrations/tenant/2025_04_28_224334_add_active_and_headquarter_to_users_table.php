@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('active')->default(true)->after('password');
+            $table->foreignId('headquarter_id')->after('id')->default(1)->constrained()->restrictOnDelete();
+            $table->boolean('view_all_headquarters')->default(false)->after('active');
+            $table->boolean('interact_with_all_headquarters')->default(false)->after('active');
         });
     }
 
@@ -23,6 +26,10 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('active');
+            $table->dropForeign(['headquarter_id']);
+            $table->dropColumn('headquarter_id');
+            $table->dropColumn('view_all_headquarters');
+            $table->dropColumn('interact_with_all_headquarters');
         });
     }
 };

@@ -33,6 +33,11 @@ class ListRisks extends ListRecords
                 ->outlined()
                 ->modalWidth('md')
                 ->form([
+                    Select::make('headquarter_id')
+                        ->label(__('Headquarters'))
+                        ->relationship('headquarter', 'name')
+                        ->native(false)
+                        ->visible(fn () => auth()->user()->view_all_headquarters === (bool) true),
                     Select::make('process_id')
                         ->label(__('Process'))
                         ->relationship('process', 'title')

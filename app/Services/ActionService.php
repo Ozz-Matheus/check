@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Action;
+use App\Models\Headquarter;
 use App\Models\SubProcess;
 use Illuminate\Support\Facades\DB;
 
@@ -18,20 +19,24 @@ class ActionService
         $this->statusIds = $statusService->getActionAndTaskStatuses();
     }
 
-    public function generateCode($subProcessId): string
+    public function generateCode($subProcessId, $headquarterId): string
     {
-        return DB::transaction(function () use ($subProcessId) {
+        $headquarterId = $headquarterId ?? auth()->user()->headquarter_id;
+
+        return DB::transaction(function () use ($subProcessId, $headquarterId) {
 
             $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
+            $headquarter = Headquarter::lockForUpdate()->findOrFail($headquarterId);
 
             $count = Action::where('origin_type', null)
                 ->where('sub_process_id', $subProcessId)
+                ->where('headquarter_id', $headquarterId)
                 ->lockForUpdate()
                 ->count();
 
             $consecutive = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
 
-            return "IND-{$subProcess->acronym}-{$consecutive}";
+            return "IND-{$subProcess->acronym}-{$consecutive}-{$headquarter->acronym}";
         });
     }
 

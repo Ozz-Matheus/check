@@ -15,6 +15,8 @@ class RiskHeatmapGrid extends Widget
 
     protected static string $view = 'filament.widgets.risk-heatmap-grid';
 
+    protected static ?string $pollingInterval = null;
+
     // protected int|string|array $columnSpan = 'full';
 
     protected function getTablePage(): string

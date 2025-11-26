@@ -252,7 +252,7 @@ class DocVersionResource extends Resource
             ])
             ->bulkActions([
                 BulkAction::make('export')
-                    ->label(__('Export selected'))
+                    ->label(__('Export base'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(fn ($records) => Excel::download(
                         new VersionExport($records->pluck('id')->toArray()),

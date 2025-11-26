@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Headquarter;
 use App\Models\Risk;
 use App\Models\RiskControlQualification;
 use App\Models\RiskImpact;
@@ -166,19 +167,23 @@ class RiskService
     /* ********************************************************* */
 
     // Generar código de riesgo
-    public function generateCode($subProcessId): string
+    public function generateCode($subProcessId, $headquarterId): string
     {
-        return DB::transaction(function () use ($subProcessId) {
+        $headquarterId = $headquarterId ?? auth()->user()->headquarter_id;
+
+        return DB::transaction(function () use ($subProcessId, $headquarterId) {
 
             $subProcess = SubProcess::lockForUpdate()->findOrFail($subProcessId);
+            $headquarter = Headquarter::lockForUpdate()->findOrFail($headquarterId);
 
             $count = Risk::where('sub_process_id', $subProcessId)
+                ->where('headquarter_id', $headquarterId)
                 ->lockForUpdate()
                 ->count();
 
             $consecutive = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
 
-            return "R-{$subProcess->acronym}-{$consecutive}";
+            return "R-{$subProcess->acronym}-{$consecutive}-{$headquarter->acronym}";
         });
     }
 }

@@ -26,6 +26,8 @@ class CreateAction extends CreateRecord
 
     public ?int $subProcessId = null;
 
+    public ?int $headquarterId = null;
+
     public function mount(): void
     {
         parent::mount();
@@ -56,6 +58,7 @@ class CreateAction extends CreateRecord
             $this->originLabel = $factory?->getLabel();
             $this->processId = $factory?->getProcessId();
             $this->subProcessId = $factory?->getSubProcessId();
+            $this->headquarterId = $factory?->getHeadquarterId();
         }
     }
 
@@ -68,8 +71,9 @@ class CreateAction extends CreateRecord
             $data['origin_label'] = $this->originLabel;
             $data['process_id'] = $this->processId;
             $data['sub_process_id'] = $this->subProcessId;
+            $data['headquarter_id'] = $this->headquarterId;
         } else {
-            $data['origin_classification_code'] = app(ActionService::class)->generateCode($data['sub_process_id']);
+            $data['origin_classification_code'] = app(ActionService::class)->generateCode($data['sub_process_id'], $data['headquarter_id'] ?? null);
             $data['origin_label'] = __('Independent');
         }
 

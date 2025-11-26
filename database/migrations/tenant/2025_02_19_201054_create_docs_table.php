@@ -25,6 +25,9 @@ return new class extends Migration
             $table->foreignId('disposition_method_id')->nullable()->constrained('doc_dispositions');
             // $table->foreignId('retention_period_id')->nullable()->constrained('doc_retentions');
             $table->boolean('display_restriction')->default(false);
+            $table->foreignId('headquarter_id')
+                ->constrained()
+                ->restrictOnDelete();
             $table->timestamps();
         });
     }

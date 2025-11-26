@@ -74,8 +74,7 @@ class DocResource extends Resource
                             ->label(__('Title'))
                             ->required()
                             ->columnSpanFull()
-                            ->maxLength(255)
-                            ->unique(),
+                            ->maxLength(255),
                         Forms\Components\Select::make('doc_type_id')
                             ->label(__('Doc type'))
                             ->relationship('type', 'label')
@@ -236,12 +235,14 @@ class DocResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->sortable()
-                    ->date()
+                    ->since()
+                    ->dateTooltip()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated at'))
                     ->sortable()
-                    ->date()
+                    ->since()
+                    ->dateTooltip()
                     ->toggleable(isToggledHiddenByDefault: true),
 
             ])->defaultSort('id', 'desc')
@@ -318,6 +319,11 @@ class DocResource extends Resource
                         0 => __('Public'),
                     ])
                     ->native(false),
+                SelectFilter::make('headquarter_id')
+                    ->label(__('Headquarters'))
+                    ->relationship('headquarter', 'name')
+                    ->native(false)
+                    ->visible(fn () => auth()->user()->view_all_headquarters === (bool) true),
             ])
             ->filtersTriggerAction(
                 fn ($action) => $action
@@ -453,7 +459,6 @@ class DocResource extends Resource
                                 new RelationshipsOfTheDocs($docIds),
                                 'docs_y_relaciones_'.now()->format('Y_m_d_His').'.xlsx'
                             );
-
                         })
                         ->deselectRecordsAfterCompletion(),
 

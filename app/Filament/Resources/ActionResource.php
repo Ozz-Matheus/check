@@ -58,6 +58,18 @@ class ActionResource extends Resource
                 Forms\Components\Section::make('Action data')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\Select::make('headquarter_id')
+                            ->label(__('Headquarter'))
+                            ->relationship('headquarter', 'name')
+                            ->afterStateUpdated(function (Set $set) {
+                                $set('verification_responsible_by_id', null);
+                                $set('responsible_by_id', null);
+                            })
+                            ->reactive()
+                            ->native(false)
+                            ->columns(1)
+                            ->required(fn ($livewire) => auth()->user()->interact_with_all_headquarters === (bool) true && ! (isset($livewire->originType) && $livewire->originType))
+                            ->visible(fn ($livewire) => auth()->user()->interact_with_all_headquarters === (bool) true && ! (isset($livewire->originType) && $livewire->originType)),
                         Forms\Components\TextInput::make('title')
                             ->label(__('Title'))
                             ->required()
@@ -179,17 +191,20 @@ class ActionResource extends Resource
                                 name: 'verificationResponsible',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function ($query, Get $get, $livewire) {
-                                    $subProcessId = $get('sub_process_id') ?? ($livewire->subProcessId ?? null);
+                                    $subProcessId = $get('sub_process_id') ?? $livewire->subProcessId ?? null;
+                                    $headquarterId = $get('headquarter_id') ?? $livewire->headquarterId ?? auth()->user()->headquarter_id ?? null;
 
                                     if (! $subProcessId) {
                                         // If no sub-process is selected, return no users.
                                         return $query->whereNull('id');
                                     }
 
-                                    return $query->whereDoesntHave(
-                                        'subProcesses',
-                                        fn ($q) => $q->where('sub_process_id', $subProcessId)
-                                    );
+                                    return $query
+                                        ->where('headquarter_id', $headquarterId)
+                                        ->whereDoesntHave(
+                                            'subProcesses',
+                                            fn ($q) => $q->where('sub_process_id', $subProcessId)
+                                        );
                                 }
                             )
                             ->searchable()
@@ -205,17 +220,20 @@ class ActionResource extends Resource
                                 name: 'responsibleBy',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function ($query, Get $get, $livewire) {
-                                    $subProcessId = $get('sub_process_id') ?? ($livewire->subProcessId ?? null);
+                                    $subProcessId = $get('sub_process_id') ?? $livewire->subProcessId ?? null;
+                                    $headquarterId = $get('headquarter_id') ?? $livewire->headquarterId ?? auth()->user()->headquarter_id ?? null;
 
                                     if (! $subProcessId) {
                                         // If no sub-process is selected, return no users.
                                         return $query->whereNull('id');
                                     }
 
-                                    return $query->whereHas(
-                                        'subProcesses',
-                                        fn ($q) => $q->where('sub_process_id', $subProcessId)
-                                    );
+                                    return $query
+                                        ->where('headquarter_id', $headquarterId)
+                                        ->whereHas(
+                                            'subProcesses',
+                                            fn ($q) => $q->where('sub_process_id', $subProcessId)
+                                        );
                                 }
                             )
                             ->searchable()
@@ -294,7 +312,7 @@ class ActionResource extends Resource
                     ->color(fn ($record) => $record->status->colorName())
                     ->icon(fn ($record) => $record->status->iconName())
                     ->placeholder('-'),
-                Tables\Columns\TextColumn::make('finished')
+                Tables\Columns\TextColumn::make('ending.finished')
                     ->label(__('Finished'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => (bool) $state ? __('Yes') : __('No'))
@@ -313,6 +331,10 @@ class ActionResource extends Resource
                     ->label(__('Cancellation date'))
                     ->date()
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('headquarter.name')
+                    ->label(__('Headquarters'))
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
@@ -351,7 +373,7 @@ class ActionResource extends Resource
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('registered_by_id')
-                    ->label(__('Registered'))
+                    ->label(__('Registered by'))
                     ->relationship('registeredBy', 'name')
                     ->multiple()
                     ->searchable()
@@ -371,12 +393,16 @@ class ActionResource extends Resource
                     )
                     ->multiple()
                     ->preload(),
-                Tables\Filters\SelectFilter::make('finished')
+                Tables\Filters\TernaryFilter::make('ending.finished')
                     ->label(__('Finished'))
-                    ->options([
-                        1 => __('Yes'),
-                        0 => __('No'),
-                    ])
+                    ->placeholder(__('All'))
+                    ->trueLabel(__('Yes'))
+                    ->falseLabel(__('No'))
+                    ->queries(
+                        true: fn ($query) => $query->whereHas('ending', fn ($q) => $q->where('finished', true)),
+                        false: fn ($query) => $query->whereDoesntHave('ending')->orWhereHas('ending', fn ($q) => $q->where('finished', false)),
+                        blank: fn ($query) => $query,
+                    )
                     ->native(false),
                 Tables\Filters\SelectFilter::make('priority_id')
                     ->label(__('Priority'))
@@ -393,6 +419,11 @@ class ActionResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload(),
+                Tables\Filters\SelectFilter::make('headquarter_id')
+                    ->label(__('Headquarters'))
+                    ->relationship('headquarter', 'name')
+                    ->native(false)
+                    ->visible(fn () => auth()->user()->view_all_headquarters === (bool) true),
             ])
             ->filtersTriggerAction(
                 fn ($action) => $action
@@ -427,7 +458,6 @@ class ActionResource extends Resource
                                 new RelationshipsOfTheActions($actionIds),
                                 'actions_y_relaciones_'.now()->format('Y_m_d_His').'.xlsx'
                             );
-
                         })
                         ->deselectRecordsAfterCompletion(),
 

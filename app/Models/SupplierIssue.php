@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class SupplierIssue extends Model
+class SupplierIssue extends Model implements AuditableContract
 {
+    use AuditableTrait, BelongsToHeadquarter;
+
     //
     protected $fillable = [
         'title',
@@ -20,6 +25,7 @@ class SupplierIssue extends Model
         'monetary_impact',
         'responsible_by_id',
         'status_id',
+        'headquarter_id',
     ];
 
     public function cause()
