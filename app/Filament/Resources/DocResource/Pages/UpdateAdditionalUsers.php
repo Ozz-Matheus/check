@@ -19,7 +19,7 @@ class UpdateAdditionalUsers extends Page
 
         if ($data) {
             $record->update([
-                'display_restriction' => $data['display_restriction'],
+                'confidential' => $data['confidential'],
             ]);
 
             $record->accessToAdditionalUsers()->sync($data['users']);

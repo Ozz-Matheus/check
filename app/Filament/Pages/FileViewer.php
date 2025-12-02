@@ -38,7 +38,7 @@ class FileViewer extends Page
 
             $user = auth()->user();
 
-            if ($this->doc->display_restriction) {
+            if ($this->doc->confidential) {
 
                 $hasAccess = DB::table('docs_has_confidential_users')
                     ->where('doc_id', $this->doc->id)

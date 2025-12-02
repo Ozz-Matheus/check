@@ -72,14 +72,14 @@ class SubProcessResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required(),
-                Forms\Components\Select::make('leader_by_id')
+                /* Forms\Components\Select::make('leader_by_id')
                     ->label(__('Leader'))
                     ->relationship('leader', 'name')
                     // ->options(fn ($record) => $record->users()->pluck('users.name', 'users.id') ?? [])
                     ->searchable()
                     ->preload()
                     ->required(fn (string $context) => $context === 'edit')
-                    ->visible(fn (string $context) => $context === 'edit'),
+                    ->visible(fn (string $context) => $context === 'edit'), */
             ]);
     }
 
@@ -95,9 +95,9 @@ class SubProcessResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('process.title')
                     ->label(__('Process')),
-                Tables\Columns\TextColumn::make('leader.name')
+                /* Tables\Columns\TextColumn::make('leader.name')
                     ->label(__('Leader'))
-                    ->searchable(),
+                    ->searchable(), */
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->date()

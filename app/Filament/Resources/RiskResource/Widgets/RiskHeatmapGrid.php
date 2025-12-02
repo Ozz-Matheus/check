@@ -71,8 +71,13 @@ class RiskHeatmapGrid extends Widget
             }
         }
 
-        $title = 'Mapa de Calor de Riesgos Inherentes';
-
-        return compact('title', 'cells', 'impacts', 'probs');
+        return [
+            'title' => __('Mapa de calor de riesgos inherentes'),
+            // 'description' => 'Distribución de riesgos según su probabilidad e impacto residual.',
+            'description' => __('Está referenciado a los filtros de la lista'),
+            'cells' => $cells,
+            'impacts' => $impacts,
+            'probs' => $probs,
+        ];
     }
 }

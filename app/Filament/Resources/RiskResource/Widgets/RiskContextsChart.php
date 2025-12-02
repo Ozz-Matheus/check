@@ -15,6 +15,8 @@ class RiskContextsChart extends ChartWidget
 
     protected static ?string $pollingInterval = null;
 
+    public ?string $filter = 'amount';
+
     public function getHeading(): ?string
     {
         return __('Risk distribution by strategic context');
@@ -23,6 +25,14 @@ class RiskContextsChart extends ChartWidget
     public function getDescription(): string|Htmlable|null
     {
         return __('It is referenced to the list filters');
+    }
+
+    protected function getFilters(): ?array
+    {
+        return [
+            'amount' => __('Amount'),
+            'percentage' => __('Percentage'),
+        ];
     }
 
     protected function getTablePage(): string
@@ -39,6 +49,16 @@ class RiskContextsChart extends ChartWidget
             ->selectRaw('risk_strategic_contexts.title, count(risks.id) as count')
             ->groupBy('risk_strategic_contexts.title')
             ->pluck('count', 'title');
+
+        if ($this->filter === 'percentage') {
+            $total = $data->sum();
+
+            if ($total > 0) {
+                $data = $data->map(function ($count) use ($total) {
+                    return round(($count / $total) * 100, 2);
+                });
+            }
+        }
 
         return [
             'datasets' => [

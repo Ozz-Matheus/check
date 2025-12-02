@@ -13,7 +13,6 @@ class SubProcess extends Model
     protected $fillable = [
         'title',
         'process_id',
-        'leader_by_id',
         'acronym',
     ];
 
@@ -28,9 +27,9 @@ class SubProcess extends Model
         return $this->belongsTo(Process::class);
     }
 
-    public function leader()
+    public function leaders()
     {
-        return $this->belongsTo(User::class, 'leader_by_id');
+        return $this->belongsToMany(User::class, 'users_lead_subprocesses');
     }
 
     public function users()

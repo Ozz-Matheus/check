@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ProcessSeeder::class,
             SubProcessSeeder::class,
             UserHasSubProcessesSeeder::class,
+            UsersLeadSubProcessesSeeder::class,
             StatusSeeder::class,
             PrioritySeeder::class,
             // Documentos

@@ -14,11 +14,6 @@ class DocType extends Model
         'name',
         'label',
         'acronym',
-        'expiration_years',
-    ];
-
-    protected $casts = [
-        'expiration_years' => 'integer',
     ];
 
     /*

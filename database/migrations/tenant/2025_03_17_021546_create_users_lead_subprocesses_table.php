@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('doc_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('label');
-            $table->string('acronym')->unique();
-            $table->timestamps();
+        Schema::create('users_lead_subprocesses', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('sub_process_id')->constrained('sub_processes');
+
+            $table->primary(['user_id', 'sub_process_id']);
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('doc_types');
+        Schema::dropIfExists('users_lead_subprocesses');
     }
 };

@@ -57,11 +57,8 @@ class RiskProbabilityResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('weight')
                     ->label(__('Weight'))
-                    ->helperText('1 - 5')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(5),
+                    // ->helperText('1 - 5')
+                    ->required(),
             ]);
     }
 
@@ -74,7 +71,6 @@ class RiskProbabilityResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('weight')
                     ->label(__('Weight'))
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))

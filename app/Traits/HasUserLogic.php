@@ -9,23 +9,17 @@ trait HasUserLogic
 {
     // Metodos para el usuario Leader
 
-    public function leaderOfSubProcess(): ?SubProcess
-    {
-        return SubProcess::with('process')
-            ->where('leader_by_id', $this->id)
-            ->first();
-    }
-
     public function getLeaderToSubProcess(?int $subProcessId)
     {
-        return SubProcess::with('leader')->find($subProcessId)?->leader;
+        $subProcess = SubProcess::find($subProcessId);
+
+        // Retorna el primer (y único) líder del subproceso
+        return $subProcess?->leaders()->first();
     }
 
     public function isLeaderOfSubProcess(?int $subProcessId): bool
     {
-        return SubProcess::where('id', $subProcessId)
-            ->where('leader_by_id', $this->id)
-            ->exists();
+        return $this->leaderOf()->where('sub_process_id', $subProcessId)->exists();
     }
 
     public function validSubProcess($subProcessId): bool
@@ -36,7 +30,7 @@ trait HasUserLogic
     public function canAccessSubProcess(int|string|null $subProcessId): bool
     {
         return $this->hasRole('super_admin') ||
-               ($subProcessId !== null && $this->validSubProcess($subProcessId));
+            ($subProcessId !== null && $this->validSubProcess($subProcessId));
     }
 
     // Verificación de permisos para el cambiar de estado de una versión del documento.

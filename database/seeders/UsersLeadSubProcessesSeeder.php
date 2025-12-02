@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class UserHasSubProcessesSeeder extends Seeder
+class UsersLeadSubProcessesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -38,6 +38,6 @@ class UserHasSubProcessesSeeder extends Seeder
         })->all();
 
         // 5. Insertar las relaciones en la tabla pivote.
-        DB::table('user_has_sub_processes')->insert($data);
+        DB::table('users_lead_subprocesses')->insert($data);
     }
 }

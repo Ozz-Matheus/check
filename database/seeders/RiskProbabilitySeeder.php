@@ -13,11 +13,11 @@ class RiskProbabilitySeeder extends Seeder
     public function run(): void
     {
         RiskProbability::factory()->createMany([
-            ['title' => 'Raro', 'weight' => 1],
-            ['title' => 'Improbable', 'weight' => 2],
-            ['title' => 'Posible', 'weight' => 3],
-            ['title' => 'Probable', 'weight' => 4],
-            ['title' => 'Casi Seguro', 'weight' => 5],
+            ['title' => 'Raro', 'weight' => 0.2],
+            ['title' => 'Improbable', 'weight' => 0.4],
+            ['title' => 'Posible', 'weight' => 0.6],
+            ['title' => 'Probable', 'weight' => 0.8],
+            ['title' => 'Casi Seguro', 'weight' => 1],
         ]);
     }
 }

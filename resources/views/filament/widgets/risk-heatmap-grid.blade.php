@@ -2,10 +2,13 @@
     <x-filament::card>
         <div class="space-y-6">
             <!-- Header -->
-            <div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+            <div class="grid flex-1 gap-y-1">
+                <h3 class="fi-section-header-heading text-base font-semibold leading-6 text-gray-950 dark:text-white">
                     {{ $title ?? null }}
-                </h2>
+                </h3>
+                <p class="fi-section-header-description overflow-hidden break-words text-sm text-gray-500 dark:text-gray-400">
+                    {{ $description ?? null }}
+                </p>
             </div>
 
             <!-- Heatmap Grid -->

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\DocService;
-use App\Support\AppNotifier;
 use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -22,17 +20,18 @@ class Doc extends Model implements AuditableContract
         'sub_process_id',
         'doc_type_id',
         'central_expiration_date',
+        'months_for_review_date',
         'storage_method_id',
         'recovery_method_id',
         'disposition_method_id',
-        'display_restriction',
+        'confidential',
         'created_by_id',
         'headquarter_id',
     ];
 
     protected $casts = [
         'central_expiration_date' => 'date',
-        'display_restriction' => 'boolean',
+        'confidential' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -146,16 +145,12 @@ class Doc extends Model implements AuditableContract
         return $today->isBefore($expiration) && $today->diffInDays($expiration) <= 30;
     }
 
-    public function reactivateDoc(): void
+    public function expirationDateAssignment(): void
     {
-        $service = app(DocService::class);
-        $docTypeExpiration = $service->getDocTypeExpiration($this->doc_type_id);
-        $centralExpirationDate = today()->addYears($docTypeExpiration);
+        $centralExpirationDate = today()->addMonths($this->months_for_review_date);
 
         $this->update([
             'central_expiration_date' => $centralExpirationDate,
         ]);
-
-        AppNotifier::success(__('Document active'));
     }
 }

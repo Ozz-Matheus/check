@@ -14,25 +14,22 @@ class RiskCategorySeeder extends Seeder
     {
         //
         RiskCategory::factory()->create([
-            'title' => 'Tecnología e información',
+            'title' => 'Estratégicos',
         ]);
         RiskCategory::factory()->create([
-            'title' => 'Personas',
+            'title' => 'Operativos',
         ]);
         RiskCategory::factory()->create([
-            'title' => 'Infraestructura y Maquinaria',
+            'title' => 'Financieros',
         ]);
         RiskCategory::factory()->create([
-            'title' => 'Propios de los procesos',
+            'title' => 'De Cumplimiento / Legales',
         ]);
         RiskCategory::factory()->create([
-            'title' => 'Legales y de Cumplimiento',
+            'title' => 'Reputacionales',
         ]);
         RiskCategory::factory()->create([
-            'title' => 'Ambientales',
-        ]);
-        RiskCategory::factory()->create([
-            'title' => 'Modelo de negocio',
+            'title' => 'Seguridad de la Información',
         ]);
     }
 }

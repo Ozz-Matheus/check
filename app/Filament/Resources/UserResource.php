@@ -52,8 +52,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(__('User data'))
-                    ->columns(3)
+                Forms\Components\Section::make(__('Datos del usuario y roles'))
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label(__('Name'))
@@ -89,6 +88,11 @@ class UserResource extends Resource
                             ->getOptionLabelFromRecordUsing(fn ($record) => __(Str::headline($record->name)))
                             ->columnSpanFull()
                             ->columns(3),
+                    ])
+                    ->columns(3),
+
+                Forms\Components\Section::make(__('Asignación de Subprocesos y lideratos'))
+                    ->schema([
                         Forms\Components\CheckboxList::make('subProcesses')
                             ->relationship('subProcesses', 'title')
                             ->label(__('Assigned Sub Processes'))
@@ -96,31 +100,63 @@ class UserResource extends Resource
                                 return $record?->isLeaderOfSubProcess($value);
                             })
                             ->searchable()
-                            ->columnSpanFull()
-                            ->columns(2)
                             ->bulkToggleable()
                             ->helperText(
                                 fn (string $context) => $context === 'edit'
                                     ? __('The user cannot be unlinked from the subprocess if he is linked to it as a leader.')
                                     : null
-                            ),
-                        Forms\Components\Toggle::make('active')
-                            ->label(__('Active'))
-                            ->helperText(__('Enables or disables user access.'))
-                            ->required()
-                            ->default(true),
+                            )
+                            ->columns(2),
+                        Forms\Components\CheckboxList::make('leaderOf')
+                            ->relationship(
+                                name: 'leaderOf',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: function (Builder $query, Forms\Get $get) {
+                                    return $query->whereIn('id', $get('subProcesses'));
+                                }
+                            )
+                            ->disableOptionWhen(function ($value, $record) {
+                                return $record?->leaderOf()->where('sub_process_id', $value)->exists();
+                            })
+                            ->getOptionLabelFromRecordUsing(function ($record) {
+                                $leader = $record->leaders()->first();
+
+                                return $record->title.' (Líder: '.$leader->name.')';
+                            })
+                            ->label(__('Lider de'))
+                            ->searchable()
+                            ->bulkToggleable()
+                            ->helperText(
+                                fn (string $context) => $context === 'edit'
+                                    ? __('El usuario tendra como opciones de liderato a los subprocesos en los que pertenece.')
+                                    : null
+                            )
+                            ->columns(2),
+                    ])
+                    ->columns(2),
+                Forms\Components\Section::make(__('Sedes y estado del usuario'))
+                    ->schema([
                         Forms\Components\Toggle::make('view_all_headquarters')
                             ->label(__('View all headquarters'))
-                            ->helperText(__('It allows the user to view the content of all headquarters.')),
+                            ->helperText(__('It allows the user to view the content of all headquarters.'))
+                            ->inline(false),
                         Forms\Components\Toggle::make('interact_with_all_headquarters')
                             ->label(__('Interact with all headquarters'))
-                            ->helperText(__('It allows the user to interact with the content of all headquarters.')),
+                            ->helperText(__('It allows the user to interact with the content of all headquarters.'))
+                            ->inline(false),
                         Forms\Components\Select::make('headquarter_id')
                             ->label(__('Headquarters'))
                             ->relationship('headquarter', 'name')
                             ->native(false)
                             ->required(),
-                    ]),
+                        Forms\Components\Toggle::make('active')
+                            ->label(__('Active'))
+                            ->helperText(__('Enables or disables user access.'))
+                            ->required()
+                            ->default(true)
+                            ->inline(false),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -138,7 +174,7 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label(__('Roles'))
-                    ->formatStateUsing(fn ($state) => Str::headline($state))
+                    ->formatStateUsing(fn ($state) => __(Str::headline($state)))
                     ->searchable()
                     ->sortable()
                     ->badge()
@@ -149,6 +185,12 @@ class UserResource extends Resource
                         'supplier' => 'warning',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('leaderOf.title')
+                    ->label(__('Lider de'))
+                    ->limit(30)
+                    ->tooltip(
+                        fn ($record) => $record->leaderOf->pluck('title')->join(', ')
+                    ),
                 Tables\Columns\TextColumn::make('headquarter.name')
                     ->label(__('Headquarters'))
                     ->sortable()

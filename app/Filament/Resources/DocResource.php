@@ -9,6 +9,7 @@ use App\Models\Doc;
 use App\Models\DocType;
 use App\Models\Status;
 use App\Models\User;
+use App\Support\AppNotifier;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -86,8 +87,12 @@ class DocResource extends Resource
                             ->reactive()
                             ->searchable()
                             ->preload()
-                            ->required()
-                            ->columnSpanFull(),
+                            ->required(),
+                        Forms\Components\TextInput::make('months_for_review_date')
+                            ->label(__('Months for review date'))
+                            ->numeric()
+                            ->minValue(1)
+                            ->required(),
                         Forms\Components\Select::make('process_id')
                             ->label(__('Process'))
                             ->relationship('process', 'title')
@@ -139,10 +144,10 @@ class DocResource extends Resource
                             ->preload()
                             ->visible($docTypeFormat)
                             ->required($docTypeFormat),
-                        Forms\Components\Fieldset::make(__('Doc restriction'))
+                        Forms\Components\Fieldset::make(__('Confidentiality'))
                             ->schema([
-                                Forms\Components\Toggle::make('display_restriction')
-                                    ->label(__('Display restriction'))
+                                Forms\Components\Toggle::make('confidential')
+                                    ->label(__('Confidential'))
                                     ->inline(false)
                                     ->afterStateUpdated(fn (Set $set) => $set('accessToAdditionalUsers', null))
                                     ->columnSpanFull()
@@ -153,7 +158,7 @@ class DocResource extends Resource
                                     ->multiple()
                                     ->searchable()
                                     ->preload()
-                                    ->visible(fn (Get $get) => $get('display_restriction') === true),
+                                    ->visible(fn (Get $get) => $get('confidential') === true),
                             ]),
                     ]),
             ]);
@@ -210,8 +215,8 @@ class DocResource extends Resource
                     })
                     ->color(fn (string $state): string => $state === __('Expired') ? 'danger' : 'success')
                     ->placeholder('-'),
-                Tables\Columns\TextColumn::make('display_restriction')
-                    ->label(__('Display restriction'))
+                Tables\Columns\TextColumn::make('confidential')
+                    ->label(__('Confidential'))
                     ->badge()
                     ->formatStateUsing(fn ($state) => (bool) $state ? __('Private') : __('Public'))
                     ->color(fn ($state) => (bool) $state ? 'warning' : 'success'),
@@ -312,8 +317,8 @@ class DocResource extends Resource
                             : $query;
                     })
                     ->native(false),
-                SelectFilter::make('display_restriction')
-                    ->label(__('Display restriction'))
+                SelectFilter::make('confidential')
+                    ->label(__('Confidential'))
                     ->options([
                         1 => __('Private'),
                         0 => __('Public'),
@@ -352,7 +357,7 @@ class DocResource extends Resource
                     )
                     ->openUrlInNewTab(false)
                     ->visible(function ($record) {
-                        if (! $record->display_restriction) {
+                        if (! $record->confidential) {
                             return true;
                         }
 
@@ -381,14 +386,14 @@ class DocResource extends Resource
                         ->form(function ($record) {
 
                             // Helpers para no repetir tanto fn(Get $get) / fn(Set $set)
-                            $isPrivate = fn (Get $get): bool => $get('display_restriction') === true;
+                            $isPrivate = fn (Get $get): bool => $get('confidential') === true;
                             $resetAccess = fn (Set $set) => $set('users', null);
 
                             return [
-                                Forms\Components\Toggle::make('display_restriction')
-                                    ->label(__('Display restriction'))
+                                Forms\Components\Toggle::make('confidential')
+                                    ->label(__('Confidential'))
                                     ->inline(false)
-                                    ->default($record->display_restriction)
+                                    ->default($record->confidential)
                                     ->afterStateUpdated($resetAccess)
                                     ->columnSpanFull()
                                     ->reactive(),
@@ -403,12 +408,12 @@ class DocResource extends Resource
                                     ->visible($isPrivate),
                             ];
                         })
-                        ->authorize(fn ($record): bool => auth()->id() === $record->subProcess?->leader?->id)
+                        ->authorize(fn ($record): bool => auth()->user()->isLeaderOfSubProcess($record->sub_process_id))
                         ->action(function ($record, array $data) {
 
                             session([
                                 'doc_edit_payload' => [
-                                    'display_restriction' => $data['display_restriction'],
+                                    'confidential' => $data['confidential'],
                                     'users' => $data['users'] ?? null,
                                 ],
                             ]);
@@ -422,10 +427,11 @@ class DocResource extends Resource
                         ->icon('heroicon-o-document-check')
                         ->color('primary')
                         ->requiresConfirmation()
-                        ->authorize(fn ($record): bool => auth()->id() === $record->subProcess?->leader?->id)
+                        ->authorize(fn ($record): bool => auth()->user()->isLeaderOfSubProcess($record->sub_process_id))
                         ->visible(fn ($record) => $record->is_about_to_expire || $record->is_expired)
                         ->action(function ($record) {
-                            $record->reactivateDoc();
+                            $record->expirationDateAssignment();
+                            AppNotifier::success(__('Document active'));
                         }),
                     DeleteAction::make()
                         ->visible(fn ($record): bool => auth()->user()?->can('delete', $record)),

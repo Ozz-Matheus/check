@@ -13,11 +13,11 @@ class RiskImpactSeeder extends Seeder
     public function run(): void
     {
         RiskImpact::factory()->createMany([
-            ['title' => 'Insignificante', 'weight' => 1],
-            ['title' => 'Menor', 'weight' => 2],
-            ['title' => 'Moderado', 'weight' => 3],
-            ['title' => 'Mayor', 'weight' => 4],
-            ['title' => 'Crítico', 'weight' => 5],
+            ['title' => 'Insignificante', 'weight' => 50],
+            ['title' => 'Menor', 'weight' => 100],
+            ['title' => 'Moderado', 'weight' => 200],
+            ['title' => 'Mayor', 'weight' => 300],
+            ['title' => 'Crítico', 'weight' => 400],
         ]);
     }
 }

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('title');
             $table->string('acronym')->unique();
             $table->foreignId('process_id')->constrained()->onDelete('cascade');
-            $table->foreignId('leader_by_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

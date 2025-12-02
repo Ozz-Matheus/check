@@ -30,6 +30,7 @@ class RunCommandForAllTenants implements ShouldQueue
                 "SHOW DATABASES LIKE '".addslashes($dbName)."'"
             ))->isNotEmpty()) {
                 \Log::warning("🚫 Base de datos no válida para tenant: {$tenant->id}");
+
                 return;
             }
 

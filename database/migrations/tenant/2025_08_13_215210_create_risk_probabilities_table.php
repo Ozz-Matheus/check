@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('risk_probabilities', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->integer('weight');
+            $table->decimal('weight', 5, 2);
             $table->timestamps();
         });
     }

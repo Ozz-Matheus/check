@@ -96,6 +96,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(SubProcess::class, 'user_has_sub_processes');
     }
 
+    public function leaderOf()
+    {
+        return $this->belongsToMany(SubProcess::class, 'users_lead_subprocesses');
+    }
+
     public function headquarter()
     {
         return $this->belongsTo(Headquarter::class);

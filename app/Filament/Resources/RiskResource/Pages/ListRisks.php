@@ -4,7 +4,9 @@ namespace App\Filament\Resources\RiskResource\Pages;
 
 use App\Exports\RiskExports\RiskReports\RiskReport;
 use App\Filament\Resources\RiskResource;
+use App\Filament\Resources\RiskResource\Widgets\InherentRisksChart;
 use App\Filament\Resources\RiskResource\Widgets\ResidualRiskHeatmapGrid;
+use App\Filament\Resources\RiskResource\Widgets\ResidualRisksChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskCategoriesChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskContextsChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskHeatmapGrid;
@@ -93,6 +95,8 @@ class ListRisks extends ListRecords
             RiskContextsChart::class,
             RiskHeatmapGrid::class,
             ResidualRiskHeatmapGrid::class,
+            InherentRisksChart::class,
+            ResidualRisksChart::class,
         ];
     }
 }

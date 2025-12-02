@@ -50,8 +50,16 @@ class RiskControlQualificationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('context')
+                Forms\Components\Select::make('context')
                     ->label(__('Context'))
+                    ->options(
+                        [
+                            'min',
+                            'middle',
+                            'max',
+                        ]
+                    )
+                    ->native(false)
                     ->required(),
                 Forms\Components\TextInput::make('title')
                     ->label(__('Title'))
@@ -59,6 +67,7 @@ class RiskControlQualificationResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('reduction_factor')
                     ->label(__('Reduction factor'))
+                    ->helperText('0% - 100%')
                     ->required()
                     ->suffix('%')
                     ->numeric()

@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Illuminate\Contracts\Support\Htmlable;
 
-class RiskCategoriesChart extends ChartWidget
+class InherentRisksChart extends ChartWidget
 {
     use InteractsWithPageTable;
 
@@ -19,7 +19,7 @@ class RiskCategoriesChart extends ChartWidget
 
     public function getHeading(): ?string
     {
-        return __('Risk distribution by category');
+        return __('Risk distribution by inherent level');
     }
 
     public function getDescription(): string|Htmlable|null
@@ -45,34 +45,39 @@ class RiskCategoriesChart extends ChartWidget
         $query = $this->getPageTableQuery();
 
         $data = $query->reorder()
-            ->join('risk_categories', 'risks.risk_category_id', '=', 'risk_categories.id')
-            ->selectRaw('risk_categories.title, count(risks.id) as count')
-            ->groupBy('risk_categories.title')
-            ->pluck('count', 'title');
+            ->join('risk_levels', 'risks.inherent_risk_level_id', '=', 'risk_levels.id')
+            ->selectRaw('risk_levels.title, risk_levels.color, count(risks.id) as count')
+            ->groupBy('risk_levels.title', 'risk_levels.color')
+            ->get();
 
         if ($this->filter === 'percentage') {
-            $total = $data->sum();
+            $total = $data->sum('count');
 
             if ($total > 0) {
-                $data = $data->map(function ($count) use ($total) {
-                    return round(($count / $total) * 100, 2);
+                $data->each(function ($item) use ($total) {
+                    $item->count = round(($item->count / $total) * 100, 2);
                 });
             }
         }
 
+        $colors = $data->pluck('color')->map(function ($colorName) {
+            return config("filament-colors.{$colorName}.rgba", 'rgba(156, 163, 175, 1)');
+        })->toArray();
+
         return [
             'datasets' => [
                 [
-                    'label' => __('Risks by category'),
-                    'data' => $data->values()->toArray(),
+                    'label' => __('Risks by inherent level'),
+                    'data' => $data->pluck('count')->toArray(),
+                    'backgroundColor' => $colors,
                 ],
             ],
-            'labels' => $data->keys()->toArray(),
+            'labels' => $data->pluck('title')->toArray(),
         ];
     }
 
     protected function getType(): string
     {
-        return 'bar';
+        return 'pie';
     }
 }

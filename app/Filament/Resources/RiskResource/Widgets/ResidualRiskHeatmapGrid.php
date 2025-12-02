@@ -72,7 +72,9 @@ class ResidualRiskHeatmapGrid extends Widget
         }
 
         return [
-            'title' => 'Mapa de Calor de Riesgos Residuales',
+            'title' => __('Mapa de calor de riesgos residuales'),
+            // 'description' => 'Distribución de riesgos según su probabilidad e impacto residual.',
+            'description' => __('Está referenciado a los filtros de la lista'),
             'cells' => $cells,
             'impacts' => $impacts,
             'probs' => $probs,

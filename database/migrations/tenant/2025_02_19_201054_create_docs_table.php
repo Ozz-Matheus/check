@@ -20,11 +20,12 @@ return new class extends Migration
             $table->foreignId('doc_type_id')->constrained();
             $table->foreignId('created_by_id')->nullable()->constrained('users')->nullOnDelete();
             $table->date('central_expiration_date')->nullable();
+            $table->integer('months_for_review_date');
             $table->foreignId('storage_method_id')->nullable()->constrained('doc_storages');
             $table->foreignId('recovery_method_id')->nullable()->constrained('doc_recoveries');
             $table->foreignId('disposition_method_id')->nullable()->constrained('doc_dispositions');
             // $table->foreignId('retention_period_id')->nullable()->constrained('doc_retentions');
-            $table->boolean('display_restriction')->default(false);
+            $table->boolean('confidential')->default(false);
             $table->foreignId('headquarter_id')
                 ->constrained()
                 ->restrictOnDelete();

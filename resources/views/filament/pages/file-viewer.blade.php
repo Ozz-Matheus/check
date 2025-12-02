@@ -16,7 +16,7 @@
             @php
                 // Si el doc es confidencial y quieres evitar exponerlo a un tercero (Office Viewer),
                 // puedes deshabilitar la vista y forzar descarga:
-                $allowExternalViewer = !optional($doc)->display_restriction;
+                $allowExternalViewer = !optional($doc)->confidential;
             @endphp
 
             @if ($allowExternalViewer)

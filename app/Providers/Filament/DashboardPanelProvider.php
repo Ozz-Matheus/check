@@ -7,7 +7,6 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\UserMenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -78,34 +77,6 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->databaseNotifications()
-            ->userMenuItems([
-                // Subproceso
-                UserMenuItem::make()
-                    ->label(function () {
-                        return auth()->user()?->leaderOfSubProcess()?->title;
-                    })
-                    ->icon('heroicon-o-puzzle-piece') // ícono para subproceso
-                    ->url(null)
-                    ->sort(2)
-                    ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                        auth()->user()?->hasRole('super_admin') ||
-                        auth()->user()?->hasRole('admin')
-                    ),
-                // Proceso
-                UserMenuItem::make()
-                    ->label(function () {
-                        $subProcess = auth()->user()?->leaderOfSubProcess();
-
-                        return $subProcess?->process?->title;
-                    })
-                    ->icon('heroicon-o-rectangle-group') // ícono para proceso
-                    ->url(null)
-                    ->sort(1)
-                    ->hidden(fn () => ! auth()->user()?->leaderOfSubProcess() ||
-                        auth()->user()?->hasRole('super_admin') ||
-                        auth()->user()?->hasRole('admin')
-                    ),
-            ]);
+            ])->databaseNotifications();
     }
 }
