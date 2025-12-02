@@ -6,13 +6,24 @@ use App\Filament\Resources\DocResource;
 use App\Models\Doc;
 use App\Models\DocVersion;
 use App\Models\File;
+use App\Models\Status;
+use App\Models\UserVersionDecision;
 use App\Support\AppNotifier;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
 use Filament\Pages\Page;
+use Filament\Tables\Actions\Action as ActionTable;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 
-class FileViewer extends Page
+class FileViewer extends Page implements HasTable
 {
+    use InteractsWithTable;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.file-viewer';
@@ -58,12 +69,96 @@ class FileViewer extends Page
         }
     }
 
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                UserVersionDecision::query()
+                    // Filtramos solo si el archivo actual es una versión
+                    ->where('version_id', $this->file->fileable_type === DocVersion::class ? $this->file->fileable_id : 0)
+            )
+            ->heading(__('Decision History')) // Título de la tabla
+            ->columns([
+                TextColumn::make('user.name')
+                    ->label(__('User'))
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('status.label')
+                    ->label(__('Decision'))
+                    ->badge()
+                    ->color(fn ($record) => $record->status->colorName())
+                    ->icon(fn ($record) => $record->status->iconName()),
+
+                TextColumn::make('comment')
+                    ->label(__('Comment'))
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->comment),
+
+                TextColumn::make('created_at')
+                    ->label(__('Created at'))
+                    ->sortable()
+                    ->since()
+                    ->dateTooltip()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
+                    ->sortable()
+                    ->since()
+                    ->dateTooltip()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->actions([
+                // APPROVED
+                ActionTable::make('approved')
+                    ->label(Status::labelFromTitle('approved') ?? 'Approved')
+                    ->icon(Status::iconFromTitle('approved') ?? 'heroicon-o-information-circle')
+                    ->color(Status::colorFromTitle('approved') ?? 'gray')
+                    ->button()
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        redirect(DocResource::getUrl('versions.approved', [
+                            'doc' => $this->doc->id,
+                            'version' => $record->version_id,
+                        ]));
+                    }),
+                // REJECTED
+                ActionTable::make('rejected')
+                    ->label(fn ($record) => Status::labelFromTitle('rejected') ?? 'Rejected')
+                    ->icon(fn ($record) => Status::iconFromTitle('rejected') ?? 'heroicon-o-information-circle')
+                    ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'gray')
+                    ->button()
+                    ->form([
+                        Textarea::make('change_reason')
+                            ->label(__('Confirm Rejection'))
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder(__('¿Reason for rejected?')),
+                    ])
+                    ->action(function ($record, array $data) {
+                        redirect(DocResource::getUrl('versions.rejected', [
+                            'doc' => $this->doc->id,
+                            'version' => $record->version_id,
+                            'change_reason' => $data['change_reason'],
+                        ]));
+                    }),
+                DeleteAction::make()
+                    ->visible(function ($record) {
+                        $user = auth()->user();
+
+                        return $user && $user->hasRole('super_admin');
+                    }),
+            ])
+            ->paginated(false); // Opcional: Desactivar paginación si son pocos registros
+    }
+
     protected function getHeaderActions(): array
     {
         return [
             Action::make('back')
                 ->label(__('Return'))
-                ->url(fn (): string => DocResource::getUrl('versions.index', ['doc' => $this->doc]))
+                ->url(fn (): string => $this->doc ? DocResource::getUrl('versions.index', ['doc' => $this->doc]) : back()->getTargetUrl()) // Pequeña mejora para evitar error si $this->doc es null
                 ->button()
                 ->color('gray'),
 
@@ -72,6 +167,11 @@ class FileViewer extends Page
 
     public function getBreadcrumbs(): array
     {
+        // Validación extra por si se visualiza un archivo que no es DocVersion
+        if (! $this->doc) {
+            return [];
+        }
+
         return [
             DocResource::getUrl('index') => __('Documents'),
             DocResource::getUrl('versions.index', ['doc' => $this->doc->id]) => __('Versions'),
