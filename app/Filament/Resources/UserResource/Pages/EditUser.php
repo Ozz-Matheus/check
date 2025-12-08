@@ -4,6 +4,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use Filament\Actions\DeleteAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\DB;
 
@@ -28,10 +29,34 @@ class EditUser extends EditRecord
 
     protected function beforeSave(): bool
     {
-        $newLeaderOfIds = $this->data['leaderOf'];
+        $originalLeaderOfIds = $this->record->leaderOf()->pluck('sub_process_id')->toArray();
+        $newLeaderOfIds = $this->data['leaderOf'] ?? [];
 
-        if (! empty($newLeaderOfIds)) {
-            DB::table('users_lead_subprocesses')->whereIn('sub_process_id', $newLeaderOfIds)->delete();
+        $removedLeaderOfIds = array_diff($originalLeaderOfIds, $newLeaderOfIds);
+        $conflictSubProcesses = [];
+
+        foreach ($removedLeaderOfIds as $subProcessId) {
+            $leaderCount = DB::table('users_lead_subprocesses')
+                ->where('sub_process_id', $subProcessId)
+                ->count();
+
+            if ($leaderCount <= 1) {
+                $subProcess = DB::table('sub_processes')->where('id', $subProcessId)->value('title');
+                if ($subProcess) {
+                    $conflictSubProcesses[] = $subProcess;
+                }
+            }
+        }
+
+        if (! empty($conflictSubProcesses)) {
+            $subProcessesList = implode(', ', $conflictSubProcesses);
+            Notification::make()
+                ->title(__('Acción denegada'))
+                ->body(__('No puedes dejar los siguientes subprocesos sin al menos un líder: :subprocesses. Asigna uno nuevo antes de retirar a este usuario.', ['subprocesses' => $subProcessesList]))
+                ->danger()
+                ->send();
+            $this->fillForm();
+            $this->halt();
         }
 
         return true;

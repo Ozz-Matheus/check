@@ -7,14 +7,12 @@ use App\Models\SubProcess;
 
 trait HasUserLogic
 {
-    // Metodos para el usuario Leader
-
-    public function getLeaderToSubProcess(?int $subProcessId)
+    public function getLeadersToSubProcess(?int $subProcessId)
     {
         $subProcess = SubProcess::find($subProcessId);
 
-        // Retorna el primer (y único) líder del subproceso
-        return $subProcess?->leaders()->first();
+        // Retorna todos los líderes del subproceso
+        return $subProcess?->leaders()->get();
     }
 
     public function isLeaderOfSubProcess(?int $subProcessId): bool

@@ -278,7 +278,7 @@
     "Last 7 days": "Últimos 7 días",
     "Last 30 days": "Últimos 30 días",
     "Last year": "Último año",
-    "Leader": "Líder",
+    "Leaders": "Líderes",
     "Leave it blank if you don't want to change your password": "Dejar en blanco si no desea cambiar su contraseña",
     "Level": "Nivel",
     "Limit date": "Fecha límite",
@@ -512,6 +512,9 @@
     "Headquarter Management": "Gestión de Sedes",
     "Reassign users to another headquarter before deleting this site.":"Reasigna los usuarios a otra sede antes de eliminar este sitio.",
     "This Headquarter has assigned users and cannot be deleted." : "Esta sede tiene usuarios asignados y no se puede eliminar.",
+
+    "Approved version":"Versión aprobada",
     "Decision":"Decisión",
+    "Decision saved successfully":"Decisión guardada exitosamente",
     "Decision History":"Historial de decisiones"
 }

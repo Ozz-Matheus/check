@@ -112,9 +112,11 @@ class VersionStatusService
     {
         $user = auth()->user();
 
-        $leader = $user->getLeaderToSubProcess($docVersion->doc->sub_process_id);
+        $leaders = $user->getLeadersToSubProcess($docVersion->doc->sub_process_id);
 
-        $notifiables = collect([$user, $docVersion->createdBy, $leader])->filter()->unique('id');
+        $notifiables = collect([$user, $docVersion->createdBy])->merge($leaders ?? [])
+            ->filter()
+            ->unique('id');
 
         Notification::send($notifiables, new VersionStatusNotice($docVersion, $status, $message));
 

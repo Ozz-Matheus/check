@@ -3,10 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Exports\DocExports\VersionExport;
+use App\Models\Doc;
 use App\Models\DocVersion;
 use App\Models\Status;
+use App\Models\SubProcess;
 use App\Traits\HasStandardFileUpload;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +20,8 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DocVersionResource extends Resource
@@ -50,6 +55,12 @@ class DocVersionResource extends Resource
                             ->directory('docs/versions')
                             ->required()
                             ->columnSpanFull(),
+                        Select::make('leads')
+                            ->label(__('leads'))
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->options(fn (Component $livewire) => static::getSubProcessLeadersOptions($livewire)),
                         TextArea::make('comment')
                             ->label(__('Comment'))
                             ->required()
@@ -264,5 +275,15 @@ class DocVersionResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         return false;
+    }
+
+    public static function getSubProcessLeadersOptions(Component $livewire): Collection|array
+    {
+        if (isset($livewire->docModel) && $livewire->docModel instanceof Doc) {
+            return SubProcess::find($livewire->docModel->sub_process_id)
+                ?->leaders()
+                ->pluck('users.name', 'users.id')
+                ?? [];
+        }
     }
 }

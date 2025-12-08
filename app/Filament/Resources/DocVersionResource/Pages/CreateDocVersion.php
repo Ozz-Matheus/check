@@ -5,6 +5,7 @@ namespace App\Filament\Resources\DocVersionResource\Pages;
 use App\Filament\Resources\DocResource;
 use App\Filament\Resources\DocVersionResource;
 use App\Models\DocVersion;
+use App\Models\Status;
 use App\Services\VersionService;
 use App\Traits\HasDocContext;
 use Filament\Actions\Action;
@@ -25,6 +26,9 @@ class CreateDocVersion extends CreateRecord
 
     protected function handleRecordCreation(array $data): DocVersion
     {
+        $leadsIds = $data['leads'] ?? [];
+        unset($data['leads']);
+
         $path = $data['path'];
         $name = $data['name'];
 
@@ -50,6 +54,18 @@ class CreateDocVersion extends CreateRecord
         ];
 
         $version->file()->create($fileMetadata);
+
+        if (! empty($leadsIds)) {
+
+            $pendingStatus = Status::byContextAndTitle('doc', 'pending');
+
+            $pivotData = [
+                'status_id' => $pendingStatus->id,
+                'comment' => __('Pending version '), // Acá podemos poner un comentario inicial.
+            ];
+
+            $version->leads()->attach($leadsIds, $pivotData);
+        }
 
         return $version;
     }

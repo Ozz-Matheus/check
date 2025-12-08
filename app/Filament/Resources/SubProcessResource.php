@@ -63,7 +63,8 @@ class SubProcessResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->disabled(fn (string $context) => $context === 'edit')
                     ->required(fn (string $context) => $context === 'create')
-                    ->dehydrateStateUsing(fn (?string $state) => mb_strtoupper($state ?? '', 'UTF-8')
+                    ->dehydrateStateUsing(
+                        fn (?string $state) => mb_strtoupper($state ?? '', 'UTF-8')
                     )
                     ->extraInputAttributes(['style' => 'text-transform: uppercase']),
                 Forms\Components\Select::make('process_id')
@@ -72,14 +73,6 @@ class SubProcessResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required(),
-                /* Forms\Components\Select::make('leader_by_id')
-                    ->label(__('Leader'))
-                    ->relationship('leader', 'name')
-                    // ->options(fn ($record) => $record->users()->pluck('users.name', 'users.id') ?? [])
-                    ->searchable()
-                    ->preload()
-                    ->required(fn (string $context) => $context === 'edit')
-                    ->visible(fn (string $context) => $context === 'edit'), */
             ]);
     }
 
@@ -87,17 +80,20 @@ class SubProcessResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('process.title')
+                    ->label(__('Process')),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('leaders.name')
+                    ->label(__('Leaders'))
+                    ->limit(30)
+                    ->tooltip(
+                        fn ($record) => $record->leaders->pluck('name')->join(', ')
+                    ),
                 Tables\Columns\TextColumn::make('acronym')
                     ->label(__('Acronym'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('process.title')
-                    ->label(__('Process')),
-                /* Tables\Columns\TextColumn::make('leader.name')
-                    ->label(__('Leader'))
-                    ->searchable(), */
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created at'))
                     ->date()
@@ -121,8 +117,7 @@ class SubProcessResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                ]),
+                Tables\Actions\BulkActionGroup::make([]),
             ]);
     }
 

@@ -62,6 +62,13 @@ class DocVersion extends Model implements AuditableContract
         return $this->morphOne(File::class, 'fileable');
     }
 
+    public function leads()
+    {
+        return $this->belongsToMany(User::class, 'users_versions_decisions', 'version_id', 'user_id')
+            ->withPivot('status_id', 'comment')
+            ->withTimestamps();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accesores / Métodos útiles

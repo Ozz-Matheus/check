@@ -99,6 +99,13 @@ class UserResource extends Resource
                             ->disableOptionWhen(function ($value, $record) {
                                 return $record?->isLeaderOfSubProcess($value);
                             })
+                            ->reactive()
+                            ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                                $subProcesses = $get('subProcesses');
+                                $leaderOf = $get('leaderOf');
+                                $filteredLeaderOf = array_intersect($leaderOf, $subProcesses);
+                                $set('leaderOf', $filteredLeaderOf);
+                            })
                             ->searchable()
                             ->bulkToggleable()
                             ->helperText(
@@ -115,14 +122,6 @@ class UserResource extends Resource
                                     return $query->whereIn('id', $get('subProcesses'));
                                 }
                             )
-                            ->disableOptionWhen(function ($value, $record) {
-                                return $record?->leaderOf()->where('sub_process_id', $value)->exists();
-                            })
-                            ->getOptionLabelFromRecordUsing(function ($record) {
-                                $leader = $record->leaders()->first();
-
-                                return $record->title.' (Líder: '.$leader->name.')';
-                            })
                             ->label(__('Lider de'))
                             ->searchable()
                             ->bulkToggleable()

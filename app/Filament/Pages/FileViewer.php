@@ -117,12 +117,8 @@ class FileViewer extends Page implements HasTable
                     ->color(Status::colorFromTitle('approved') ?? 'gray')
                     ->button()
                     ->requiresConfirmation()
-                    ->action(function ($record) {
-                        redirect(DocResource::getUrl('versions.approved', [
-                            'doc' => $this->doc->id,
-                            'version' => $record->version_id,
-                        ]));
-                    }),
+                    ->visible(fn (UserVersionDecision $record) => $this->canVote($record))
+                    ->action(fn (UserVersionDecision $record) => $this->updateDecision($record, 'approved', __('Approved version'))),
                 // REJECTED
                 ActionTable::make('rejected')
                     ->label(fn ($record) => Status::labelFromTitle('rejected') ?? 'Rejected')
@@ -130,19 +126,14 @@ class FileViewer extends Page implements HasTable
                     ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'gray')
                     ->button()
                     ->form([
-                        Textarea::make('change_reason')
+                        Textarea::make('comment')
                             ->label(__('Confirm Rejection'))
                             ->required()
                             ->maxLength(255)
                             ->placeholder(__('¿Reason for rejected?')),
                     ])
-                    ->action(function ($record, array $data) {
-                        redirect(DocResource::getUrl('versions.rejected', [
-                            'doc' => $this->doc->id,
-                            'version' => $record->version_id,
-                            'change_reason' => $data['change_reason'],
-                        ]));
-                    }),
+                    ->visible(fn (UserVersionDecision $record) => $this->canVote($record))
+                    ->action(fn (UserVersionDecision $record, array $data) => $this->updateDecision($record, 'rejected', $data['comment'])),
                 DeleteAction::make()
                     ->visible(function ($record) {
                         $user = auth()->user();
@@ -187,5 +178,36 @@ class FileViewer extends Page implements HasTable
     public static function shouldRegisterNavigation(): bool
     {
         return false;
+    }
+
+    protected function canVote(UserVersionDecision $record): bool
+    {
+        // 1️⃣ Regla de Propiedad: El usuario solo puede votar sobre SU propio registro.
+        if ($record->user_id !== auth()->id()) {
+            return false;
+        }
+
+        // 2️⃣ Regla de Estado: Solo si el estado es 'pending'
+        $pendingStatusId = Status::byContextAndTitle('doc', 'pending')?->id;
+
+        return $record->status_id == $pendingStatusId;
+    }
+
+    protected function updateDecision(UserVersionDecision $record, string $statusTitle, ?string $comment = null)
+    {
+        // 1️⃣ Buscamos el ID del estado basado en el contexto 'doc' y el título (approved/rejected)
+        $status = Status::byContextAndTitle('doc', $statusTitle);
+
+        // 2️⃣ Actualizamos el registro existente.
+        $record->update([
+            'status_id' => $status->id,
+            'comment' => $comment,
+        ]);
+
+        // 3️⃣ Notificación
+        AppNotifier::success(__('Decision saved successfully'));
+
+        // 4️⃣ Redirección
+        return redirect()->back();
     }
 }
