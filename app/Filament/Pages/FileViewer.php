@@ -204,10 +204,69 @@ class FileViewer extends Page implements HasTable
             'comment' => $comment,
         ]);
 
-        // 3️⃣ Notificación
+        // 3️⃣ NUEVA LÓGICA: Comprobamos si el estado final de la versión debe cambiar.
+        $this->checkAndUpdateVersionStatus($record, $statusTitle);
+
+        // 4️⃣ Notificación
         AppNotifier::success(__('Decision saved successfully'));
 
-        // 4️⃣ Redirección
+        // 5️⃣ Redirección
         return redirect()->back();
+    }
+
+    protected function checkAndUpdateVersionStatus(UserVersionDecision $voterDecision, string $statusTitle): bool
+    {
+        // Accedemos a la versión del documento a través de la relación.
+        $version = $voterDecision->version;
+        $currentUser = auth()->user();
+
+        // 1. Obtener los IDs de estado necesarios.
+        $approvedId = Status::byContextAndTitle('doc', 'approved')?->id;
+        $rejectedId = Status::byContextAndTitle('doc', 'rejected')?->id;
+
+        // Cuento todos los votantes asignados a esta versión.
+        $totalDecisions = $version->leads()->count();
+
+        if ($totalDecisions === 0) {
+            return false;
+        }
+
+        // Lógica de RECHAZO Inmediato (Voto de rechazo) ---
+        // Si *cualquier* votante coloca 'rejected'.
+        if ($statusTitle === 'rejected') {
+
+            $version->update([
+                'status_id' => $rejectedId,
+                'decided_by_id' => $currentUser->id,
+                'decision_at' => now(),
+            ]);
+
+            AppNotifier::warning(__('Voting closed'), __('The version was rejected by :user.', ['user' => $currentUser->name]));
+
+            return true;
+        }
+
+        // Lógica de APROBACIÓN Total (Solo si el voto actual fue 'approved') ---
+        if ($statusTitle === 'approved') {
+
+            // Contamos cuántas decisiones han sido *aprobadas*.
+            $approvedCount = $version->leads()->wherePivot('status_id', $approvedId)->count();
+
+            // Si el número de aprobados es igual al total de votantes, significa que todos votaron 'approved'.
+            if ($approvedCount === $totalDecisions) {
+
+                $version->update([
+                    'status_id' => $approvedId,
+                    'decided_by_id' => $currentUser->id,
+                    'decision_at' => now(),
+                ]);
+
+                AppNotifier::success(__('Version approved'), __('All reviewers approved the version.'));
+
+                return true;
+            }
+        }
+
+        return false; // La votación sigue pendiente (aún hay votos en 'pending').
     }
 }
