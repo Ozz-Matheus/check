@@ -50,9 +50,16 @@
             </div>
         </div>
 
+        @php
+            $isDocVersion = $file->fileable_type === 'App\Models\DocVersion';
+            // Obtenemos el título del estado (draft, pending, approved, etc.)
+            $statusTitle = $isDocVersion ? $file->fileable->status->title : null;
+            // Mostrar SOLO si es una versión Y NO es borrador
+            $showVotingTable = $isDocVersion && $statusTitle !== 'draft';
+        @endphp
+
         {{-- Tabla de Decisiones --}}
-        {{-- Solo mostramos la tabla si es una versión de documento --}}
-        @if($file->fileable_type === 'App\Models\DocVersion')
+        @if($showVotingTable)
             <div class="mt-8 border-t pt-6">
                 {{ $this->table }}
             </div>

@@ -79,7 +79,10 @@ class VersionStatusService
 
         $originalFile = $docVersion->file;
 
-        DB::transaction(function () use ($validated, $originalFile) {
+        // Recuperamos los IDs de los usuarios que votaban en la versión original
+        $originalLeadersIds = $docVersion->leads()->pluck('users.id')->toArray();
+
+        DB::transaction(function () use ($validated, $originalFile, $originalLeadersIds) {
 
             $newVersion = DocVersion::create($validated);
 
@@ -89,6 +92,18 @@ class VersionStatusService
                 'mime_type' => $originalFile->mime_type,
                 'size' => $originalFile->size,
             ]);
+
+            // Si existían líderes, los asociamos a la nueva versión restaurada
+            if (! empty($originalLeadersIds)) {
+
+                $pendingStatus = Status::byContextAndTitle('doc', 'pending');
+
+                // Preparamos los datos pivot (estado pendiente y comentario por defecto)
+                $newVersion->leads()->attach($originalLeadersIds, [
+                    'status_id' => $pendingStatus->id,
+                    'comment' => __('Restored version pending decision'),
+                ]);
+            }
         });
 
         $status = Status::findOrFail($validated['status_id']);

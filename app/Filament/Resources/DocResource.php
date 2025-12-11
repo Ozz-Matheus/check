@@ -483,8 +483,8 @@ class DocResource extends Resource
             'versions.create' => \App\Filament\Resources\DocVersionResource\Pages\CreateDocVersion::route('/{doc}/versions/create'),
             'versions.pending' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/pending/{version}'),
             'versions.restore' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/restore/{version}'),
-            'versions.approved' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/approved/{version}'),
-            'versions.rejected' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/rejected/{version}'),
+            // 'versions.approved' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/approved/{version}'),
+            // 'versions.rejected' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/rejected/{version}'),
         ];
     }
 }
