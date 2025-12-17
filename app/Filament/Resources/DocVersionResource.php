@@ -103,24 +103,9 @@ class DocVersionResource extends Resource
                     ->copyable()
                     ->copyMessage(__('Comment copied'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('change_reason')
-                    ->label(__('Reason for change'))
-                    ->limit(30)
-                    ->tooltip(fn ($record) => $record->change_reason)
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->label(__('Created by'))
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('decidedBy.name')
-                    ->label(__('Decided by'))
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('decision_at')
-                    ->label(__('Decision at'))
-                    ->sortable()
-                    ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('sha256_hash')
                     ->label(__('Sha256_hash'))
@@ -207,59 +192,12 @@ class DocVersionResource extends Resource
                                 ->orderByDesc('version')
                                 ->first()?->id
                         ),
-
-                    // APPROVED
-                    // Action::make('approved')
-                    //     ->label(fn ($record) => Status::labelFromTitle('approved') ?? 'Approved')
-                    //     ->icon(fn ($record) => Status::iconFromTitle('approved') ?? 'heroicon-o-information-circle')
-                    //     ->color(fn ($record) => Status::colorFromTitle('approved') ?? 'gray')
-                    //     ->requiresConfirmation()
-                    //     ->action(function ($record) {
-                    //         redirect(DocResource::getUrl('versions.approved', [
-                    //             'doc' => $record->doc_id,
-                    //             'version' => $record->id,
-                    //         ]));
-                    //     })
-                    //     ->visible(function ($record) {
-                    //         return auth()->user()->canApproveAndReject(
-                    //             $record->doc->sub_process_id ?? null
-                    //         ) && $record->status_id === Status::byContextAndTitle('doc', 'pending')?->id
-                    //             && $record->isLatestVersion();
-                    //     }),
-
-                    // REJECTED
-                    // Action::make('rejected')
-                    //     ->label(fn ($record) => Status::labelFromTitle('rejected') ?? 'Rejected')
-                    //     ->icon(fn ($record) => Status::iconFromTitle('rejected') ?? 'heroicon-o-information-circle')
-                    //     ->color(fn ($record) => Status::colorFromTitle('rejected') ?? 'gray')
-                    //     ->form([
-                    //         Textarea::make('change_reason')
-                    //             ->label(__('Confirm Rejection'))
-                    //             ->required()
-                    //             ->maxLength(255)
-                    //             ->placeholder(__('¿Reason for rejected?')),
-                    //     ])
-                    //     ->action(function ($record, array $data) {
-                    //         redirect(DocResource::getUrl('versions.rejected', [
-                    //             'doc' => $record->doc_id,
-                    //             'version' => $record->id,
-                    //             'change_reason' => $data['change_reason'],
-                    //         ]));
-                    //     })
-                    //     ->visible(function ($record) {
-                    //         return auth()->user()->canApproveAndReject(
-                    //             $record->doc->sub_process_id ?? null
-                    //         ) && $record->status_id === Status::byContextAndTitle('doc', 'pending')?->id
-                    //             && $record->isLatestVersion();
-                    //     }),
                     DeleteAction::make()
                         ->visible(function ($record) {
                             $user = auth()->user();
 
                             return $user && $user->hasRole('super_admin');
                         }),
-
-                    // Tables\Actions\EditAction::make(),
                 ])->color('primary')->link()->label(false)->tooltip('Actions'),
             ])
             ->bulkActions([

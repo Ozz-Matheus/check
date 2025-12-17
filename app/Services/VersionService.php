@@ -20,6 +20,7 @@ class VersionService
         $doc = Doc::with('subProcess')->findOrFail($data['doc_id']);
 
         $hasApprovalAccess = $user->canApproveAndReject($doc->sub_process_id ?? null);
+
         $statusApproved = Status::byContextAndTitle('doc', 'approved');
         $statusDraft = Status::byContextAndTitle('doc', 'draft');
 
@@ -27,16 +28,18 @@ class VersionService
             ->orderByDesc('version')
             ->first();
 
-        $newVersion = $this->calculateNewVersion($lastVersion, $hasApprovalAccess);
+        $targetStatus = isset($data['status_id']) == $statusApproved->id ? 'approved' : null;
 
-        $hasApprovalAccess ? $doc->expirationDateAssignment() : null;
+        $newVersion = $this->calculateNewVersion($lastVersion?->version, $hasApprovalAccess, $targetStatus);
+
+        if ($hasApprovalAccess) {
+            $doc->expirationDateAssignment();
+        }
 
         return array_merge($data, [
-            'status_id' => in_array('status_id', $preserve) ? ($data['status_id'] ?? null) : ($hasApprovalAccess ? $statusApproved->id : $statusDraft->id),
-            'version' => in_array('version', $preserve) ? ($data['version'] ?? null) : $newVersion,
+            'version' => $newVersion,
+            'status_id' => in_array('status_id', $preserve) ? ($data['status_id'] ?? null) : ($statusDraft->id),
             'created_by_id' => in_array('created_by_id', $preserve) ? ($data['created_by_id'] ?? null) : $user->id,
-            'decided_by_id' => in_array('decided_by_id', $preserve) ? ($data['decided_by_id'] ?? null) : ($hasApprovalAccess ? auth()->id() : null),
-            'decision_at' => in_array('decision_at', $preserve) ? ($data['decision_at'] ?? null) : ($hasApprovalAccess ? now() : null),
         ]);
     }
 }

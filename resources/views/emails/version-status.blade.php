@@ -38,10 +38,10 @@
         </ul>
     </div>
 
-    @if ($changeReason)
+    @if ($messageBody)
         <div class="alert">
             <strong>Información Importante</strong>
-            {{ $changeReason }}
+            {{ $messageBody }}
         </div>
     @endif
 

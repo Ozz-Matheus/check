@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
@@ -108,7 +107,7 @@ class Doc extends Model implements AuditableContract
     public function approvedVersionUrl(): ?string
     {
         return $this->latestApprovedVersion?->file->path
-            ? Storage::url($this->latestApprovedVersion->file->path)
+            ? $this->latestApprovedVersion->file->url()
             : null;
     }
 

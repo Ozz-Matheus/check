@@ -4,12 +4,19 @@ namespace App\Traits;
 
 trait HasVersioning
 {
-    protected function calculateNewVersion($lastVersion, bool $hasApprovalAccess): string
+    /**
+     * Calcula la nueva versión basándose en la anterior y los permisos/estado.
+     */
+    private function calculateNewVersion(?string $lastVersion, bool $hasApprovalAccess, ?string $status = null): string
     {
-        return $lastVersion
-            ? ($hasApprovalAccess
-                ? ((int) $lastVersion->version + 1).'.00'
-                : bcadd($lastVersion->version, '0.01', 2))
-            : ($hasApprovalAccess ? '1.00' : '0.01');
+        // 1️⃣ Si no existe, retornamos el inicial y salimos.
+        if (blank($lastVersion)) {
+            return '0.01';
+        }
+
+        // 2️⃣ Cálculo de la versión
+        return ($hasApprovalAccess && $status === 'approved')
+            ? ((int) $lastVersion + 1).'.00'
+            : bcadd($lastVersion, '0.01', 2);
     }
 }

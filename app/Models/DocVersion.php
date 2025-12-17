@@ -15,20 +15,16 @@ class DocVersion extends Model implements AuditableContract
     protected $fillable = [
         'version',
         'comment',
-        'change_reason',
         'sha256_hash',
-        'decision_at',
         'status_id',
         'doc_id',
         'created_by_id',
-        'decided_by_id',
     ];
 
     protected $casts = [
         'version' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'decision_at' => 'datetime',
     ];
 
     /*
@@ -50,11 +46,6 @@ class DocVersion extends Model implements AuditableContract
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by_id')->withDefault();
-    }
-
-    public function decidedBy()
-    {
-        return $this->belongsTo(User::class, 'decided_by_id')->withDefault();
     }
 
     public function file()

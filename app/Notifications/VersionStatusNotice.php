@@ -18,17 +18,17 @@ class VersionStatusNotice extends Notification
 
     private $status;
 
-    private $changeReason;
+    private $messageBody;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(DocVersion $version, Status $status, $changeReason = null)
+    public function __construct(DocVersion $version, Status $status, $messageBody = null)
     {
         //
         $this->version = $version;
         $this->status = $status;
-        $this->changeReason = $changeReason;
+        $this->messageBody = $messageBody;
     }
 
     /**
@@ -52,7 +52,7 @@ class VersionStatusNotice extends Notification
                 'user' => $notifiable,
                 'version' => $this->version,
                 'status' => $this->status,
-                'changeReason' => $this->changeReason,
+                'messageBody' => $this->messageBody,
             ]);
     }
 

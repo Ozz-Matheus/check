@@ -15,15 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('version');
             $table->string('comment')->nullable();
-            $table->string('change_reason')->nullable();
             $table->string('sha256_hash')->unique();
-            $table->timestamp('decision_at')->nullable();
 
             $table->foreignId('status_id')->constrained('statuses');
 
             $table->foreignId('doc_id')->constrained()->onDelete('cascade');
             $table->foreignId('created_by_id')->constrained('users');
-            $table->foreignId('decided_by_id')->nullable()->constrained('users')->nullOnDelete();
 
             $table->timestamps();
         });

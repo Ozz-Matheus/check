@@ -163,10 +163,8 @@
     "Criteria copied": "Criterio copiado",
     "Current": "Vigente",
     "Date compliance": "Cumplimiento de fechas",
-    "Decided by": "Decidido por",
     "Decided by (name)": "Decidido por (nombre)",
     "Decided by (email)": "Decidido por (correo)",
-    "Decision at": "Decidido en",
     "Description": "Descripción",
     "Detail": "Detalle",
     "Detection date": "Fecha de detección",
@@ -342,7 +340,6 @@
     "Real impact": "Impacto real",
     "Real start date": "Fecha de inicio real",
     "Reason for cancellation": "Motivo de la cancelación",
-    "Reason for change": "Motivo del cambio",
     "Reason for delay": "Motivo de la demora",
     "Reason for extemporaneous closing": "Motivo del cierre extemporáneo",
     "Recovery method": "Método de recuperación",
@@ -516,5 +513,7 @@
     "Approved version":"Versión aprobada",
     "Decision":"Decisión",
     "Decision saved successfully":"Decisión guardada exitosamente",
-    "Decision History":"Historial de decisiones"
+    "Decision History":"Historial de decisiones",
+    "New version status": "Estado de nueva versión",
+    "Create a new record" : "Se ha creado un nuevo documento"
 }
