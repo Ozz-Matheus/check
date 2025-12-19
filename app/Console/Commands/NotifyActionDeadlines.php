@@ -4,36 +4,27 @@ namespace App\Console\Commands;
 
 use App\Models\Action;
 use App\Notifications\ActionDeadlineNotice;
-use App\Traits\LogsToSchedulerFile;
-use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class NotifyActionDeadlines extends Command
+class NotifyActionDeadlines extends BaseDeadlineCommand
 {
-    use LogsToSchedulerFile;
-
     protected $signature = 'notify:action-limit_dates';
 
-    protected $description = 'Notifica a los responsables de acciones de mejora que vencen hoy o en 10 días.';
+    protected $description = 'Notifica responsables de acciones.';
 
-    public function handle(): int
+    protected function getQuery(): Builder
     {
-        $today = Carbon::today();
-        $inTenDays = Carbon::today()->addDays(10);
+        return Action::with('responsibleBy');
+    }
 
-        $acciones = Action::whereIn('limit_date', [$today->toDateString(), $inTenDays->toDateString()])->get();
+    protected function getRecipients(Model $record): array
+    {
+        return $record->responsibleBy ? [$record->responsibleBy] : [];
+    }
 
-        $this->logToSchedulerFile('Iniciando revisión de acciones con vencimiento');
-
-        foreach ($acciones as $accion) {
-            if ($accion->responsibleBy) {
-                $accion->responsibleBy->notify(new ActionDeadlineNotice($accion));
-                $this->info("Notificación enviada a {$accion->responsibleBy->email} para acción ID {$accion->id}");
-            }
-        }
-
-        $this->logToSchedulerFile('Finalizó revisión de acciones');
-
-        return Command::SUCCESS;
+    protected function getNotification(Model $record): mixed
+    {
+        return new ActionDeadlineNotice($record);
     }
 }

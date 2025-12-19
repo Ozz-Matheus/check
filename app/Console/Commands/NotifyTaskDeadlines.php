@@ -4,48 +4,37 @@ namespace App\Console\Commands;
 
 use App\Models\ActionTask;
 use App\Notifications\TaskDeadlineNotice;
-use App\Traits\LogsToSchedulerFile;
-use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class NotifyTaskDeadlines extends Command
+class NotifyTaskDeadlines extends BaseDeadlineCommand
 {
-    use LogsToSchedulerFile;
-
     protected $signature = 'notify:task-limit_dates';
 
-    protected $description = 'Notifica a los responsables de tareas que vencen hoy o en 10 días.';
+    protected $description = 'Notifica responsables de tareas.';
 
-    public function handle(): int
+    protected function getQuery(): Builder
     {
-        $today = Carbon::today();
-        $inTenDays = Carbon::today()->addDays(10);
+        return ActionTask::with(['responsibleBy', 'action.responsibleBy']);
+    }
 
-        $tareas = ActionTask::whereDate('limit_date', $today)
-            ->orWhereDate('limit_date', $inTenDays)
-            ->get();
+    protected function getRecipients(Model $record): array
+    {
+        $recipients = [];
 
-        $this->logToSchedulerFile('Iniciando revisión de tareas con vencimiento');
-
-        foreach ($tareas as $task) {
-            $recipients = [];
-
-            if ($task->responsible) {
-                $recipients[] = $task->responsible;
-            }
-
-            if ($task->action && $task->action->responsibleBy) {
-                $recipients[] = $task->action->responsibleBy;
-            }
-
-            foreach ($recipients as $user) {
-                $user->notify(new TaskDeadlineNotice($task));
-                $this->info("Notificación enviada a {$user->email} para tarea ID {$task->id}");
-            }
+        if ($record->responsibleBy) {
+            $recipients[] = $record->responsibleBy;
         }
 
-        $this->logToSchedulerFile('Finalizó revisión de tareas');
+        if ($record->action && $record->action->responsibleBy) {
+            $recipients[] = $record->action->responsibleBy;
+        }
 
-        return Command::SUCCESS;
+        return $recipients;
+    }
+
+    protected function getNotification(Model $record): mixed
+    {
+        return new TaskDeadlineNotice($record);
     }
 }

@@ -14,19 +14,35 @@ class UpdateStatuses extends Command
 
     protected $signature = 'statuses:update';
 
-    protected $description = 'Actualiza a vencido las acciones y tareas vencidas.';
+    protected $description = 'Actualiza a "Vencido" las acciones y tareas cuya fecha límite ha pasado.';
 
     public function handle(): int
     {
-        $this->logToSchedulerFile('Iniciando actualización de estados vencidos');
+        $this->logToSchedulerFile('Iniciando actualización de estados vencidos...');
 
-        $updatedActions = OverdueService::markAsOverdue(Action::class);
-        $updatedTasks = OverdueService::markAsOverdue(ActionTask::class);
+        try {
+            // Actualizar el estado de Acciones y tareas.
+            $updatedActions = OverdueService::markAsOverdue(Action::class);
+            $updatedTasks = OverdueService::markAsOverdue(ActionTask::class);
 
-        $this->info("Acciones vencidas actualizadas: {$updatedActions}");
-        $this->info("Tareas vencidas actualizadas: {$updatedTasks}");
+            // Logueamos solo si hubo cambios para no llenar el archivo de ruido
+            if ($updatedActions > 0 || $updatedTasks > 0) {
+                $this->info("Actualización completada: {$updatedActions} acciones, {$updatedTasks} tareas.");
+                $this->logToSchedulerFile("✅ Cambios realizados: {$updatedActions} acciones y {$updatedTasks} tareas vencieron.");
+            } else {
+                $this->info('Sin registros vencidos.');
+                // Opcional: comentar esta línea si no quieres logs vacíos
+                // $this->logToSchedulerFile('Sin registros por vencer.');
+            }
 
-        $this->logToSchedulerFile('Finalizó actualización de estados vencidos');
+        } catch (\Exception $e) {
+            $this->error('Error: '.$e->getMessage());
+            $this->logToSchedulerFile('⚠️ ERROR actualizando estados: '.$e->getMessage());
+
+            return Command::FAILURE;
+        }
+
+        $this->logToSchedulerFile('Finalizó actualización de estados.');
 
         return Command::SUCCESS;
     }
