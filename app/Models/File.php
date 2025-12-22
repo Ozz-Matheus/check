@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 
 class File extends Model
 {
@@ -50,21 +50,25 @@ class File extends Model
 
     public function url(): ?string
     {
-        $tenantId = tenant()->getTenantKey();
-        $relativePath = Str::after($this->path, 'app/public/');
+        $disk = config('uploads.disk');
 
-        return asset("tenant{$tenantId}/{$relativePath}");
-    }
+        // Escenario: Disco Privado
+        if ($disk === 'local') {
+            // Generamos URL firmada válida por 60 minutos (tiempo suficiente para leer/presentar)
+            return URL::temporarySignedRoute(
+                'files.secure.show',
+                now()->addMinutes(60),
+                ['file' => $this->id]
+            );
+        }
 
-    /**
-     * URL absoluta garantizada (para Office Viewer).
-     */
-    public function absoluteUrl(): string
-    {
-        $url = $this->url();
+        // Escenario: Disco Público
+        $tenantId = tenant()?->getTenantKey();
+        if ($tenantId) {
+            return asset("tenant{$tenantId}/{$this->path}");
+        }
 
-        // Si $url ya es absoluta (S3), URL::to() la deja igual.
-        return URL::to($url);
+        return Storage::disk($disk)->url($this->path);
     }
 
     public function getReadableMimeTypeAttribute(): string

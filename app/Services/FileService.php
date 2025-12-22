@@ -9,6 +9,8 @@ class FileService
 {
     public function createFiles(Model $model, array $data): void
     {
+        $disk = config('uploads.disk');
+
         foreach ($data['path'] ?? [] as $path) {
 
             $fileName = $data['name'][$path] ?? basename($path);
@@ -16,8 +18,8 @@ class FileService
             $fileMetadata = [
                 'name' => $fileName,
                 'path' => $path,
-                'mime_type' => Storage::disk('public')->mimeType($path),
-                'size' => Storage::disk('public')->size($path),
+                'mime_type' => Storage::disk($disk)->mimeType($path),
+                'size' => Storage::disk($disk)->size($path),
                 'context' => $data['context'] ?? null,
             ];
 

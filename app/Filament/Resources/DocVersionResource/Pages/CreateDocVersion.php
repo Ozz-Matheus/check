@@ -32,7 +32,9 @@ class CreateDocVersion extends CreateRecord
         $path = $data['path'];
         $name = $data['name'];
 
-        $sha256 = hash('sha256', Storage::disk('public')->path($path));
+        $disk = config('uploads.disk');
+
+        $sha256 = hash('sha256', Storage::disk($disk)->path($path));
 
         $data['sha256_hash'] = $sha256;
 
@@ -42,14 +44,12 @@ class CreateDocVersion extends CreateRecord
 
         $version = DocVersion::create($validated);
 
-        $cfg = config('uploads');
-
         $fileMetadata = [
 
             'name' => $name,
             'path' => $path,
-            'mime_type' => Storage::disk($cfg['disk'])->mimeType($path),
-            'size' => Storage::disk($cfg['disk'])->size($path),
+            'mime_type' => Storage::disk($disk)->mimeType($path),
+            'size' => Storage::disk($disk)->size($path),
 
         ];
 

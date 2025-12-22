@@ -1,4 +1,4 @@
-@extends('layouts.filament-error')
+@extends('errors.layout.filament-error')
 
 @section('title', __('Página expirada'))
 

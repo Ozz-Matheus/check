@@ -22,7 +22,7 @@
                 {{-- Office Online Viewer necesita URL ABSOLUTA y accesible públicamente --}}
                 @if ($allowExternalViewer)
                     <iframe
-                        src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode($file->absoluteUrl()) }}"
+                        src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode($file->url()) }}"
                         class="w-full h-screen border rounded shadow"
                         title="Office Viewer"
                     ></iframe>
