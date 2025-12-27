@@ -24,11 +24,11 @@ return new class extends Migration
             $table->foreignId('storage_method_id')->nullable()->constrained('doc_storages');
             $table->foreignId('recovery_method_id')->nullable()->constrained('doc_recoveries');
             $table->foreignId('disposition_method_id')->nullable()->constrained('doc_dispositions');
-            // $table->foreignId('retention_period_id')->nullable()->constrained('doc_retentions');
             $table->boolean('confidential')->default(false);
             $table->foreignId('headquarter_id')
                 ->constrained()
                 ->restrictOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

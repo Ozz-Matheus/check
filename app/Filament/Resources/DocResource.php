@@ -21,6 +21,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -92,6 +93,7 @@ class DocResource extends Resource
                             ->label(__('Months for review date'))
                             ->numeric()
                             ->minValue(1)
+                            ->default(1)
                             ->required(),
                         Forms\Components\Select::make('process_id')
                             ->label(__('Process'))
@@ -329,6 +331,7 @@ class DocResource extends Resource
                     ->relationship('headquarter', 'name')
                     ->native(false)
                     ->visible(fn () => auth()->user()->view_all_headquarters === (bool) true),
+                TrashedFilter::make(),
             ])
             ->filtersTriggerAction(
                 fn ($action) => $action
@@ -440,6 +443,10 @@ class DocResource extends Resource
 
                 ])->color('primary')->link()->label(false)->tooltip('Actions'),
 
+                Tables\Actions\DeleteAction::make(),        // Envía a papelera
+                Tables\Actions\RestoreAction::make(),       // Recupera de papelera
+                Tables\Actions\ForceDeleteAction::make(),  // Borrado físico permanente
+
             ])
 
             ->bulkActions([
@@ -467,6 +474,9 @@ class DocResource extends Resource
                             );
                         })
                         ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
 
                 ]),
             ]);
@@ -483,8 +493,6 @@ class DocResource extends Resource
             'versions.create' => \App\Filament\Resources\DocVersionResource\Pages\CreateDocVersion::route('/{doc}/versions/create'),
             'versions.pending' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/pending/{version}'),
             'versions.restore' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/restore/{version}'),
-            // 'versions.approved' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/approved/{version}'),
-            // 'versions.rejected' => \App\Filament\Resources\DocVersionResource\Pages\ChangeVersionStatus::route('/{doc}/versions/rejected/{version}'),
         ];
     }
 }

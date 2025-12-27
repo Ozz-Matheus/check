@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Traits\BelongsToHeadquarter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 class Doc extends Model implements AuditableContract
 {
-    use AuditableTrait, BelongsToHeadquarter;
+    use AuditableTrait, BelongsToHeadquarter, SoftDeletes;
 
     //
     protected $fillable = [
