@@ -517,5 +517,6 @@
     "New version status": "Estado de nueva versión",
     "Document status: ": "Estado del documento: ",
     "Create a new record" : "Se ha creado un nuevo registro",
-    "Created a new record!": "¡Se creó un nuevo registro!"
+    "Created a new record!": "¡Se creó un nuevo registro!",
+    "Document close to expiration": "Documento se próxima a vencer"
 }

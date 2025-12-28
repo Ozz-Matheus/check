@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\URL;
 
 abstract class BaseDeadlineCommand extends Command
 {
@@ -38,8 +39,9 @@ abstract class BaseDeadlineCommand extends Command
         $today = Carbon::today()->toDateString();
         $warningDate = Carbon::today()->addDays(10)->toDateString();
 
-        // Intenta obtener el tenant actual (si existe) para el log
-        $tenantId = tenant('id') ?? 'Central';
+        // 1. Obtenemos el objeto tenant completo para verificar si existe
+        $currentTenant = tenant();
+        $tenantId = $currentTenant ? $currentTenant->id : 'Central';
 
         // Lógica unificada: Busca vencimientos
         $records = $this->getQuery()
@@ -47,7 +49,19 @@ abstract class BaseDeadlineCommand extends Command
             ->get();
 
         // Agregamos el Tenant al log para saber en qué BD estamos
-        $this->logToSchedulerFile("[{$tenantId}] Iniciando revisión ({$this->name}): {$records->count()} registros.");
+        $this->logToSchedulerFile("Iniciando revisión ({$this->name}): {$records->count()} registros.");
+
+        // 2. Validación de seguridad: Solo forzamos la URL si estamos en un Tenant real
+        if ($currentTenant) {
+
+            $protocol = 'http://';
+
+            $dbSubDomain = $currentTenant->domains->first()?->domain;
+
+            $domain = $dbSubDomain.'.'.config('tenancy.central_domains')[0];
+
+            URL::forceRootUrl($protocol.$domain);
+        }
 
         foreach ($records as $record) {
             $recipients = $this->getRecipients($record);
@@ -55,12 +69,14 @@ abstract class BaseDeadlineCommand extends Command
             foreach ($recipients as $user) {
                 if ($user && method_exists($user, 'notify')) {
                     $user->notify($this->getNotification($record));
-                    $this->info("Notificación enviada a {$user->email} para ID {$record->id}");
+                    $this->logToSchedulerFile("Notificación enviada a {$user->email} para Documento con ID : {$record->id}.");
                 }
             }
         }
 
-        $this->logToSchedulerFile("[Tenant: {$tenantId}] Finalizó revisión.");
+        URL::forceRootUrl(null);
+
+        $this->logToSchedulerFile('Finalizó revisión.');
 
         return Command::SUCCESS;
     }
