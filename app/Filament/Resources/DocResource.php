@@ -20,7 +20,10 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ForceDeleteAction;
+use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -296,35 +299,48 @@ class DocResource extends Resource
                     ->query(function (Builder $query, array $data): Builder {
                         $value = $data['value'];
 
+                        // Validación rápida: si es nulo o inválido, retornamos sin filtrar
                         if ($value === null || ! in_array((int) $value, [0, 1], true)) {
                             return $query;
                         }
 
                         return (int) $value === 1
-                            ? $query->whereNotNull('central_expiration_date')->where('central_expiration_date', '<', today())
-                            : $query->where(fn (Builder $q) => $q->whereNull('central_expiration_date')->orWhere('central_expiration_date', '>=', today()));
+                            // EXPIRADO (Incluye hoy)
+                            // Usamos whereDate para mayor precisión
+                            ? $query->whereNotNull('central_expiration_date')
+                                ->whereDate('central_expiration_date', '<=', today())
+
+                            // VIGENTE
+                            // Es vigente si es NULL o si es estrictamente MAYOR a hoy
+                            : $query->where(fn (Builder $q) => $q
+                                ->whereNull('central_expiration_date')
+                                ->orWhereDate('central_expiration_date', '>', today())
+                            );
                     })
                     ->native(false),
                 SelectFilter::make('expiration_soon')
                     ->label(__('Expiring soon'))
                     ->options([
-                        10 => __('Expiring in 10 days'),
-                        30 => __('Expiring in 30 days'),
+                        1 => __('Expires in 1 day'),
+                        10 => __('Expires in 10 days'),
+                        30 => __('Expires in 30 days'),
                     ])
                     ->query(function (Builder $query, array $data) {
-                        $days = $data['value'] ?? null;
+                        $days = $data['value'];
 
-                        return $days
-                            ? $query->whereBetween('central_expiration_date', [today(), today()->addDays((int) $days)])
-                            : $query;
+                        // Si no hay selección, no filtramos nada
+                        if ($days === null || $days === '') {
+                            return $query;
+                        }
+
+                        return $query->whereDate('central_expiration_date', '=', today()->addDays((int) $days));
                     })
                     ->native(false),
-                SelectFilter::make('confidential')
+
+                TernaryFilter::make('confidential')
                     ->label(__('Confidential'))
-                    ->options([
-                        1 => __('Private'),
-                        0 => __('Public'),
-                    ])
+                    ->trueLabel(__('Private'))
+                    ->falseLabel(__('Public'))
                     ->native(false),
                 SelectFilter::make('headquarter_id')
                     ->label(__('Headquarters'))
@@ -436,16 +452,14 @@ class DocResource extends Resource
                             $record->expirationDateAssignment();
                             AppNotifier::success(__('Document active'));
                         }),
-                    DeleteAction::make()
-                        ->visible(fn ($record): bool => auth()->user()?->can('delete', $record)),
+                    DeleteAction::make(), // Envía a papelera
+                    RestoreAction::make(),      // Recupera de papelera
+                    ForceDeleteAction::make()
+                        ->visible(fn ($record): bool => auth()->user()->hasRole('super_admin')), // Borrado físico permanente
 
                     // Tables\Actions\EditAction::make(),
 
                 ])->color('primary')->link()->label(false)->tooltip('Actions'),
-
-                Tables\Actions\DeleteAction::make(),        // Envía a papelera
-                Tables\Actions\RestoreAction::make(),       // Recupera de papelera
-                Tables\Actions\ForceDeleteAction::make(),  // Borrado físico permanente
 
             ])
 
@@ -474,9 +488,9 @@ class DocResource extends Resource
                             );
                         })
                         ->deselectRecordsAfterCompletion(),
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\RestoreBulkAction::make(),
+                    // Tables\Actions\ForceDeleteBulkAction::make(),
 
                 ]),
             ]);

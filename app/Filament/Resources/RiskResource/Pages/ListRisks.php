@@ -11,12 +11,12 @@ use App\Filament\Resources\RiskResource\Widgets\RiskCategoriesChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskContextsChart;
 use App\Filament\Resources\RiskResource\Widgets\RiskHeatmapGrid;
 use App\Filament\Resources\RiskResource\Widgets\RiskStatsOverview;
+use App\Support\AppNotifier;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 
@@ -63,11 +63,11 @@ class ListRisks extends ListRecords
                     $reportData = RiskReport::make($data);
 
                     if ($reportData['risks']->isEmpty()) {
-                        Notification::make()
-                            ->title('Sin datos')
-                            ->body('No se encontraron riesgos para esta combinación de proceso y subproceso.')
-                            ->warning()
-                            ->send();
+
+                        AppNotifier::warning(
+                            'Sin datos',
+                            'No se encontraron riesgos para esta combinación de proceso y subproceso.',
+                        );
 
                         return;
                     }

@@ -20,6 +20,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 
 class FileViewer extends Page implements HasTable
 {
@@ -171,9 +172,9 @@ class FileViewer extends Page implements HasTable
         ];
     }
 
-    public function getSubheading(): ?string
+    public function getSubheading(): ?HtmlString
     {
-        return $this->file->name;
+        return new HtmlString('<strong class="text-gray-950">'.__('File name : ').'</strong>'.e($this->file->name));
     }
 
     public static function shouldRegisterNavigation(): bool

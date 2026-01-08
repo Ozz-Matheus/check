@@ -31,7 +31,7 @@ class OverdueService
         return $modelClass::query()
             // OPTIMIZACIÓN: Usamos 'where' simple en lugar de 'whereDate' para aprovechar índices SQL
             // Al comparar un campo DATE/DATETIME con un string 'YYYY-MM-DD', MySQL lo maneja bien.
-            ->where($dateColumn, '<', $today)
+            ->where($dateColumn, '<=', $today)
             ->whereIn($statusColumn, [
                 $statusIds['pending'],
                 $statusIds['in_execution'],

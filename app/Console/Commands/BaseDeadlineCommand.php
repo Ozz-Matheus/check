@@ -26,7 +26,9 @@ abstract class BaseDeadlineCommand extends Command
     /**
      * Define la instancia de la notificación a enviar.
      */
-    abstract protected function getNotification(Model $record): mixed;
+    abstract protected function getWarningNotification(Model $record): mixed; // Para advertencia días antes.
+
+    abstract protected function getExpiredNotification(Model $record): mixed; // Para vencido.
 
     /**
      * Nombre de la columna de fecha en la BD.
@@ -37,18 +39,18 @@ abstract class BaseDeadlineCommand extends Command
     {
 
         $today = Carbon::today()->toDateString();
-        $warningDate = Carbon::today()->addDays(10)->toDateString();
+        $oneDayBefore = Carbon::today()->addDays(1)->toDateString(); // 1 día antes
+        $tenDaysBefore = Carbon::today()->addDays(10)->toDateString(); // 10 días antes
 
         // 1. Obtenemos el objeto tenant completo para verificar si existe
         $currentTenant = tenant();
-        $tenantId = $currentTenant ? $currentTenant->id : 'Central';
 
-        // Lógica unificada: Busca vencimientos
+        // Lógica unificada: Busca vencimientos que coincidan con cualquiera de las 3 fechas
         $records = $this->getQuery()
-            ->whereIn($this->dateColumn, [$today, $warningDate])
+            ->whereIn($this->dateColumn, [$today, $oneDayBefore, $tenDaysBefore])
             ->get();
 
-        // Agregamos el Tenant al log para saber en qué BD estamos
+        // Inicio de revisión
         $this->logToSchedulerFile("Iniciando revisión ({$this->name}): {$records->count()} registros.");
 
         // 2. Validación de seguridad: Solo forzamos la URL si estamos en un Tenant real
@@ -66,10 +68,22 @@ abstract class BaseDeadlineCommand extends Command
         foreach ($records as $record) {
             $recipients = $this->getRecipients($record);
 
+            // Determinamos la fecha real del registro para saber qué plantilla usar
+            $recordDate = Carbon::parse($record->{$this->dateColumn})->toDateString();
+
+            // Lógica de decisión de plantilla
+            if ($recordDate === $today) {
+                // ES HOY: Plantilla de Vencido
+                $notification = $this->getExpiredNotification($record);
+            } else {
+                // ES 1 o DÍAS ANTES: Plantilla de Próximo a Vencer
+                $notification = $this->getWarningNotification($record);
+            }
+
             foreach ($recipients as $user) {
                 if ($user && method_exists($user, 'notify')) {
-                    $user->notify($this->getNotification($record));
-                    $this->logToSchedulerFile("Notificación enviada a {$user->email} para Documento con ID : {$record->id}.");
+                    $user->notify($notification);
+                    $this->logToSchedulerFile("Notificación enviada a {$user->email} para ID: {$record->id} (Fecha: $recordDate).");
                 }
             }
         }

@@ -37,12 +37,16 @@ class RolesSeeder extends Seeder
         // Asignar permisos al rol SuperAdmin
         $superAdminRole->givePermissionTo($permissionModels);
 
+        // Mail
+
+        $mail = 'admin@'.config('tenancy.central_domains')[0];
+
         // Crear usuario SuperAdmin
         $superAdmin = User::firstOrCreate(
-            ['email' => 's@ht.com'],
+            ['email' => $mail],
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt('s@ht.com'),
+                'password' => bcrypt($mail),
             ]
         );
 

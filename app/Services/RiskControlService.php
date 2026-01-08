@@ -20,11 +20,12 @@ class RiskControlService
     /* ********************************** */
 
     // 📌 Se elimina ?
-    private function taskNotification(string $message): void
-    {
-        Notification::make()
-            ->title($message)
-            ->success()
-            ->send();
-    } // Se puede utilizar para avisar cuando si se actualize el promediado
+    // private function taskNotification(string $message): void
+    // {
+    //     Notification::make()
+    //         ->title($message)
+    //         ->success()
+    //         ->send();
+    // }
+    // Se puede utilizar para avisar cuando si se actualize el promediado
 }

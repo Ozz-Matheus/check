@@ -3,10 +3,9 @@
 namespace App\Filament\Resources\DocResource\Pages;
 
 use App\Filament\Resources\DocResource;
-use App\Models\Doc;
 use App\Notifications\DocCreatedNotice;
 use App\Services\DocService;
-use Filament\Notifications\Notification;
+use App\Support\AppNotifier;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateDoc extends CreateRecord
@@ -17,15 +16,14 @@ class CreateDoc extends CreateRecord
     {
         $user = auth()->user();
 
-        $doc = new Doc($data);
-
         if (! $user->canAccessSubProcess($data['sub_process_id'] ?? null)) {
-            Notification::make()
-                ->title(__('Access denied'))
-                ->body(__('You do not have permission to create this file.'))
-                ->danger()
-                ->persistent()
-                ->send();
+
+            AppNotifier::error(
+                __('Access denied'),
+                __('You do not have permission to create this file.'),
+                true
+            );
+
             $this->halt();
         }
 

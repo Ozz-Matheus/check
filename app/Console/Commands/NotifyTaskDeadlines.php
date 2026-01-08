@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\ActionTask;
 use App\Notifications\TaskDeadlineNotice;
+use App\Notifications\TaskExpiredNotice;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,19 +23,27 @@ class NotifyTaskDeadlines extends BaseDeadlineCommand
     {
         $recipients = [];
 
+        // Responsable de la Tarea
         if ($record->responsibleBy) {
             $recipients[] = $record->responsibleBy;
         }
 
+        // Responsable de la Acción
         if ($record->action && $record->action->responsibleBy) {
             $recipients[] = $record->action->responsibleBy;
         }
 
-        return $recipients;
+        // Filtramos por ID para evitar duplicados
+        return collect($recipients)->unique('id')->all();
     }
 
-    protected function getNotification(Model $record): mixed
+    protected function getWarningNotification(Model $record): mixed
     {
-        return new TaskDeadlineNotice($record);
+        return new TaskDeadlineNotice($record); // Próxima a Vencer
+    }
+
+    protected function getExpiredNotification(Model $record): mixed
+    {
+        return new TaskExpiredNotice($record); // Vencida
     }
 }

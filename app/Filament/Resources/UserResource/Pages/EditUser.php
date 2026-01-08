@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Support\AppNotifier;
 use Filament\Actions\DeleteAction;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\DB;
 
@@ -50,11 +50,12 @@ class EditUser extends EditRecord
 
         if (! empty($conflictSubProcesses)) {
             $subProcessesList = implode(', ', $conflictSubProcesses);
-            Notification::make()
-                ->title(__('Acción denegada'))
-                ->body(__('No puedes dejar los siguientes subprocesos sin al menos un líder: :subprocesses. Asigna uno nuevo antes de retirar a este usuario.', ['subprocesses' => $subProcessesList]))
-                ->danger()
-                ->send();
+
+            AppNotifier::error(
+                __('Acción denegada'),
+                __('No puedes dejar los siguientes subprocesos sin al menos un líder: :subprocesses. Asigna uno nuevo antes de retirar a este usuario.', ['subprocesses' => $subProcessesList])
+            );
+
             $this->fillForm();
             $this->halt();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +29,7 @@ class ExistingTenantCreatorService
         DB::table('tenants')
             ->where('id', $tenant->id)
             ->update([
+                'user_id' => $data['user_id'],
                 'data' => json_encode([
                     'created_at' => $tenant->created_at?->toDateTimeString(),
                     'updated_at' => $tenant->updated_at?->toDateTimeString(),
@@ -77,19 +79,24 @@ class ExistingTenantCreatorService
 
         // 6️⃣ Crear usuario admin inicial
         try {
-            $exists = DB::connection('dynamic')->table('users')
-                ->where('email', $tenant->email)
-                ->exists();
 
-            if (! $exists) {
-                DB::connection('dynamic')->table('users')->insert([
+            // A. Cambiamos la conexión por defecto a 'dynamic' (la del tenant)
+            Config::set('database.default', 'dynamic');
+
+            // B. Usamos firstOrCreate para obtener la INSTANCIA del modelo
+            $user = User::firstOrCreate(
+                ['email' => $tenant->email], // Busca por email
+                [
                     'name' => $tenant->name,
-                    'email' => $tenant->email,
                     'password' => $data['password'],
                     'created_at' => now(),
                     'updated_at' => now(),
-                ]);
-            }
+                ]
+            );
+
+            // C. Ahora sí tenemos el objeto $user y podemos asignar el rol
+            $user->assignRole('super_admin');
+
         } catch (\Throwable $e) {
             report($e);
         }

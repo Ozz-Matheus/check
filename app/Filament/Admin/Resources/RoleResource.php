@@ -25,11 +25,11 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string
     {
-        return trans('filament-tenancy::messages.group');
+        return __('Global Management');
     }
 
     public static function getPermissionPrefixes(): array

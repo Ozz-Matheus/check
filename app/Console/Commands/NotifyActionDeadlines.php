@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Action;
 use App\Notifications\ActionDeadlineNotice;
+use App\Notifications\ActionExpiredNotice;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,8 +24,13 @@ class NotifyActionDeadlines extends BaseDeadlineCommand
         return $record->responsibleBy ? [$record->responsibleBy] : [];
     }
 
-    protected function getNotification(Model $record): mixed
+    protected function getWarningNotification(Model $record): mixed
     {
-        return new ActionDeadlineNotice($record);
+        return new ActionDeadlineNotice($record); // Próxima a Vencer
+    }
+
+    protected function getExpiredNotification(Model $record): mixed
+    {
+        return new ActionExpiredNotice($record);  // Vencida
     }
 }

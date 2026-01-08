@@ -4,10 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use App\Support\AppNotifier;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ForceDeleteAction;
+use Filament\Tables\Actions\RestoreAction;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -211,10 +217,30 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+
+                    DeleteAction::make(), // Envía a papelera
+                    RestoreAction::make(),      // Recupera de papelera
+                    ForceDeleteAction::make()
+                        ->visible(fn ($record): bool => auth()->user()->hasRole('super_admin'))
+                        ->before(function ($record, $action) {
+                            // Verificamos si el usuario es líder de algún subproceso
+                            if ($record->leadSubProcesses()->exists()) {
+
+                                AppNotifier::error(
+                                    __('Action Denied'),
+                                    __('This user is currently a leader of one or more sub-processes. Please reassign them before deleting.'),
+                                    true
+                                );
+                                $action->halt();
+                            }
+                        }), // Borrado físico permanente
+
+                ])->color('primary')->link()->label(false)->tooltip('Actions'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

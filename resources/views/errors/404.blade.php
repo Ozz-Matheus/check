@@ -18,7 +18,7 @@
                 {{ __('Lo sentimos, la página que estás buscando no fue encontrada.') }}
             </p>
 
-            <a href="{{ route('filament.dashboard.pages.dashboard') }}"
+            <a href="{{ \App\Support\AppHelper::getHomeUrl() }}"
                class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-custom-500 text-white text-sm font-medium rounded-lg transition">
                 {{ __('Ir al panel') }}
             </a>

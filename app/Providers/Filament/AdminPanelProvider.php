@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Plugins\CustomTenancyPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -19,7 +20,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use TomatoPHP\FilamentTenancy\FilamentTenancyPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -59,7 +59,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
-                FilamentTenancyPlugin::make()->panel('dashboard'),
+                CustomTenancyPlugin::make()->panel('dashboard'),
             ])
             ->middleware([
                 EncryptCookies::class,

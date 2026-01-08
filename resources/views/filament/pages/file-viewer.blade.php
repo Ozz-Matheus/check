@@ -2,9 +2,11 @@
     <div class="space-y-6">
 
         <div class="space-y-4">
-            <p><strong>MIME:</strong> {{ $file->readable_mime_type }}</p>
-            <p><strong>Size:</strong> {{ $file->readable_size }}</p>
-
+            <div class="flex items-center gap-x-2">
+                <p><strong>Formato :</strong> {{ $file->readable_mime_type }}</p>
+                <p>|</p>
+                <p><strong>Tamaño:</strong> {{ $file->readable_size }}</p>
+            </div>
             @if ($file->isPdf())
                 {{-- PDF embebido directamente --}}
                 <iframe

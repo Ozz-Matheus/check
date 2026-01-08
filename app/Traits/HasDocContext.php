@@ -38,7 +38,7 @@ trait HasDocContext
         $status = Status::byContextAndTitle('doc', $data['status_title']);
 
         Notification::make()
-            ->title('Version successfully '.$status->label)
+            ->title(__('Version successfully ').$status->label)
             ->icon($status->iconName())
             ->color($status->colorName())
             ->status($status->colorName())

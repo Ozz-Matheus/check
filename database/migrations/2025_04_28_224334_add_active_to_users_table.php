@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('active')->default(true)->after('password');
+            $table->softDeletes()->after('remember_token');
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('active');
+            $table->dropSoftDeletes();
         });
     }
 };

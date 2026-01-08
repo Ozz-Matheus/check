@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use TomatoPHP\FilamentTenancy\Models\Tenant;
 
 class TenantPolicy
 {

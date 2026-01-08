@@ -128,7 +128,7 @@ class Doc extends Model implements AuditableContract
     // Determina si el documento está vencido.
     public function getIsExpiredAttribute(): bool
     {
-        return $this->central_expiration_date && today()->isAfter($this->central_expiration_date);
+        return $this->central_expiration_date && today()->greaterThanOrEqualTo($this->central_expiration_date);
     }
 
     // Determina si el documento está por vencer en los próximos 30 días.

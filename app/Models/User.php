@@ -9,6 +9,7 @@ use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasPanelShield, HasRoles, HasUserLogic, Notifiable;
+    use HasFactory, HasPanelShield, HasRoles, HasUserLogic, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -106,6 +107,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsTo(Headquarter::class);
     }
 
+    public function leadSubProcesses()
+    {
+        return $this->belongsToMany(SubProcess::class, 'users_lead_subprocesses', 'user_id', 'sub_process_id');
+    }
+
     // public function registeredActions()
     // {
     //     return $this->hasMany(Action::class, 'registered_by_id');
@@ -131,18 +137,31 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
+        // 1️⃣ Super Admin
         if ($this->hasRole('super_admin')) {
             return true;
         }
 
-        if (! $this->isActive()) {
+        // 2️⃣ Evaluamos condiciones de bloqueo
+        // match(true) buscará la primera condición que se cumpla
+        $failure = match (true) {
+            tenant()?->is_active === false => [
+                'Workspace Deactivated',
+                'This workspace is currently deactivated. Contact the administrator.',
+            ],
+            ! $this->isActive() => [
+                'Account Deactivated',
+                'Your account has been deactivated. Contact the administrator.',
+            ],
+            default => null, // Si todo está bien
+        };
+
+        // 3️⃣ Ejecutamos el cierre de sesión una sola vez
+        if ($failure) {
+
             Auth::logout();
 
-            AppNotifier::error(
-                'Account deactivated',
-                'Your account has been deactivated. Contact the administrator.',
-                true
-            );
+            AppNotifier::error($failure[0], $failure[1], true);
 
             return false;
         }
